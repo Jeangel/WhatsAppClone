@@ -1,6 +1,27 @@
 import * as React from 'react';
-import { View, FlatList } from 'react-native';
-import { StatusItem } from '../molecules/StatusItem';
+import { View, FlatList, StyleSheet } from 'react-native';
+import { UserStatusItem } from '../molecules/Status/UserStatusItem';
+import { AddStatusButton } from '../molecules/Status/AddStatusButton';
+
+const styles = StyleSheet.create({
+  contentContainerStyle: {
+    paddingVertical: 10,
+  },
+  separator: {
+    padding: 5,
+  },
+  listHeaderComponent: {
+    paddingHorizontal: 10,
+  },
+});
+
+const ListHeaderComponent = () => (
+  <View style={styles.listHeaderComponent}>
+    <AddStatusButton />
+  </View>
+);
+
+const Separator = () => <View style={styles.separator} />;
 
 export const StatusList = () => {
   const dummyData = [
@@ -27,7 +48,7 @@ export const StatusList = () => {
         id: '1-Mary',
         profileImageUrl:
           'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-        name: 'Mary',
+        name: 'Jul',
       },
       uploadedStatusAmount: 1,
     },
@@ -36,7 +57,7 @@ export const StatusList = () => {
         id: '1-Jon',
         profileImageUrl:
           'https://images.unsplash.com/photo-1463453091185-61582044d556?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80',
-        name: 'Jon',
+        name: 'Jon 😃',
       },
       uploadedStatusAmount: 3,
     },
@@ -69,23 +90,27 @@ export const StatusList = () => {
     },
     {
       user: {
-        id: '1-Jan',
+        id: '1-Jean',
         profileImageUrl:
           'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80',
-        name: 'Jan',
+        name: 'Jean',
       },
       uploadedStatusAmount: 1,
     },
   ];
+
   return (
     <View>
       <FlatList
         data={dummyData}
         horizontal
         showsHorizontalScrollIndicator={false}
+        ListHeaderComponent={ListHeaderComponent}
+        ItemSeparatorComponent={Separator}
+        contentContainerStyle={styles.contentContainerStyle}
+        keyExtractor={({ user }) => user.id}
         renderItem={({ item }) => (
-          <StatusItem
-            key={item.user.id}
+          <UserStatusItem
             user={item.user}
             uploadedStatusAmount={item.uploadedStatusAmount}
           />
