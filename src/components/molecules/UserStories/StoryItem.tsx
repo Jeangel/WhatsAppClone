@@ -3,13 +3,13 @@ import { TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components';
 import { Text } from '../../atoms/Text';
 
-interface StatusItemProps {
+interface StoryItemProps {
   label: string;
   children: React.ReactNode;
   onPress?: () => void;
 }
 
-const StatusContainer = styled(TouchableOpacity)`
+const StoryContainer = styled(TouchableOpacity)`
   justify-content: center;
   align-items: center;
 `;
@@ -34,20 +34,20 @@ const MainContentContainer = styled(View)`
   justify-content: center;
 `;
 
-export const StatusItem = ({ label, children, onPress }: StatusItemProps) => {
+export const StoryItem = ({ label, children, onPress }: StoryItemProps) => {
   const handleOnPress = () => {
     if (onPress && typeof onPress === 'function') {
       onPress();
     }
   };
   return (
-    <StatusContainer onPress={handleOnPress}>
+    <StoryContainer onPress={handleOnPress}>
       <MainContentContainer>{children}</MainContentContainer>
       <LabelContainer>
         <Label color="neutral60" variant="small">
           {label}
         </Label>
       </LabelContainer>
-    </StatusContainer>
+    </StoryContainer>
   );
 };

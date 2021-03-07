@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useTheme } from '../../../hooks';
 import { ImageWithSegmentedBorder } from '../ImageWithSegmentedBorder';
-import { StatusItem } from './StatusItem';
+import { StoryItem } from './StoryItem';
 
-interface UserStatusItemProps {
-  uploadedStatusAmount: number;
+interface UserStoryItemProps {
+  uploadedStoryAmount: number;
   user: {
     id: string;
     name: string;
@@ -13,11 +13,11 @@ interface UserStatusItemProps {
   onPress?: (userId: string) => {};
 }
 
-export const UserStatusItem = ({
+export const UserStoryItem = ({
   user,
-  uploadedStatusAmount,
+  uploadedStoryAmount,
   onPress,
-}: UserStatusItemProps) => {
+}: UserStoryItemProps) => {
   const theme = useTheme();
   const handleOnPress = () => {
     if (onPress && typeof onPress === 'function') {
@@ -25,13 +25,13 @@ export const UserStatusItem = ({
     }
   };
   return (
-    <StatusItem onPress={handleOnPress} label={user.name}>
+    <StoryItem onPress={handleOnPress} label={user.name}>
       <ImageWithSegmentedBorder
         url={user.profileImageUrl}
-        borderSlices={uploadedStatusAmount}
+        borderSlices={uploadedStoryAmount}
         size={70}
         borderColor={theme.colors.primary}
       />
-    </StatusItem>
+    </StoryItem>
   );
 };

@@ -5,7 +5,8 @@ import styled from 'styled-components';
 import { Icon } from '../components/atoms/Icon';
 import { Text } from '../components/atoms/Text';
 import { Header } from '../components/molecules/Header';
-import { StatusList } from '../components/organisms/StatusList';
+import { StoryList } from '../components/organisms/StoryList';
+import { ChatList } from '../components/organisms/ChatList';
 
 const HeaderContent = styled(View)`
   flex-direction: row;
@@ -17,7 +18,7 @@ const Container = styled(View)`
   background-color: ${({ theme }) => theme.colors.surface};
 `;
 
-const StatusContainer = styled(View)`
+const StoryContainer = styled(View)`
   padding: 20px 0;
   border-bottom-color: ${({ theme }) => theme.colors.neutral80};
   border-bottom-width: 0.5px;
@@ -39,9 +40,10 @@ export const ChatsHeader = (props: StackHeaderProps) => {
 export const Chats = () => {
   return (
     <Container>
-      <StatusContainer>
-        <StatusList />
-      </StatusContainer>
+      <StoryContainer>
+        <StoryList />
+      </StoryContainer>
+      <ChatList />
     </Container>
   );
 };
