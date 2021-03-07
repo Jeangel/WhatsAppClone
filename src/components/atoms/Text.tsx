@@ -7,37 +7,47 @@ import {
 import styled from 'styled-components';
 import { EColor } from '../../theme';
 
+type TextWeight =
+  | 'normal'
+  | 'bold'
+  | '100'
+  | '200'
+  | '300'
+  | '400'
+  | '500'
+  | '600'
+  | '700'
+  | '800'
+  | '900';
+
+export enum ETextVariant {
+  'extraSmall' = 'extraSmall',
+  small = 'small',
+  body = 'body',
+  button = 'button',
+  h1 = 'h1',
+  h2 = 'h2',
+  h3 = 'h3',
+  h4 = 'h4',
+}
+
 interface TextProps extends RNTextProps {
-  variant?: string;
+  variant?: keyof typeof ETextVariant;
   style?: TextStyle;
   color?: keyof typeof EColor;
-  weight?:
-    | 'normal'
-    | 'bold'
-    | '100'
-    | '200'
-    | '300'
-    | '400'
-    | '500'
-    | '600'
-    | '700'
-    | '800'
-    | '900';
+  weight?: TextWeight;
   children: React.ReactNode;
 }
 
-const BaseText = styled(RNText)`
+const BaseText = styled(RNText)<TextProps>`
   font-family: 'SFProText-Regular';
-`;
-
-const BodyText = styled(BaseText)<{
-  color: keyof typeof EColor;
-  weight: string;
-}>`
-  font-size: 14px;
   color: ${({ theme, color }) =>
     color ? theme.colors[color] : theme.colors.neutral40};
   font-weight: ${({ weight }) => (weight ? weight : '300')};
+`;
+
+const BodyText = styled(BaseText)`
+  font-size: 14px;
 `;
 
 const SmallText = styled(BaseText)`
@@ -49,13 +59,27 @@ const ExtraSmallText = styled(BaseText)`
 `;
 
 const H1Text = styled(BaseText)`
-  font-size: 28px;
-  font-weight: 900;
+  font-family: 'SFProText-Bold';
+  font-size: 25px;
+  color: ${({ theme, color }) =>
+    color ? theme.colors[color] : theme.colors.neutral20};
+  font-weight: ${({ weight }) => (weight ? weight : '900')};
+`;
+
+const H2Text = styled(BaseText)`
+  font-family: 'SFProText-Bold';
+  font-size: 20px;
+  color: ${({ theme, color }) =>
+    color ? theme.colors[color] : theme.colors.neutral20};
+  font-weight: ${({ weight }) => (weight ? weight : '600')};
 `;
 
 const H4Text = styled(BaseText)`
   font-size: 16px;
   font-weight: 500;
+  color: ${({ theme, color }) =>
+    color ? theme.colors[color] : theme.colors.neutral20};
+  font-weight: ${({ weight }) => (weight ? weight : '500')};
 `;
 
 const ButtonText = styled(BaseText)`
@@ -71,17 +95,19 @@ export const Text = ({
 }: TextProps) => {
   const getTextComponent = () => {
     switch (variant) {
-      case 'body':
+      case ETextVariant.body:
         return BodyText;
-      case 'small':
+      case ETextVariant.small:
         return SmallText;
-      case 'extra-small':
+      case ETextVariant.extraSmall:
         return ExtraSmallText;
-      case 'h1':
+      case ETextVariant.h1:
         return H1Text;
-      case 'h4':
+      case ETextVariant.h2:
+        return H2Text;
+      case ETextVariant.h4:
         return H4Text;
-      case 'button':
+      case ETextVariant.button:
         return ButtonText;
       default:
         return BodyText;
