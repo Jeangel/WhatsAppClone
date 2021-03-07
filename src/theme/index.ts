@@ -21,7 +21,19 @@ export enum EColor {
 }
 
 export interface ITheme {
-  colors: keyof typeof EColor;
+  colors: {
+    primary: string;
+    white: string;
+    black: string;
+    surface: string;
+    safe: string;
+    warning: string;
+    danger: string;
+    neutral20: string;
+    neutral40: string;
+    neutral60: string;
+    neutral80: string;
+  };
 }
 
 export const themes = {
