@@ -8,10 +8,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   separator: {
-    padding: 5,
+    padding: 10,
   },
   listHeaderComponent: {
-    paddingHorizontal: 10,
+    paddingLeft: 10,
+    paddingRight: 20,
   },
 });
 

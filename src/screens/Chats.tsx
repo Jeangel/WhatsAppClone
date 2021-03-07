@@ -17,6 +17,12 @@ const Container = styled(View)`
   background-color: ${({ theme }) => theme.colors.surface};
 `;
 
+const StatusContainer = styled(View)`
+  padding: 20px 0;
+  border-bottom-color: ${({ theme }) => theme.colors.neutral80};
+  border-bottom-width: 0.5px;
+`;
+
 export const ChatsHeader = (props: StackHeaderProps) => {
   return (
     <Header insets={props.insets}>
@@ -33,7 +39,9 @@ export const ChatsHeader = (props: StackHeaderProps) => {
 export const Chats = () => {
   return (
     <Container>
-      <StatusList />
+      <StatusContainer>
+        <StatusList />
+      </StatusContainer>
     </Container>
   );
 };
