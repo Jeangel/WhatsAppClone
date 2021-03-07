@@ -24,7 +24,7 @@ const ListHeaderComponent = () => (
 
 const Separator = () => <View style={styles.separator} />;
 
-export const StoryList = () => {
+export const StoriesList = () => {
   const dummyData = [
     {
       user: {

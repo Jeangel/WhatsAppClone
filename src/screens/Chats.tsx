@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Icon } from '../components/atoms/Icon';
 import { Text } from '../components/atoms/Text';
 import { Header } from '../components/molecules/Header';
-import { StoryList } from '../components/organisms/StoryList';
+import { StoriesList } from '../components/organisms/StoriesList';
 import { ChatList } from '../components/organisms/ChatList';
 
 const HeaderContent = styled(View)`
@@ -41,7 +41,7 @@ export const Chats = () => {
   return (
     <Container>
       <StoryContainer>
-        <StoryList />
+        <StoriesList />
       </StoryContainer>
       <ChatList />
     </Container>
