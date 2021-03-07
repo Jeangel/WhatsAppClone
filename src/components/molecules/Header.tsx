@@ -7,7 +7,7 @@ export const Header = styled(View)<{ insets: EdgeInsets }>`
   padding-bottom: 20px;
   padding-left: 15px;
   padding-right: 15px;
-  background-color: white;
+  background-color: ${({ theme }) => theme.colors.surface};
   border-bottom-width: 1px;
   border-bottom-color: ${({ theme }) => theme.colors.neutral80};
 `;

@@ -9,13 +9,10 @@ interface IconProps {
   size?: number;
 }
 
-export const Icon = ({
-  name,
-  color: fillColor = 'white',
-  size = 20,
-}: IconProps) => {
+export const Icon = ({ name, color: fillColor, size = 20 }: IconProps) => {
   const theme = useTheme();
-  const color = theme.colors[fillColor as EColor] || fillColor;
+  const color =
+    theme.colors[fillColor as EColor] || fillColor || theme.colors.neutral60;
   switch (name) {
     case 'phone':
       return (
