@@ -25,6 +25,7 @@
     "react-native-screens": "^2.18.1",
     "react-native-svg": "^12.1.0",
     "react-native-svg-charts": "^5.4.0",
+    "react-native-swipe-list-view": "^3.2.6",
     "styled-components": "^5.2.1"
   },
   "devDependencies": {
