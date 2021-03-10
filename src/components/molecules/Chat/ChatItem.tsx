@@ -6,6 +6,7 @@ import RelativeTime from 'dayjs/plugin/relativeTime';
 import { IChatItem } from '../../../app/Chat';
 import { Text } from '../../atoms/Text';
 import { ChatUserImage } from './ChatUserImage';
+import { MessageStatus } from '../Message/MessageStatus';
 dayjs.extend(RelativeTime);
 
 interface ChatItemProps {
@@ -51,6 +52,11 @@ const UnreadMessagesContainer = styled(View)<{ hide: boolean }>`
   display: ${({ hide }) => (hide ? 'none' : 'flex')};
 `;
 
+const MessageStatusContainer = styled(View)`
+  align-items: center;
+  justify-content: center;
+`;
+
 const LastMessageTimeStamp = styled(Text)`
   text-transform: capitalize;
 `;
@@ -61,6 +67,7 @@ const Content = styled(View)`
 
 export const ChatItem = ({ data }: ChatItemProps) => {
   const hasUnreadMessages = data.unreadMessages > 0;
+  const shouldShowUnreadMessages = data.lastMessage.author === data.author.id;
   return (
     <Container>
       <Content>
@@ -82,11 +89,17 @@ export const ChatItem = ({ data }: ChatItemProps) => {
           <LastMessageTimeStamp color="neutral60" variant="small">
             {dayjs(data.lastMessage.sentAt).fromNow()}
           </LastMessageTimeStamp>
-          <UnreadMessagesContainer hide={!hasUnreadMessages}>
-            <Text color="white" variant="small">
-              {data.unreadMessages}
-            </Text>
-          </UnreadMessagesContainer>
+          {shouldShowUnreadMessages ? (
+            <UnreadMessagesContainer hide={!hasUnreadMessages}>
+              <Text color="white" variant="small">
+                {data.unreadMessages}
+              </Text>
+            </UnreadMessagesContainer>
+          ) : (
+            <MessageStatusContainer>
+              <MessageStatus status={data.lastMessage.status} />
+            </MessageStatusContainer>
+          )}
         </ChatInfoContainer>
       </Content>
     </Container>
