@@ -1,3 +1,8 @@
+export enum EMessageStatus {
+  sent = 'sent',
+  read = 'read',
+  received = 'received',
+}
 export class Message {
   id!: string;
   author!: string;
@@ -6,5 +11,6 @@ export class Message {
   viewedBy!: string[];
   content!: string;
   type!: string;
+  status!: keyof typeof EMessageStatus;
   constructor() {}
 }
