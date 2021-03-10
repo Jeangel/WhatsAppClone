@@ -9,6 +9,7 @@ export const LightTheme: ITheme = {
     safe: '#5CE27F',
     warning: '#FFE12D',
     danger: '#E25C5C',
+    info: '#689ECC',
     neutral20: '#121212',
     neutral40: '#313131',
     neutral60: '#B1B1B1',

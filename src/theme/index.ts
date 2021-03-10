@@ -14,6 +14,7 @@ export enum EColor {
   safe = 'safe',
   warning = 'warning',
   danger = 'danger',
+  info = 'info',
   neutral20 = 'neutral20',
   neutral40 = 'neutral40',
   neutral60 = 'neutral60',
@@ -29,6 +30,7 @@ export interface ITheme {
     safe: string;
     warning: string;
     danger: string;
+    info: string;
     neutral20: string;
     neutral40: string;
     neutral60: string;

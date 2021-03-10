@@ -9,6 +9,7 @@ export const DarkTheme: ITheme = {
     safe: '#5CE27F',
     warning: '#FFE12D',
     danger: '#E25C5C',
+    info: '#689ECC',
     neutral20: '#EFEFEF',
     neutral40: '#B1B1B1',
     neutral60: '#313131',
