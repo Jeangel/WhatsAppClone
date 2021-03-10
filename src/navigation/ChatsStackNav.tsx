@@ -1,8 +1,14 @@
 import * as React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Chats, ChatsHeader } from '../screens/Chats';
+import { Chat } from '../screens/Chat';
 
-const ChatsStack = createStackNavigator();
+export type ChatStackParamList = {
+  Chats: undefined;
+  Chat: { chatId: string } | undefined;
+};
+
+const ChatsStack = createStackNavigator<ChatStackParamList>();
 
 export const ChatsStackNav = () => {
   return (
@@ -11,6 +17,7 @@ export const ChatsStackNav = () => {
         header: ChatsHeader,
       }}>
       <ChatsStack.Screen name="Chats" component={Chats} />
+      <ChatsStack.Screen name="Chat" component={Chat} />
     </ChatsStack.Navigator>
   );
 };

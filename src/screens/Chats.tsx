@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import { StackHeaderProps } from '@react-navigation/stack';
+import { StackHeaderProps, StackNavigationProp } from '@react-navigation/stack';
 import styled from 'styled-components';
 import { Icon } from '../components/atoms/Icon';
 import { Text } from '../components/atoms/Text';
 import { Header } from '../components/molecules/Header';
 import { StoriesList } from '../components/organisms/StoriesList';
 import { ChatList } from '../components/organisms/ChatList';
+import { ChatStackParamList } from '../navigation/ChatsStackNav';
 
 const HeaderContent = styled(View)`
   flex-direction: row;
@@ -37,13 +38,26 @@ export const ChatsHeader = (props: StackHeaderProps) => {
   );
 };
 
-export const Chats = () => {
+type ChatScreenNavigationProp = StackNavigationProp<
+  ChatStackParamList,
+  'Chats'
+>;
+
+interface ChatsProps {
+  navigation: ChatScreenNavigationProp;
+}
+
+export const Chats = ({ navigation }: ChatsProps) => {
+  const onChatPress = (chatId: string) => {
+    navigation.navigate('Chat', { chatId });
+  };
+  const onChatRemove = () => {};
   return (
     <Container>
       <StoryContainer>
         <StoriesList />
       </StoryContainer>
-      <ChatList />
+      <ChatList onChatPress={onChatPress} onChatRemove={onChatRemove} />
     </Container>
   );
 };

@@ -10,10 +10,6 @@ const Container = styled(View)`
   flex: 1;
 `;
 
-const ItemContainer = styled(TouchableOpacity)`
-  background-color: white;
-`;
-
 const RemoveItemButton = styled(TouchableOpacity)`
   align-items: center;
   justify-content: center;
@@ -59,11 +55,14 @@ const RemoveItem = ({
   );
 };
 
-export const ChatList = () => {
+interface ChatListProps {
+  onChatPress: (chatId: string) => void;
+  onChatRemove: (chatId: string) => void;
+}
+
+export const ChatList = ({ onChatPress, onChatRemove }: ChatListProps) => {
   const opacity = React.useRef(new Animated.Value(1)).current;
   opacity.interpolate({ inputRange: [0, 75], outputRange: [0, 1] });
-
-  const onRemove = () => {};
 
   return (
     <Container>
@@ -72,13 +71,11 @@ export const ChatList = () => {
         showsVerticalScrollIndicator={false}
         keyExtractor={({ id }) => id}
         renderItem={({ item }) => (
-          <ItemContainer>
-            <ChatItem data={item} />
-          </ItemContainer>
+          <ChatItem data={item} onPress={onChatPress} />
         )}
         leftOpenValue={75}
         renderHiddenItem={({ item }) => (
-          <RemoveItem id={item.id} onPress={onRemove} />
+          <RemoveItem id={item.id} onPress={onChatRemove} />
         )}
       />
     </Container>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 import RelativeTime from 'dayjs/plugin/relativeTime';
@@ -11,14 +11,16 @@ dayjs.extend(RelativeTime);
 
 interface ChatItemProps {
   data: IChatItem;
+  onPress: (chatId: string) => void;
 }
 
-const Container = styled(View)`
+const Container = styled(TouchableOpacity)`
   flex-direction: row;
   align-items: center;
   border-bottom-color: ${({ theme }) => theme.colors.neutral80};
   border-bottom-width: 1px;
   padding: 20px 5px 20px 0;
+  background-color: ${({ theme }) => theme.colors.surface};
 `;
 
 const ImageContainer = styled(View)`
@@ -65,11 +67,14 @@ const Content = styled(View)`
   flex-direction: row;
 `;
 
-export const ChatItem = ({ data }: ChatItemProps) => {
+export const ChatItem = ({ data, onPress }: ChatItemProps) => {
   const hasUnreadMessages = data.unreadMessages > 0;
   const shouldShowUnreadMessages = data.lastMessage.author === data.author.id;
+  const handleOnPress = () => {
+    onPress(data.id);
+  };
   return (
-    <Container>
+    <Container onPress={handleOnPress}>
       <Content>
         <ImageContainer>
           <ChatUserImage
