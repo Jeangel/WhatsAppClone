@@ -9,11 +9,6 @@ import { StoriesList } from '../components/organisms/StoriesList';
 import { ChatList } from '../components/organisms/ChatList';
 import { ChatStackParamList } from '../navigation/ChatsStackNav';
 
-const HeaderContent = styled(View)`
-  flex-direction: row;
-  justify-content: space-between;
-`;
-
 const Container = styled(View)`
   flex: 1;
   background-color: ${({ theme }) => theme.colors.surface};
@@ -27,13 +22,11 @@ const StoryContainer = styled(View)`
 
 export const ChatsHeader = (props: StackHeaderProps) => {
   return (
-    <Header insets={props.insets}>
-      <HeaderContent>
-        <Text variant="h1">Chats</Text>
-        <TouchableOpacity onPress={() => {}}>
-          <Icon name="add-people" size={35} color={'primary'} />
-        </TouchableOpacity>
-      </HeaderContent>
+    <Header insets={props.insets} justifyContent="space-between">
+      <Text variant="h1">Chats</Text>
+      <TouchableOpacity onPress={() => {}}>
+        <Icon name="add-people" size={35} color={'primary'} />
+      </TouchableOpacity>
     </Header>
   );
 };
