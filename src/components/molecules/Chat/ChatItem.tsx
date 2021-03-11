@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import RelativeTime from 'dayjs/plugin/relativeTime';
 import { IChatItem } from '../../../app/Chat';
 import { Text } from '../../atoms/Text';
-import { ChatUserImage } from './ChatUserImage';
+import { UserImage } from '../User/UserImage';
 import { MessageStatus } from '../Message/MessageStatus';
 dayjs.extend(RelativeTime);
 
@@ -77,7 +77,7 @@ export const ChatItem = ({ data, onPress }: ChatItemProps) => {
     <Container onPress={handleOnPress}>
       <Content>
         <ImageContainer>
-          <ChatUserImage
+          <UserImage
             url={data.author.profileImageUrl}
             status={data.author.status}
           />

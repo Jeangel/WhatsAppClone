@@ -2,9 +2,10 @@ import * as React from 'react';
 import { View, Image } from 'react-native';
 import styled from 'styled-components';
 
-interface ChatUserImageProps {
+interface UserImageProps {
   url: string;
   status: string;
+  size?: number;
 }
 
 const Container = styled(View)`
@@ -12,9 +13,9 @@ const Container = styled(View)`
   align-items: center;
 `;
 
-const ProfileImage = styled(Image)`
-  height: 60px;
-  width: 60px;
+const ProfileImage = styled(Image)<{ size: number }>`
+  height: ${({ size }) => size}px;
+  width: ${({ size }) => size}px;
   border-radius: 100px;
 `;
 
@@ -22,9 +23,9 @@ const ImageContainer = styled(View)`
   position: relative;
 `;
 
-const Status = styled(View)<{ status: string }>`
-  width: 12px;
-  height: 12px;
+const Status = styled(View)<{ status: string; size: number }>`
+  width: ${({ size }) => size}px;
+  height: ${({ size }) => size}px;
   border-radius: 100px;
   position: absolute;
   bottom: 4px;
@@ -42,12 +43,12 @@ const Status = styled(View)<{ status: string }>`
   }};
 `;
 
-export const ChatUserImage = ({ url, status }: ChatUserImageProps) => {
+export const UserImage = ({ url, status, size = 60 }: UserImageProps) => {
   return (
     <Container>
       <ImageContainer>
-        <ProfileImage source={{ uri: url }} />
-        <Status status={status} />
+        <ProfileImage source={{ uri: url }} size={size} />
+        <Status status={status} size={size * 0.2} />
       </ImageContainer>
     </Container>
   );
