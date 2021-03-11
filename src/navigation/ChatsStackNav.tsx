@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Chats, ChatsHeader } from '../screens/Chats';
-import { Chat } from '../screens/Chat';
+import { Chat, ChatHeader } from '../screens/Chat';
 
 export type ChatStackParamList = {
   Chats: undefined;
@@ -12,12 +12,17 @@ const ChatsStack = createStackNavigator<ChatStackParamList>();
 
 export const ChatsStackNav = () => {
   return (
-    <ChatsStack.Navigator
-      screenOptions={{
-        header: ChatsHeader,
-      }}>
-      <ChatsStack.Screen name="Chats" component={Chats} />
-      <ChatsStack.Screen name="Chat" component={Chat} />
+    <ChatsStack.Navigator>
+      <ChatsStack.Screen
+        name="Chats"
+        component={Chats}
+        options={{ header: ChatsHeader }}
+      />
+      <ChatsStack.Screen
+        name="Chat"
+        component={Chat}
+        options={{ header: ChatHeader }}
+      />
     </ChatsStack.Navigator>
   );
 };

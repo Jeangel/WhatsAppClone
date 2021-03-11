@@ -5,8 +5,8 @@ import dayjs from 'dayjs';
 import RelativeTime from 'dayjs/plugin/relativeTime';
 import { IChatItem } from '../../../app/Chat';
 import { Text } from '../../atoms/Text';
-import { UserImage } from '../User/UserImage';
 import { MessageStatus } from '../Message/MessageStatus';
+import { UserInfo } from '../User/UserInfo';
 dayjs.extend(RelativeTime);
 
 interface ChatItemProps {
@@ -19,17 +19,13 @@ const Container = styled(TouchableOpacity)`
   align-items: center;
   border-bottom-color: ${({ theme }) => theme.colors.neutral80};
   border-bottom-width: 1px;
-  padding: 20px 5px 20px 0;
+  padding: 20px 5px;
   background-color: ${({ theme }) => theme.colors.surface};
 `;
 
-const ImageContainer = styled(View)`
-  width: 25%;
-`;
-
-const MessageContainer = styled(View)`
+const UserInfoContainer = styled(View)`
   height: 100%;
-  width: 55%;
+  width: 80%;
 `;
 
 const ChatInfoContainer = styled(View)`
@@ -38,10 +34,6 @@ const ChatInfoContainer = styled(View)`
   justify-content: space-between;
   flex: 1;
   padding-bottom: 15px;
-`;
-
-const ChatName = styled(Text)`
-  padding-bottom: 5px;
 `;
 
 const UnreadMessagesContainer = styled(View)<{ hide: boolean }>`
@@ -76,20 +68,9 @@ export const ChatItem = ({ data, onPress }: ChatItemProps) => {
   return (
     <Container onPress={handleOnPress}>
       <Content>
-        <ImageContainer>
-          <UserImage
-            url={data.author.profileImageUrl}
-            status={data.author.status}
-          />
-        </ImageContainer>
-        <MessageContainer>
-          <ChatName variant="h4" weight="600">
-            {data.author.name}
-          </ChatName>
-          <Text color="neutral60" numberOfLines={2} ellipsizeMode="tail">
-            {data.lastMessage.content}
-          </Text>
-        </MessageContainer>
+        <UserInfoContainer>
+          <UserInfo user={data.author} description={data.lastMessage.content} />
+        </UserInfoContainer>
         <ChatInfoContainer>
           <LastMessageTimeStamp color="neutral60" variant="small">
             {dayjs(data.lastMessage.sentAt).fromNow()}
