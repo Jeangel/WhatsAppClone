@@ -3,7 +3,6 @@ import { TouchableOpacity, View } from 'react-native';
 import { StackHeaderProps, StackNavigationProp } from '@react-navigation/stack';
 import styled from 'styled-components';
 import { Icon } from '../components/atoms/Icon';
-import { Text } from '../components/atoms/Text';
 import { Header } from '../components/molecules/Header';
 import { StoriesList } from '../components/organisms/StoriesList';
 import { ChatList } from '../components/organisms/ChatList';
@@ -22,8 +21,7 @@ const StoryContainer = styled(View)`
 
 export const ChatsHeader = (props: StackHeaderProps) => {
   return (
-    <Header insets={props.insets} justifyContent="space-between">
-      <Text variant="h1">Chats</Text>
+    <Header {...props} title="Chats">
       <TouchableOpacity onPress={() => {}}>
         <Icon name="add-people" size={35} color={'primary'} />
       </TouchableOpacity>
