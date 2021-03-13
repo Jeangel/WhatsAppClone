@@ -71,7 +71,7 @@ export const Chat = ({}: ChatProps) => {
     <Container>
       <GiftedChat
         renderInputToolbar={() => <ChatMessageBar />}
-        minInputToolbarHeight={60}
+        minInputToolbarHeight={100}
       />
     </Container>
   );

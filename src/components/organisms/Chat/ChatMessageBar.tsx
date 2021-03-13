@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, TextInput, TouchableOpacity, Animated } from 'react-native';
+import { View, TextInput, TouchableOpacity } from 'react-native';
 import styled from 'styled-components';
 import { Icon } from '../../atoms/Icon';
 
@@ -7,20 +7,23 @@ const Container = styled(View)`
   flex: 1;
   padding: 5px 15px;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
 `;
 
 const Input = styled(TextInput)`
   border: 1px solid ${({ theme }) => theme.colors.neutral80};
   padding: 5px 15px;
-  height: 40px;
-  border-radius: 40px;
+  padding-top: 7px;
+  max-height: 200px;
+  min-height: 35px;
+  border-radius: 20px;
 `;
 
-const InputContainer = styled(Animated.View)`
+const InputContainer = styled(View)`
   padding-left: 10px;
   padding-right: 10px;
+  padding-bottom: 2px;
   flex: 1;
 `;
 
@@ -72,7 +75,7 @@ const SendButton = () => {
 };
 
 export const ChatMessageBar = ({}) => {
-  const [inputIsFocused, setInputIsFocused] = React.useState(true);
+  const [inputIsFocused, setInputIsFocused] = React.useState(false);
 
   const handleOnFocus = () => {
     setInputIsFocused(true);
@@ -90,6 +93,7 @@ export const ChatMessageBar = ({}) => {
           placeholder="Type message"
           onFocus={handleOnFocus}
           onBlur={handleOnBlur}
+          multiline
         />
       </InputContainer>
       {!inputIsFocused && <VoiceNoteButton />}
