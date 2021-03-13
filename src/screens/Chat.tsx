@@ -9,6 +9,7 @@ import { dummyData } from '../components/organisms/data';
 import { UserInfo } from '../components/molecules/User/UserInfo';
 import { capitalize } from '../util';
 import { Icon } from '../components/atoms/Icon';
+import { GiftedChat } from 'react-native-gifted-chat';
 
 type ChatScreenNavigationProp = StackNavigationProp<ChatStackParamList, 'Chat'>;
 
@@ -65,5 +66,9 @@ interface ChatProps {
 }
 
 export const Chat = ({}: ChatProps) => {
-  return <Container />;
+  return (
+    <Container>
+      <GiftedChat />
+    </Container>
+  );
 };

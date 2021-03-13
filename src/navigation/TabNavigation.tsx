@@ -1,15 +1,19 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  getFocusedRouteNameFromRoute,
+  RouteProp,
+} from '@react-navigation/core';
 import { StyleSheet } from 'react-native';
 import { ChatsStackNav } from './ChatsStackNav';
 import { CallsStackNav } from './CallsStackNav';
 import { SettingsStackNav } from './SettingsStackNav';
 import { Icon } from '../components/atoms/Icon';
 import { useTheme } from '../hooks';
-
+import { EColor } from '../theme';
 interface RenderTabBarIconProps {
-  color: string;
+  color: EColor;
   size: number;
   route: {
     name: string;
@@ -41,13 +45,26 @@ const renderTabBarIcon = ({ color, size, route }: RenderTabBarIconProps) => {
   return <Icon name={iconName} size={size} color={color} />;
 };
 
+const getShouldShowTabBar = (
+  route: RouteProp<Record<string, object | undefined>, string>,
+) => {
+  const routeName = getFocusedRouteNameFromRoute(route);
+  const routesWithoutTabBar = ['Chat'];
+  if (routeName) {
+    return !routesWithoutTabBar.includes(routeName);
+  }
+  return true;
+};
+
 export const TabNavigation = () => {
   const theme = useTheme();
   const safeAreaInsets = useSafeAreaInsets();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarIcon: (props) => renderTabBarIcon({ ...props, route }),
+        tabBarIcon: (props) =>
+          renderTabBarIcon({ ...props, route, color: props.color as EColor }),
+        tabBarVisible: getShouldShowTabBar(route),
       })}
       tabBarOptions={{
         safeAreaInsets,
