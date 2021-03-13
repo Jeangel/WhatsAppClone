@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { View, TextInput, TouchableOpacity } from 'react-native';
 import styled from 'styled-components';
 import { Icon } from '../../atoms/Icon';
@@ -75,14 +76,19 @@ const SendButton = () => {
 };
 
 export const ChatMessageBar = ({}) => {
-  const [inputIsFocused, setInputIsFocused] = React.useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
+  const [message, setMessage] = useState('');
 
   const handleOnFocus = () => {
-    setInputIsFocused(true);
+    setIsInputFocused(true);
   };
 
   const handleOnBlur = () => {
-    setInputIsFocused(false);
+    setIsInputFocused(false);
+  };
+
+  const onMessageChange = (text: string) => {
+    setMessage(text);
   };
 
   return (
@@ -94,11 +100,13 @@ export const ChatMessageBar = ({}) => {
           onFocus={handleOnFocus}
           onBlur={handleOnBlur}
           multiline
+          value={message}
+          onChangeText={onMessageChange}
         />
       </InputContainer>
-      {!inputIsFocused && <VoiceNoteButton />}
-      {!inputIsFocused && <MoreButton />}
-      {inputIsFocused && <SendButton />}
+      {!isInputFocused && !message.length && <VoiceNoteButton />}
+      {!isInputFocused && !message.length && <MoreButton />}
+      {(isInputFocused || !!message.length) && <SendButton />}
     </Container>
   );
 };
