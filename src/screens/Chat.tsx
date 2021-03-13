@@ -10,6 +10,7 @@ import { UserCard } from '../components/molecules/User/UserCard';
 import { capitalize } from '../util';
 import { Icon } from '../components/atoms/Icon';
 import { GiftedChat } from 'react-native-gifted-chat';
+import { ChatMessageBar } from '../components/organisms/Chat/ChatMessageBar';
 
 type ChatScreenNavigationProp = StackNavigationProp<ChatStackParamList, 'Chat'>;
 
@@ -68,7 +69,10 @@ interface ChatProps {
 export const Chat = ({}: ChatProps) => {
   return (
     <Container>
-      <GiftedChat />
+      <GiftedChat
+        renderInputToolbar={ChatMessageBar}
+        minInputToolbarHeight={60}
+      />
     </Container>
   );
 };
