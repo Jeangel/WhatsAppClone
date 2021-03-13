@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { View, TouchableOpacity, Animated } from 'react-native';
 import styled from 'styled-components';
-import { ChatItem } from '../molecules/Chat/ChatItem';
+import { ChatItem } from '../../molecules/Chat/ChatItem';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import { Icon } from '../atoms/Icon';
-import { dummyData } from './data';
+import { Icon } from '../../atoms/Icon';
+import { dummyData } from '../data';
 
 const Container = styled(View)`
   flex: 1;
