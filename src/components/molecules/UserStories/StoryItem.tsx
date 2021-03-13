@@ -34,6 +34,9 @@ const MainContentContainer = styled(View)`
   justify-content: center;
 `;
 
+/**
+ * Generic Story Item.
+ */
 export const StoryItem = ({ label, children, onPress }: StoryItemProps) => {
   const handleOnPress = () => {
     if (onPress && typeof onPress === 'function') {

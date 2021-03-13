@@ -6,7 +6,7 @@ import RelativeTime from 'dayjs/plugin/relativeTime';
 import { IChatItem } from '../../../app/Chat';
 import { Text } from '../../atoms/Text';
 import { MessageStatus } from '../Message/MessageStatus';
-import { UserInfo } from '../User/UserInfo';
+import { UserCard } from '../User/UserCard';
 dayjs.extend(RelativeTime);
 
 interface ChatItemProps {
@@ -23,7 +23,7 @@ const Container = styled(TouchableOpacity)`
   background-color: ${({ theme }) => theme.colors.surface};
 `;
 
-const UserInfoContainer = styled(View)`
+const UserCardContainer = styled(View)`
   height: 100%;
   width: 80%;
 `;
@@ -68,9 +68,9 @@ export const ChatItem = ({ data, onPress }: ChatItemProps) => {
   return (
     <Container onPress={handleOnPress}>
       <Content>
-        <UserInfoContainer>
-          <UserInfo user={data.author} description={data.lastMessage.content} />
-        </UserInfoContainer>
+        <UserCardContainer>
+          <UserCard user={data.author} description={data.lastMessage.content} />
+        </UserCardContainer>
         <ChatInfoContainer>
           <LastMessageTimeStamp color="neutral60" variant="small">
             {dayjs(data.lastMessage.sentAt).fromNow()}

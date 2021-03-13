@@ -6,7 +6,7 @@ import { Header } from '../components/molecules/Header';
 import { ChatStackParamList } from '../navigation/ChatsStackNav';
 // TODO: Create a separate folder with all the dummy data
 import { dummyData } from '../components/organisms/data';
-import { UserInfo } from '../components/molecules/User/UserInfo';
+import { UserCard } from '../components/molecules/User/UserCard';
 import { capitalize } from '../util';
 import { Icon } from '../components/atoms/Icon';
 import { GiftedChat } from 'react-native-gifted-chat';
@@ -43,7 +43,7 @@ export const ChatHeader = (props: StackHeaderProps) => {
     <Header {...props} showBackButton>
       {chat ? (
         <UserStatusContainer>
-          <UserInfo
+          <UserCard
             user={chat.author}
             description={capitalize(chat.author.status)}
             size={40}

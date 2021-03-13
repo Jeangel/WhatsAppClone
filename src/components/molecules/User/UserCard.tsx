@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 import styled from 'styled-components';
 import { Text } from '../../atoms/Text';
-import { UserImage } from '../User/UserImage';
+import { UserImage } from './UserImage';
 import { User } from '../../../app/User';
 
 const Container = styled(View)`
@@ -22,13 +22,13 @@ const UserName = styled(Text)`
   padding-bottom: 5px;
 `;
 
-interface UserInfoProps {
+interface UserCardProps {
   user: User;
   description: string;
   size?: number;
 }
 
-export const UserInfo = ({ user, description, size }: UserInfoProps) => {
+export const UserCard = ({ user, description, size }: UserCardProps) => {
   return (
     <Container>
       <ImageContainer>
