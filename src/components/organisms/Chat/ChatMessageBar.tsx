@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, TextInput, TouchableOpacity } from 'react-native';
+import { View, TextInput, TouchableOpacity, Animated } from 'react-native';
 import styled from 'styled-components';
 import { Icon } from '../../atoms/Icon';
 
@@ -18,7 +18,7 @@ const Input = styled(TextInput)`
   border-radius: 40px;
 `;
 
-const InputContainer = styled(View)`
+const InputContainer = styled(Animated.View)`
   padding-left: 10px;
   padding-right: 10px;
   flex: 1;
@@ -55,7 +55,7 @@ const VoiceNoteButton = () => {
   );
 };
 
-const More = () => {
+const MoreButton = () => {
   return (
     <RoundedBarButton>
       <Icon name="clip" size={20} color={'primary'} />
@@ -63,15 +63,38 @@ const More = () => {
   );
 };
 
+const SendButton = () => {
+  return (
+    <RoundedBarButton>
+      <Icon name="send" size={20} color={'primary'} />
+    </RoundedBarButton>
+  );
+};
+
 export const ChatMessageBar = ({}) => {
+  const [inputIsFocused, setInputIsFocused] = React.useState(true);
+
+  const handleOnFocus = () => {
+    setInputIsFocused(true);
+  };
+
+  const handleOnBlur = () => {
+    setInputIsFocused(false);
+  };
+
   return (
     <Container>
       <EmojiButton />
       <InputContainer>
-        <Input placeholder="Type message" />
+        <Input
+          placeholder="Type message"
+          onFocus={handleOnFocus}
+          onBlur={handleOnBlur}
+        />
       </InputContainer>
-      <VoiceNoteButton />
-      <More />
+      {!inputIsFocused && <VoiceNoteButton />}
+      {!inputIsFocused && <MoreButton />}
+      {inputIsFocused && <SendButton />}
     </Container>
   );
 };
