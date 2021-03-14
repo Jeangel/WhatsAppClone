@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Animated } from 'react-native';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Animated,
+  ViewStyle,
+} from 'react-native';
 import styled from 'styled-components';
 import { Icon } from '../../atoms/Icon';
 
@@ -28,7 +34,7 @@ const InputContainer = styled(Animated.View)`
   padding-bottom: 2px;
 `;
 
-const RoundedBarButton = styled(TouchableOpacity)`
+const RoundedButtonShape = styled(TouchableOpacity)`
   height: 40px;
   width: 40px;
   border: 1px solid ${({ theme }) => theme.colors.neutral80};
@@ -47,91 +53,79 @@ const AnimatedItemsContainer = styled(View)`
   width: 90%;
 `;
 
-const ActionButtonContainer = styled(Animated.View)`
-  padding-right: 10px;
+const DynamicButtonsContainer = styled(Animated.View)`
+  margin-right: 10px;
   align-items: center;
   justify-content: center;
+  width: 40px;
+  height: 40px;
 `;
 
-const EmojiButton = () => {
+interface RoundedButtonProps {
+  icon: string;
+  style?:
+    | Animated.AnimatedInterpolation
+    | Animated.WithAnimatedObject<ViewStyle>
+    | ViewStyle;
+}
+
+const RoundedButton = ({ icon, style }: RoundedButtonProps) => {
   return (
-    <RoundedBarButton>
-      <Icon name="smile-face" size={20} color={'primary'} />
-    </RoundedBarButton>
+    <Animated.View style={style}>
+      <RoundedButtonShape>
+        <Icon name={icon} size={20} color={'primary'} />
+      </RoundedButtonShape>
+    </Animated.View>
   );
 };
 
-const ActionButton = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <ActionButtonContainer>
-      <RoundedBarButton>{children}</RoundedBarButton>
-    </ActionButtonContainer>
-  );
-};
-
-const MoreButton = () => {
-  return (
-    <RoundedBarButton>
-      <Icon name="clip" size={20} color={'primary'} />
-    </RoundedBarButton>
-  );
-};
-
-const SendButton = () => {
-  return (
-    <RoundedBarButton>
-      <Icon name="send" size={20} color={'primary'} />
-    </RoundedBarButton>
-  );
-};
-
-const ActionButtonIconContainer = styled(Animated.View)`
+const DynamicButton = styled(RoundedButton)`
   position: absolute;
-  background-color: red;
 `;
 
 export const ChatMessageBar = ({}) => {
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [message, setMessage] = useState('');
-  const animatedValue = React.useRef(new Animated.Value(0)).current;
-  const actionButtonAnimator = React.useRef(new Animated.Value(0)).current;
+  const inputSizeAnimator = React.useRef(new Animated.Value(0)).current;
+  const dynamicButtonAnimator = React.useRef(new Animated.Value(0)).current;
 
-  const inputWidthAnimation = animatedValue.interpolate({
+  const messageInputSizeAnimation = inputSizeAnimator.interpolate({
     inputRange: [0, 1],
-    outputRange: ['72%', '85%'],
+    outputRange: ['75%', '85%'],
   });
 
-  const moreButtonTranslateAnimation = animatedValue.interpolate({
+  const moreButtonTranslateAnimation = inputSizeAnimator.interpolate({
     inputRange: [0, 1],
     outputRange: [0, 50],
   });
-  const moreButtonOpacityAnimation = animatedValue.interpolate({
+
+  const moreButtonOpacityAnimation = inputSizeAnimator.interpolate({
     inputRange: [0, 50],
     outputRange: [1, 0],
   });
 
-  // const actionButtonOutAnimation = animatedValue.interpolate({
-  //   inputRange: [0, 1],
-  //   outputRange: [],
-  // });
-
-  const outActionButtonAnimation = Animated.spring(actionButtonAnimator, {
+  const dynamicButtonFadeOutAnimation = Animated.spring(dynamicButtonAnimator, {
     toValue: 0,
     useNativeDriver: true,
   });
 
-  const inActionButtonAnimation = Animated.spring(actionButtonAnimator, {
+  const dynamicButtonFadeInAnimation = Animated.spring(dynamicButtonAnimator, {
     toValue: 1,
     useNativeDriver: true,
   });
 
-  const increaseAnimateValueAnimation = Animated.timing(animatedValue, {
+  const sendButtonFadeInOutAnimation = dynamicButtonAnimator.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 0],
+  });
+
+  const increaseAnimateValueAnimation = Animated.timing(inputSizeAnimator, {
     toValue: 1,
     useNativeDriver: false,
     duration: 200,
   });
 
-  const decreaseAnimatedValueAnimation = Animated.timing(animatedValue, {
+  const decreaseAnimatedValueAnimation = Animated.timing(inputSizeAnimator, {
     toValue: 0,
     useNativeDriver: false,
     duration: 200,
@@ -141,24 +135,24 @@ export const ChatMessageBar = ({}) => {
     const shouldGrow = !!(isInputFocused || message.length);
     if (shouldGrow) {
       increaseAnimateValueAnimation.start();
-      outActionButtonAnimation.start();
+      dynamicButtonFadeOutAnimation.start();
     } else {
       decreaseAnimatedValueAnimation.start();
-      inActionButtonAnimation.start();
+      dynamicButtonFadeInAnimation.start();
     }
     return () => {
       increaseAnimateValueAnimation.stop();
       decreaseAnimatedValueAnimation.stop();
-      outActionButtonAnimation.stop();
-      inActionButtonAnimation.stop();
+      dynamicButtonFadeOutAnimation.stop();
+      dynamicButtonFadeInAnimation.stop();
     };
   }, [
     isInputFocused,
     message,
     increaseAnimateValueAnimation,
     decreaseAnimatedValueAnimation,
-    outActionButtonAnimation,
-    inActionButtonAnimation,
+    dynamicButtonFadeOutAnimation,
+    dynamicButtonFadeInAnimation,
   ]);
 
   const handleOnFocus = () => {
@@ -173,18 +167,13 @@ export const ChatMessageBar = ({}) => {
     setMessage(text);
   };
 
-  const sendButtonAnimation = actionButtonAnimator.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 0],
-  });
-
   return (
     <Container>
       <EmojiButtonContainer>
-        <EmojiButton />
+        <RoundedButton icon="smile-face" />
       </EmojiButtonContainer>
       <AnimatedItemsContainer>
-        <InputContainer style={{ width: inputWidthAnimation }}>
+        <InputContainer style={{ width: messageInputSizeAnimation }}>
           <Input
             multiline
             placeholder="Type message"
@@ -194,22 +183,22 @@ export const ChatMessageBar = ({}) => {
             onChangeText={onMessageChange}
           />
         </InputContainer>
-        <ActionButton>
-          <ActionButtonIconContainer
-            style={{ transform: [{ scale: actionButtonAnimator }] }}>
-            <Icon name="mic" size={20} color={'primary'} />
-          </ActionButtonIconContainer>
-          <ActionButtonIconContainer
-            style={{ transform: [{ scale: sendButtonAnimation }] }}>
-            <Icon name="send" size={20} color={'primary'} />
-          </ActionButtonIconContainer>
-        </ActionButton>
+        <DynamicButtonsContainer>
+          <DynamicButton
+            icon="mic"
+            style={{ transform: [{ scale: dynamicButtonAnimator }] }}
+          />
+          <DynamicButton
+            icon="send"
+            style={{ transform: [{ scale: sendButtonFadeInOutAnimation }] }}
+          />
+        </DynamicButtonsContainer>
         <Animated.View
           style={{
             transform: [{ translateX: moreButtonTranslateAnimation }],
             opacity: moreButtonOpacityAnimation,
           }}>
-          <MoreButton />
+          <RoundedButton icon="clip" />
         </Animated.View>
       </AnimatedItemsContainer>
     </Container>
