@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { View, TextInput, TouchableOpacity } from 'react-native';
+import { View, TextInput, TouchableOpacity, Animated } from 'react-native';
 import styled from 'styled-components';
 import { Icon } from '../../atoms/Icon';
 
@@ -19,13 +19,13 @@ const Input = styled(TextInput)`
   max-height: 200px;
   min-height: 35px;
   border-radius: 20px;
+  width: 100%;
 `;
 
-const InputContainer = styled(View)`
+const InputContainer = styled(Animated.View)`
   padding-left: 10px;
   padding-right: 10px;
   padding-bottom: 2px;
-  flex: 1;
 `;
 
 const RoundedBarButton = styled(TouchableOpacity)`
@@ -37,7 +37,17 @@ const RoundedBarButton = styled(TouchableOpacity)`
   justify-content: center;
 `;
 
-const VoiceNoteButtonContainer = styled(View)`
+const EmojiButtonContainer = styled(View)`
+  width: 10%;
+`;
+
+const AnimatedItemsContainer = styled(View)`
+  flex-direction: row;
+  align-items: center;
+  width: 90%;
+`;
+
+const VoiceNoteButtonContainer = styled(Animated.View)`
   padding-right: 10px;
 `;
 
@@ -78,6 +88,51 @@ const SendButton = () => {
 export const ChatMessageBar = ({}) => {
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [message, setMessage] = useState('');
+  const animatedValue = React.useRef(new Animated.Value(0)).current;
+
+  const inputWidthAnimation = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['72%', '85%'],
+  });
+
+  const moreButtonTranslateAnimation = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 50],
+  });
+  const moreButtonOpacityAnimation = animatedValue.interpolate({
+    inputRange: [0, 50],
+    outputRange: [1, 0],
+  });
+
+  const increaseAnimateValueAnimation = Animated.timing(animatedValue, {
+    toValue: 1,
+    useNativeDriver: false,
+    duration: 200,
+  });
+
+  const decreaseAnimatedValueAnimation = Animated.timing(animatedValue, {
+    toValue: 0,
+    useNativeDriver: false,
+    duration: 200,
+  });
+
+  React.useEffect(() => {
+    const shouldGrow = !!(isInputFocused || message.length);
+    if (shouldGrow) {
+      increaseAnimateValueAnimation.start();
+    } else {
+      decreaseAnimatedValueAnimation.start();
+    }
+    return () => {
+      increaseAnimateValueAnimation.stop();
+      decreaseAnimatedValueAnimation.stop();
+    };
+  }, [
+    isInputFocused,
+    message,
+    increaseAnimateValueAnimation,
+    decreaseAnimatedValueAnimation,
+  ]);
 
   const handleOnFocus = () => {
     setIsInputFocused(true);
@@ -93,20 +148,29 @@ export const ChatMessageBar = ({}) => {
 
   return (
     <Container>
-      <EmojiButton />
-      <InputContainer>
-        <Input
-          placeholder="Type message"
-          onFocus={handleOnFocus}
-          onBlur={handleOnBlur}
-          multiline
-          value={message}
-          onChangeText={onMessageChange}
-        />
-      </InputContainer>
-      {!isInputFocused && !message.length && <VoiceNoteButton />}
-      {!isInputFocused && !message.length && <MoreButton />}
-      {(isInputFocused || !!message.length) && <SendButton />}
+      <EmojiButtonContainer>
+        <EmojiButton />
+      </EmojiButtonContainer>
+      <AnimatedItemsContainer>
+        <InputContainer style={{ width: inputWidthAnimation }}>
+          <Input
+            placeholder="Type message"
+            onFocus={handleOnFocus}
+            onBlur={handleOnBlur}
+            multiline
+            value={message}
+            onChangeText={onMessageChange}
+          />
+        </InputContainer>
+        <VoiceNoteButton />
+        <Animated.View
+          style={{
+            transform: [{ translateX: moreButtonTranslateAnimation }],
+            opacity: moreButtonOpacityAnimation,
+          }}>
+          <MoreButton />
+        </Animated.View>
+      </AnimatedItemsContainer>
     </Container>
   );
 };
