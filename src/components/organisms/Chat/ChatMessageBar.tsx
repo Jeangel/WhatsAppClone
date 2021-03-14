@@ -47,8 +47,10 @@ const AnimatedItemsContainer = styled(View)`
   width: 90%;
 `;
 
-const VoiceNoteButtonContainer = styled(Animated.View)`
+const ActionButtonContainer = styled(Animated.View)`
   padding-right: 10px;
+  align-items: center;
+  justify-content: center;
 `;
 
 const EmojiButton = () => {
@@ -59,13 +61,11 @@ const EmojiButton = () => {
   );
 };
 
-const VoiceNoteButton = () => {
+const ActionButton = ({ children }: { children: React.ReactNode }) => {
   return (
-    <VoiceNoteButtonContainer>
-      <RoundedBarButton>
-        <Icon name="mic" size={20} color={'primary'} />
-      </RoundedBarButton>
-    </VoiceNoteButtonContainer>
+    <ActionButtonContainer>
+      <RoundedBarButton>{children}</RoundedBarButton>
+    </ActionButtonContainer>
   );
 };
 
@@ -85,10 +85,16 @@ const SendButton = () => {
   );
 };
 
+const ActionButtonIconContainer = styled(Animated.View)`
+  position: absolute;
+  background-color: red;
+`;
+
 export const ChatMessageBar = ({}) => {
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [message, setMessage] = useState('');
   const animatedValue = React.useRef(new Animated.Value(0)).current;
+  const actionButtonAnimator = React.useRef(new Animated.Value(0)).current;
 
   const inputWidthAnimation = animatedValue.interpolate({
     inputRange: [0, 1],
@@ -102,6 +108,21 @@ export const ChatMessageBar = ({}) => {
   const moreButtonOpacityAnimation = animatedValue.interpolate({
     inputRange: [0, 50],
     outputRange: [1, 0],
+  });
+
+  // const actionButtonOutAnimation = animatedValue.interpolate({
+  //   inputRange: [0, 1],
+  //   outputRange: [],
+  // });
+
+  const outActionButtonAnimation = Animated.spring(actionButtonAnimator, {
+    toValue: 0,
+    useNativeDriver: true,
+  });
+
+  const inActionButtonAnimation = Animated.spring(actionButtonAnimator, {
+    toValue: 1,
+    useNativeDriver: true,
   });
 
   const increaseAnimateValueAnimation = Animated.timing(animatedValue, {
@@ -120,18 +141,24 @@ export const ChatMessageBar = ({}) => {
     const shouldGrow = !!(isInputFocused || message.length);
     if (shouldGrow) {
       increaseAnimateValueAnimation.start();
+      outActionButtonAnimation.start();
     } else {
       decreaseAnimatedValueAnimation.start();
+      inActionButtonAnimation.start();
     }
     return () => {
       increaseAnimateValueAnimation.stop();
       decreaseAnimatedValueAnimation.stop();
+      outActionButtonAnimation.stop();
+      inActionButtonAnimation.stop();
     };
   }, [
     isInputFocused,
     message,
     increaseAnimateValueAnimation,
     decreaseAnimatedValueAnimation,
+    outActionButtonAnimation,
+    inActionButtonAnimation,
   ]);
 
   const handleOnFocus = () => {
@@ -146,6 +173,11 @@ export const ChatMessageBar = ({}) => {
     setMessage(text);
   };
 
+  const sendButtonAnimation = actionButtonAnimator.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 0],
+  });
+
   return (
     <Container>
       <EmojiButtonContainer>
@@ -154,15 +186,24 @@ export const ChatMessageBar = ({}) => {
       <AnimatedItemsContainer>
         <InputContainer style={{ width: inputWidthAnimation }}>
           <Input
+            multiline
             placeholder="Type message"
             onFocus={handleOnFocus}
             onBlur={handleOnBlur}
-            multiline
             value={message}
             onChangeText={onMessageChange}
           />
         </InputContainer>
-        <VoiceNoteButton />
+        <ActionButton>
+          <ActionButtonIconContainer
+            style={{ transform: [{ scale: actionButtonAnimator }] }}>
+            <Icon name="mic" size={20} color={'primary'} />
+          </ActionButtonIconContainer>
+          <ActionButtonIconContainer
+            style={{ transform: [{ scale: sendButtonAnimation }] }}>
+            <Icon name="send" size={20} color={'primary'} />
+          </ActionButtonIconContainer>
+        </ActionButton>
         <Animated.View
           style={{
             transform: [{ translateX: moreButtonTranslateAnimation }],
