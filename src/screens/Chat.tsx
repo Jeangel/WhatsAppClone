@@ -9,7 +9,7 @@ import { dummyData } from '../components/organisms/data';
 import { UserCard } from '../components/molecules/User/UserCard';
 import { capitalize } from '../util';
 import { Icon } from '../components/atoms/Icon';
-import { GiftedChat } from 'react-native-gifted-chat';
+import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import { ChatMessageBar } from '../components/organisms/Chat/ChatMessageBar';
 
 type ChatScreenNavigationProp = StackNavigationProp<ChatStackParamList, 'Chat'>;
@@ -67,8 +67,8 @@ interface ChatProps {
 }
 
 export const Chat = ({}: ChatProps) => {
-  const handleOnSend = (args: unknown) => {
-    console.log(args, 'handleOnSend');
+  const handleOnSend = (messages: IMessage[]) => {
+    console.log(messages, 'handleOnSend');
   };
   return (
     <Container>

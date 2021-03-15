@@ -66,16 +66,17 @@ const DynamicButtonsContainer = styled(Animated.View)`
 
 interface RoundedButtonProps {
   icon: string;
+  onPress?: () => void;
   style?:
     | Animated.AnimatedInterpolation
     | Animated.WithAnimatedObject<ViewStyle>
     | ViewStyle;
 }
 
-const RoundedButton = ({ icon, style }: RoundedButtonProps) => {
+const RoundedButton = ({ icon, style, onPress }: RoundedButtonProps) => {
   return (
     <Animated.View style={style}>
-      <RoundedButtonShape>
+      <RoundedButtonShape onPress={onPress}>
         <Icon name={icon} size={20} color={'primary'} />
       </RoundedButtonShape>
     </Animated.View>
@@ -86,7 +87,15 @@ const DynamicButton = styled(RoundedButton)`
   position: absolute;
 `;
 
-export const ChatMessageBar = (props: InputToolbarProps) => {
+interface ChatMessageBarProps extends InputToolbarProps {
+  /**
+   * Sadly types are not updated for the InputToolbarProps from
+   * react-native-gifted-chat... then, let's do it manual.
+   */
+  onSend?: ({ message: string }: { message: string }) => void;
+}
+
+export const ChatMessageBar = ({ onSend }: ChatMessageBarProps) => {
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [message, setMessage] = useState('');
   const inputSizeAnimator = React.useRef(new Animated.Value(0)).current;
@@ -170,6 +179,12 @@ export const ChatMessageBar = (props: InputToolbarProps) => {
     setMessage(text);
   };
 
+  const handleOnSend = () => {
+    if (typeof onSend === 'function') {
+      onSend({ message });
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -195,6 +210,7 @@ export const ChatMessageBar = (props: InputToolbarProps) => {
             />
             <DynamicButton
               icon="send"
+              onPress={handleOnSend}
               style={{ transform: [{ scale: sendButtonFadeInOutAnimation }] }}
             />
           </DynamicButtonsContainer>
