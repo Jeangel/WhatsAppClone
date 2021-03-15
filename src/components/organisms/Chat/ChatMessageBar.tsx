@@ -6,13 +6,16 @@ import {
   TouchableOpacity,
   Animated,
   ViewStyle,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
+import { InputToolbarProps } from 'react-native-gifted-chat';
 import styled from 'styled-components';
 import { Icon } from '../../atoms/Icon';
 
 const Container = styled(View)`
-  flex: 1;
-  padding: 5px 15px;
+  height: 110px;
+  padding: 5px 20px;
   flex-direction: row;
   align-items: flex-end;
   justify-content: center;
@@ -55,7 +58,7 @@ const AnimatedItemsContainer = styled(View)`
 
 const DynamicButtonsContainer = styled(Animated.View)`
   margin-right: 10px;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   width: 40px;
   height: 40px;
@@ -83,7 +86,7 @@ const DynamicButton = styled(RoundedButton)`
   position: absolute;
 `;
 
-export const ChatMessageBar = ({}) => {
+export const ChatMessageBar = (props: InputToolbarProps) => {
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [message, setMessage] = useState('');
   const inputSizeAnimator = React.useRef(new Animated.Value(0)).current;
@@ -168,39 +171,42 @@ export const ChatMessageBar = ({}) => {
   };
 
   return (
-    <Container>
-      <EmojiButtonContainer>
-        <RoundedButton icon="smile-face" />
-      </EmojiButtonContainer>
-      <AnimatedItemsContainer>
-        <InputContainer style={{ width: messageInputSizeAnimation }}>
-          <Input
-            multiline
-            placeholder="Type message"
-            onFocus={handleOnFocus}
-            onBlur={handleOnBlur}
-            value={message}
-            onChangeText={onMessageChange}
-          />
-        </InputContainer>
-        <DynamicButtonsContainer>
-          <DynamicButton
-            icon="mic"
-            style={{ transform: [{ scale: dynamicButtonAnimator }] }}
-          />
-          <DynamicButton
-            icon="send"
-            style={{ transform: [{ scale: sendButtonFadeInOutAnimation }] }}
-          />
-        </DynamicButtonsContainer>
-        <Animated.View
-          style={{
-            transform: [{ translateX: moreButtonTranslateAnimation }],
-            opacity: moreButtonOpacityAnimation,
-          }}>
-          <RoundedButton icon="clip" />
-        </Animated.View>
-      </AnimatedItemsContainer>
-    </Container>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <Container>
+        <EmojiButtonContainer>
+          <RoundedButton icon="smile-face" />
+        </EmojiButtonContainer>
+        <AnimatedItemsContainer>
+          <InputContainer style={{ width: messageInputSizeAnimation }}>
+            <Input
+              multiline
+              placeholder="Type message"
+              onFocus={handleOnFocus}
+              onBlur={handleOnBlur}
+              value={message}
+              onChangeText={onMessageChange}
+            />
+          </InputContainer>
+          <DynamicButtonsContainer>
+            <DynamicButton
+              icon="mic"
+              style={{ transform: [{ scale: dynamicButtonAnimator }] }}
+            />
+            <DynamicButton
+              icon="send"
+              style={{ transform: [{ scale: sendButtonFadeInOutAnimation }] }}
+            />
+          </DynamicButtonsContainer>
+          <Animated.View
+            style={{
+              transform: [{ translateX: moreButtonTranslateAnimation }],
+              opacity: moreButtonOpacityAnimation,
+            }}>
+            <RoundedButton icon="clip" />
+          </Animated.View>
+        </AnimatedItemsContainer>
+      </Container>
+    </KeyboardAvoidingView>
   );
 };

@@ -67,11 +67,16 @@ interface ChatProps {
 }
 
 export const Chat = ({}: ChatProps) => {
+  const handleOnSend = (args: unknown) => {
+    console.log(args, 'handleOnSend');
+  };
   return (
     <Container>
       <GiftedChat
-        renderInputToolbar={() => <ChatMessageBar />}
+        renderInputToolbar={(props) => <ChatMessageBar {...props} />}
         minInputToolbarHeight={100}
+        onSend={handleOnSend}
+        bottomOffset={20}
       />
     </Container>
   );
