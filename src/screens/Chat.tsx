@@ -11,6 +11,7 @@ import { capitalize } from '../util';
 import { Icon } from '../components/atoms/Icon';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import { ChatMessageBar } from '../components/organisms/Chat/ChatMessageBar';
+import { usePubNub } from 'pubnub-react';
 
 type ChatScreenNavigationProp = StackNavigationProp<ChatStackParamList, 'Chat'>;
 
@@ -67,8 +68,11 @@ interface ChatProps {
 }
 
 export const Chat = ({}: ChatProps) => {
-  const handleOnSend = (messages: IMessage[]) => {
-    console.log(messages, 'handleOnSend');
+  // const pubnub = usePubNub();
+  const [messages, setMessages] = React.useState<IMessage[]>([]);
+  const handleOnSend = (newMessages: IMessage[]) => {
+    console.log(newMessages, 'handleOnSend');
+    setMessages([...messages, ...newMessages]);
   };
   return (
     <Container>
@@ -77,6 +81,7 @@ export const Chat = ({}: ChatProps) => {
         minInputToolbarHeight={100}
         onSend={handleOnSend}
         bottomOffset={20}
+        messages={messages}
       />
     </Container>
   );

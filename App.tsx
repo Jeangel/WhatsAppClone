@@ -5,6 +5,14 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Navigation from './src/navigation';
 import { ThemeProvider } from './src/contexts/ThemeContext';
 import { ETheme, themes } from './src/theme';
+import { PubNubProvider } from 'pubnub-react';
+import Pubnub from 'pubnub';
+import Config from 'react-native-config';
+
+const pubNubClient = new Pubnub({
+  subscribeKey: Config.PUBNUB_SUBSCRIBE_SECRET,
+  publishKey: Config.PUBNUB_PUBLISH_SECRET,
+});
 
 const App = () => {
   const [themeMode, setThemeMode] = useState(ETheme.light);
@@ -16,19 +24,21 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <ThemeProvider
-        theme={themes[themeMode]}
-        toggleThemeMode={toggleThemeMode}
-        themeMode={themeMode}>
-        <SafeAreaProvider>
-          <StatusBar
-            barStyle={
-              themeMode === ETheme.light ? 'dark-content' : 'light-content'
-            }
-          />
-          <Navigation />
-        </SafeAreaProvider>
-      </ThemeProvider>
+      <PubNubProvider client={pubNubClient}>
+        <ThemeProvider
+          theme={themes[themeMode]}
+          toggleThemeMode={toggleThemeMode}
+          themeMode={themeMode}>
+          <SafeAreaProvider>
+            <StatusBar
+              barStyle={
+                themeMode === ETheme.light ? 'dark-content' : 'light-content'
+              }
+            />
+            <Navigation />
+          </SafeAreaProvider>
+        </ThemeProvider>
+      </PubNubProvider>
     </NavigationContainer>
   );
 };

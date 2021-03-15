@@ -92,7 +92,7 @@ interface ChatMessageBarProps extends InputToolbarProps {
    * Sadly types are not updated for the InputToolbarProps from
    * react-native-gifted-chat... then, let's do it manual.
    */
-  onSend?: ({ message: string }: { message: string }) => void;
+  onSend?: ({ text: string }: { text: string }) => void;
 }
 
 export const ChatMessageBar = ({ onSend }: ChatMessageBarProps) => {
@@ -181,7 +181,8 @@ export const ChatMessageBar = ({ onSend }: ChatMessageBarProps) => {
 
   const handleOnSend = () => {
     if (typeof onSend === 'function') {
-      onSend({ message });
+      onSend({ text: message });
+      setMessage('');
     }
   };
 
