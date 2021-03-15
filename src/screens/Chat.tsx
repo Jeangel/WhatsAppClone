@@ -11,7 +11,7 @@ import { capitalize } from '../util';
 import { Icon } from '../components/atoms/Icon';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import { ChatMessageBar } from '../components/organisms/Chat/ChatMessageBar';
-import { usePubNub } from 'pubnub-react';
+import { MessageBubble } from '../components/organisms/Chat/MessageBubble'
 
 type ChatScreenNavigationProp = StackNavigationProp<ChatStackParamList, 'Chat'>;
 
@@ -78,10 +78,11 @@ export const Chat = ({}: ChatProps) => {
     <Container>
       <GiftedChat
         renderInputToolbar={(props) => <ChatMessageBar {...props} />}
+        renderBubble={(props) => <MessageBubble {...props} />}
         minInputToolbarHeight={100}
         onSend={handleOnSend}
         bottomOffset={20}
-        messages={messages}
+        messages={messages.reverse()}
       />
     </Container>
   );
