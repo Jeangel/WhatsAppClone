@@ -11,7 +11,8 @@ import { capitalize } from '../util';
 import { Icon } from '../components/atoms/Icon';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import { ChatMessageBar } from '../components/organisms/Chat/ChatMessageBar';
-import { MessageBubble } from '../components/organisms/Chat/MessageBubble'
+import { MessageBubble } from '../components/organisms/Chat/MessageBubble';
+import { messages as dummyMessages } from '../data/messages';
 
 type ChatScreenNavigationProp = StackNavigationProp<ChatStackParamList, 'Chat'>;
 
@@ -69,20 +70,24 @@ interface ChatProps {
 
 export const Chat = ({}: ChatProps) => {
   // const pubnub = usePubNub();
-  const [messages, setMessages] = React.useState<IMessage[]>([]);
+  const [messages, setMessages] = React.useState<IMessage[]>(dummyMessages);
   const handleOnSend = (newMessages: IMessage[]) => {
     console.log(newMessages, 'handleOnSend');
-    setMessages([...messages, ...newMessages]);
+    const newMessage = newMessages[0];
+    setMessages((msgs: IMessage[]) => [...msgs, newMessage]);
   };
   return (
     <Container>
       <GiftedChat
+        user={{ _id: 2 }}
         renderInputToolbar={(props) => <ChatMessageBar {...props} />}
         renderBubble={(props) => <MessageBubble {...props} />}
-        minInputToolbarHeight={100}
+        minInputToolbarHeight={50}
         onSend={handleOnSend}
-        bottomOffset={20}
-        messages={messages.reverse()}
+        bottomOffset={30}
+        messages={messages}
+        showUserAvatar={false}
+        inverted={false}
       />
     </Container>
   );

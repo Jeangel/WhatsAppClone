@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import { Icon } from '../../atoms/Icon';
 
 const Container = styled(View)`
-  height: 110px;
+  height: 50px;
   padding: 5px 20px;
   flex-direction: row;
   align-items: flex-end;
@@ -44,6 +44,7 @@ const RoundedButtonShape = styled(TouchableOpacity)`
   border-radius: 100px;
   align-items: center;
   justify-content: center;
+  opacity: ${({ disabled }) => (disabled ? 0.4 : 1)};
 `;
 
 const EmojiButtonContainer = styled(View)`
@@ -67,16 +68,22 @@ const DynamicButtonsContainer = styled(Animated.View)`
 interface RoundedButtonProps {
   icon: string;
   onPress?: () => void;
+  disabled?: boolean;
   style?:
     | Animated.AnimatedInterpolation
     | Animated.WithAnimatedObject<ViewStyle>
     | ViewStyle;
 }
 
-const RoundedButton = ({ icon, style, onPress }: RoundedButtonProps) => {
+const RoundedButton = ({
+  icon,
+  style,
+  onPress,
+  disabled,
+}: RoundedButtonProps) => {
   return (
     <Animated.View style={style}>
-      <RoundedButtonShape onPress={onPress}>
+      <RoundedButtonShape onPress={onPress} disabled={disabled}>
         <Icon name={icon} size={20} color={'primary'} />
       </RoundedButtonShape>
     </Animated.View>
@@ -213,6 +220,7 @@ export const ChatMessageBar = ({ onSend }: ChatMessageBarProps) => {
               icon="send"
               onPress={handleOnSend}
               style={{ transform: [{ scale: sendButtonFadeInOutAnimation }] }}
+              disabled={!message}
             />
           </DynamicButtonsContainer>
           <Animated.View
