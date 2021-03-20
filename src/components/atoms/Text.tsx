@@ -34,7 +34,7 @@ export enum ETextVariant {
 interface TextProps extends RNTextProps {
   variant?: keyof typeof ETextVariant;
   style?: TextStyle;
-  color?: keyof typeof EColor;
+  color?: keyof typeof EColor | string;
   weight?: TextWeight;
   children: React.ReactNode;
 }
