@@ -38,12 +38,12 @@ const PickerContainer = styled(TouchableOpacity)`
 const StyledInput = styled(TextInput)`
   border-bottom-color: ${({ theme }) => theme.colors.neutral60};
   border-bottom-width: 0.5px;
-  width: 70%;
+  width: 50%;
   color: ${({ theme }) => theme.colors.neutral40};
 `;
 
 const CountryCallingCode = styled(Text)`
-  padding-left: 5px;
+  padding-left: 10px;
   padding-right: 5px;
 `;
 
@@ -54,10 +54,10 @@ export const CellphoneInput = ({
   country,
 }: CellphoneInputProps) => {
   const [isVisible, setIsVisible] = React.useState<boolean>(false);
-  const onSelect = (country: Country) => {
+  const onSelect = (selectedCountry: Country) => {
     onChangeCountry({
-      code: country.cca2,
-      callingCode: country.callingCode[0],
+      code: selectedCountry.cca2,
+      callingCode: selectedCountry.callingCode[0],
     });
   };
   return (
@@ -68,6 +68,7 @@ export const CellphoneInput = ({
           countryCode={country.code as CountryCode}
           onClose={() => setIsVisible(false)}
           visible={isVisible}
+          withFilter
         />
         <Icon name="chevron-down" size={15} color="neutral60" />
         {country.callingCode && (

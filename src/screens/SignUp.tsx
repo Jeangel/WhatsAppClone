@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { View, KeyboardAvoidingView, Platform } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -65,7 +65,7 @@ const PhoneSignIn = () => {
   );
 };
 
-const Container = styled(View)`
+const Container = styled(KeyboardAvoidingView)`
   padding: 20px;
   height: 100%;
   align-items: center;
@@ -78,18 +78,24 @@ const TitleContainer = styled(View)`
 
 const DescriptionText = styled(Text)`
   text-align: center;
-  margin-bottom: 10px;
-  margin-top: 10px;
+  padding-bottom: 10px;
+  padding-top: 10px;
 `;
 
 const Title = styled(Text)`
   text-align: center;
-  margin-bottom: 10px;
+  padding-bottom: 10px;
 `;
 
 const IllustrationContainer = styled(View)`
-  margin-top: 20px;
-  margin-bottom: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+`;
+
+const SendOTPButton = styled(Button)`
+  margin-top: 40px;
+  align-self: center;
+  width: 100%;
 `;
 
 export const SignUp = ({}: SignUpProps) => {
@@ -101,7 +107,7 @@ export const SignUp = ({}: SignUpProps) => {
 
   return (
     <SafeAreaView>
-      <Container>
+      <Container behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <TitleContainer>
           <Title variant="h1">
             Sign up to start chatting with your friends!
@@ -120,6 +126,7 @@ export const SignUp = ({}: SignUpProps) => {
           phone={phone}
           onChangePhone={setPhone}
         />
+        <SendOTPButton text="SEND OTP CODE" disabled={phone.length < 10} />
       </Container>
     </SafeAreaView>
   );
