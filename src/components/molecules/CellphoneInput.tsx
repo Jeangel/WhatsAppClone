@@ -55,7 +55,6 @@ export const CellphoneInput = ({
 }: CellphoneInputProps) => {
   const [isVisible, setIsVisible] = React.useState<boolean>(false);
   const onSelect = (country: Country) => {
-    console.log('ASDASDASD', country);
     onChangeCountry({
       code: country.cca2,
       callingCode: country.callingCode[0],

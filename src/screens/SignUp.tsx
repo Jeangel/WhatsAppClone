@@ -95,7 +95,7 @@ const IllustrationContainer = styled(View)`
 export const SignUp = ({}: SignUpProps) => {
   const [country, setCountry] = React.useState({
     code: 'CO',
-    callingCode: '+57',
+    callingCode: '57',
   });
   const [phone, setPhone] = React.useState('');
 
