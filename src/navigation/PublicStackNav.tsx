@@ -3,12 +3,15 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { ConfirmPhone } from '../screens/ConfirmPhone';
 import { Landing } from '../screens/Landing';
 import { ConfirmOTP } from '../screens/ConfirmOTP';
+import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
 export type PublicStackParamList = {
   Home: undefined;
   Landing: undefined;
   ConfirmPhone: undefined;
-  ConfirmOTP: undefined;
+  ConfirmOTP: {
+    confirmation: FirebaseAuthTypes.ConfirmationResult;
+  };
 };
 
 const PublicStack = createStackNavigator<PublicStackParamList>();

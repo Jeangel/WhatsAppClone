@@ -1,69 +1,14 @@
 import * as React from 'react';
 import { View, KeyboardAvoidingView, Platform } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '../components/atoms/Text';
 import { PublicStackParamList } from '../navigation/PublicStackNav';
 import { Button } from '../components/atoms/Button';
-import { OTPInput } from '../components/molecules/OTPInput';
 import styled from 'styled-components';
 import { Illustration } from '../components/atoms/Illustration';
 import { CellphoneInput } from '../components/molecules/CellphoneInput';
-
-type ChatScreenNavigationProp = StackNavigationProp<
-  PublicStackParamList,
-  'ConfirmPhone'
->;
-
-interface ConfirmPhoneProps {
-  navigation: ChatScreenNavigationProp;
-}
-
-const PhoneSignIn = () => {
-  // If null, no SMS has been sent
-  const [
-    confirm,
-    setConfirm,
-  ] = React.useState<FirebaseAuthTypes.ConfirmationResult | null>(null);
-
-  const [code, setCode] = React.useState('');
-
-  // Handle the button press
-  async function signInWithPhoneNumber(phoneNumber: string) {
-    try {
-      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
-      setConfirm(confirmation);
-    } catch (error) {
-      console.log('asd;asdkj', error);
-    }
-  }
-
-  async function confirmCode() {
-    try {
-      const asd = await confirm?.confirm(code);
-      console.log(asd);
-    } catch (error) {
-      console.log('Invalid code.', error);
-    }
-  }
-
-  if (confirm) {
-    return (
-      <Button
-        text="Phone Number Sign In"
-        onPress={() => signInWithPhoneNumber('+57 3104445909')}
-      />
-    );
-  }
-
-  return (
-    <>
-      <OTPInput value={code} onChange={setCode} />
-      <Button text="Confirm Code" onPress={() => confirmCode()} />
-    </>
-  );
-};
 
 const Container = styled(KeyboardAvoidingView)`
   padding: 20px;
@@ -98,6 +43,15 @@ const SendOTPButton = styled(Button)`
   width: 100%;
 `;
 
+type ConfirmPhoneScreenNavigationProp = StackNavigationProp<
+  PublicStackParamList,
+  'ConfirmPhone'
+>;
+
+interface ConfirmPhoneProps {
+  navigation: ConfirmPhoneScreenNavigationProp;
+}
+
 export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
   const [country, setCountry] = React.useState({
     code: 'CO',
@@ -106,11 +60,10 @@ export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
   const [phone, setPhone] = React.useState('');
   const signInWithPhoneNumber = async () => {
     try {
-      // const confirmation = await auth().signInWithPhoneNumber(
-      //   `${country.callingCode} ${phone}`,
-      // );
-      console.log('qweqweqweqweqwe');
-      navigation.navigate('ConfirmOTP');
+      const confirmation = await auth().signInWithPhoneNumber(
+        `+${country.callingCode} ${phone}`,
+      );
+      navigation.navigate('ConfirmOTP', { confirmation });
     } catch (error) {
       console.log('SIGN UP ERROR', error);
     }
