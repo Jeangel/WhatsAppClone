@@ -7,6 +7,7 @@ import { Text } from './Text';
 enum EButtonVariant {
   primary = 'primary',
   secondary = 'secondary',
+  transparent = 'transparent',
 }
 
 type ButtonVariant = keyof typeof EButtonVariant;
@@ -19,6 +20,10 @@ const buttonColors = {
   [EButtonVariant.secondary]: {
     background: EColor.primary,
     foreground: EColor.white,
+  },
+  [EButtonVariant.transparent]: {
+    background: EColor.transparent,
+    foreground: EColor.primary,
   },
 };
 

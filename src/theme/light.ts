@@ -14,5 +14,6 @@ export const LightTheme: ITheme = {
     neutral40: '#313131',
     neutral60: '#B1B1B1',
     neutral80: '#EFEFEF',
+    transparent: 'transparent',
   },
 };

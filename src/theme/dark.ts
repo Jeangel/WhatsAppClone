@@ -14,5 +14,6 @@ export const DarkTheme: ITheme = {
     neutral40: '#B1B1B1',
     neutral60: '#313131',
     neutral80: '#121212',
+    transparent: 'transparent',
   },
 };

@@ -19,6 +19,7 @@ export enum EColor {
   neutral40 = 'neutral40',
   neutral60 = 'neutral60',
   neutral80 = 'neutral80',
+  transparent = 'transparent',
 }
 
 export interface ITheme {
@@ -35,6 +36,7 @@ export interface ITheme {
     neutral40: string;
     neutral60: string;
     neutral80: string;
+    transparent: string;
   };
 }
 
