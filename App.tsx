@@ -18,7 +18,7 @@ const pubNubClient = new Pubnub({
 
 const App = () => {
   const [themeMode, setThemeMode] = useState(ETheme.light);
-  const [isShowingSpinner, setIsShowingSpinner] = useState(false);
+  const [isShowingSpinner, setIsShowingSpinner] = useState(true);
   const showSpinner = () => setIsShowingSpinner(true);
   const hideSpinner = () => setIsShowingSpinner(false);
   const toggleThemeMode = () => {

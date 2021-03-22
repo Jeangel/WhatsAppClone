@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import LottieView from 'lottie-react-native';
 import { RouteProp } from '@react-navigation/core';
 import { ScreenContainer } from '../components/atoms/ScreenContainer';
+import { useSpinner } from '../hooks';
 
 type ConfirmOTPScreenNavigationProp = StackNavigationProp<
   PublicStackParamList,
@@ -69,12 +70,14 @@ const AnimationView = styled(LottieView)`
 export const ConfirmOTP = ({ route }: ConfirmOTPProps) => {
   const [code, setCode] = React.useState('');
   const [loop, setLoop] = React.useState(true);
+  const { showSpinner, hideSpinner } = useSpinner();
   const [otpConfirmationTimes, setOTPConfirmationTimes] = React.useState(0);
   const [isFetching, setIsFetching] = React.useState(false);
   const animationRef = React.useRef<LottieView>(null);
   const confirmOTPCode = async () => {
     setIsFetching(true);
     try {
+      showSpinner();
       const user = await route.params.confirmation.confirm(code);
       console.log(user);
       startFiniteAnimation();
@@ -82,6 +85,7 @@ export const ConfirmOTP = ({ route }: ConfirmOTPProps) => {
       console.log('CONFIRM OTP ERROR', error);
       setIsFetching(false);
     } finally {
+      hideSpinner();
       setOTPConfirmationTimes(otpConfirmationTimes + 1);
     }
   };
@@ -117,7 +121,7 @@ export const ConfirmOTP = ({ route }: ConfirmOTPProps) => {
           disabled={code.length < 6 || isFetching}
         />
         <DescriptionText variant="small">
-          Didn't you receive any code? {otpConfirmationTimes}
+          Didn't you receive any code?
         </DescriptionText>
         <ResendOTPCode
           text="RESEND NEW CODE"

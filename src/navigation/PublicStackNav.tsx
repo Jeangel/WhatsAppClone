@@ -4,7 +4,6 @@ import { ConfirmPhone } from '../screens/ConfirmPhone';
 import { Landing } from '../screens/Landing';
 import { ConfirmOTP } from '../screens/ConfirmOTP';
 import { FirebaseAuthTypes } from '@react-native-firebase/auth';
-import { Icon } from '../components/atoms/Icon';
 import { Header } from '../components/molecules/Header';
 
 export type PublicStackParamList = {
@@ -13,6 +12,7 @@ export type PublicStackParamList = {
   ConfirmPhone: undefined;
   ConfirmOTP: {
     confirmation: FirebaseAuthTypes.ConfirmationResult;
+    phone: string;
   };
 };
 

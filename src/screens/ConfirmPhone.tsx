@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { Illustration } from '../components/atoms/Illustration';
 import { CellphoneInput } from '../components/molecules/CellphoneInput';
 import { ScreenContainer } from '../components/atoms/ScreenContainer';
+import { useSpinner } from '../hooks';
 
 const Container = styled(KeyboardAvoidingView)`
   padding: 20px;
@@ -53,19 +54,25 @@ interface ConfirmPhoneProps {
 }
 
 export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
+  const { showSpinner, hideSpinner } = useSpinner();
   const [country, setCountry] = React.useState({
     code: 'CO',
     callingCode: '57',
   });
   const [phone, setPhone] = React.useState('');
   const signInWithPhoneNumber = async () => {
+    const formattedPhone = `+${country.callingCode} ${phone}`;
     try {
-      const confirmation = await auth().signInWithPhoneNumber(
-        `+${country.callingCode} ${phone}`,
-      );
-      navigation.navigate('ConfirmOTP', { confirmation });
+      showSpinner();
+      const confirmation = await auth().signInWithPhoneNumber(formattedPhone);
+      navigation.navigate('ConfirmOTP', {
+        confirmation,
+        phone: formattedPhone,
+      });
     } catch (error) {
       console.log('SIGN UP ERROR', error);
+    } finally {
+      hideSpinner();
     }
   };
 
