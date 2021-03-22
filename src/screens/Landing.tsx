@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Text } from '../components/atoms/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { EColor } from '../theme';
 import styled from 'styled-components';
 import { View } from 'react-native';
 import { Illustration } from '../components/atoms/Illustration';
@@ -44,7 +43,7 @@ interface LandingProps {
 
 export const Landing = ({ navigation }: LandingProps) => {
   const onLetsDoIt = () => {
-    navigation.navigate('SignUp');
+    navigation.navigate('ConfirmPhone');
   };
   return (
     <SafeAreaView>

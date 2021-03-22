@@ -13,10 +13,10 @@ import { CellphoneInput } from '../components/molecules/CellphoneInput';
 
 type ChatScreenNavigationProp = StackNavigationProp<
   PublicStackParamList,
-  'SignUp'
+  'ConfirmPhone'
 >;
 
-interface SignUpProps {
+interface ConfirmPhoneProps {
   navigation: ChatScreenNavigationProp;
 }
 
@@ -98,12 +98,23 @@ const SendOTPButton = styled(Button)`
   width: 100%;
 `;
 
-export const SignUp = ({}: SignUpProps) => {
+export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
   const [country, setCountry] = React.useState({
     code: 'CO',
     callingCode: '57',
   });
   const [phone, setPhone] = React.useState('');
+  const signInWithPhoneNumber = async () => {
+    try {
+      // const confirmation = await auth().signInWithPhoneNumber(
+      //   `${country.callingCode} ${phone}`,
+      // );
+      console.log('qweqweqweqweqwe');
+      navigation.navigate('ConfirmOTP');
+    } catch (error) {
+      console.log('SIGN UP ERROR', error);
+    }
+  };
 
   return (
     <SafeAreaView>
@@ -126,7 +137,11 @@ export const SignUp = ({}: SignUpProps) => {
           phone={phone}
           onChangePhone={setPhone}
         />
-        <SendOTPButton text="SEND OTP CODE" disabled={phone.length < 10} />
+        <SendOTPButton
+          text="SEND OTP CODE"
+          disabled={phone.length < 10}
+          onPress={signInWithPhoneNumber}
+        />
       </Container>
     </SafeAreaView>
   );
