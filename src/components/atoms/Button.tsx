@@ -8,6 +8,7 @@ enum EButtonVariant {
   primary = 'primary',
   secondary = 'secondary',
   transparent = 'transparent',
+  danger = 'danger',
 }
 
 type ButtonVariant = keyof typeof EButtonVariant;
@@ -18,12 +19,16 @@ const buttonColors = {
     foreground: EColor.white,
   },
   [EButtonVariant.secondary]: {
-    background: EColor.primary,
-    foreground: EColor.white,
+    background: EColor.neutral80,
+    foreground: EColor.neutral20,
   },
   [EButtonVariant.transparent]: {
     background: EColor.transparent,
     foreground: EColor.primary,
+  },
+  [EButtonVariant.danger]: {
+    background: EColor.danger,
+    foreground: EColor.white,
   },
 };
 

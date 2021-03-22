@@ -74,6 +74,14 @@ const H2Text = styled(BaseText)`
   font-weight: ${({ weight }) => (weight ? weight : '600')};
 `;
 
+const H3Text = styled(BaseText)`
+  font-size: 18px;
+  font-weight: 500;
+  color: ${({ theme, color }) =>
+    color ? theme.colors[color] : theme.colors.neutral20};
+  font-weight: ${({ weight }) => (weight ? weight : '500')};
+`;
+
 const H4Text = styled(BaseText)`
   font-size: 16px;
   font-weight: 500;
@@ -107,6 +115,8 @@ export const Text = ({
         return H2Text;
       case ETextVariant.h4:
         return H4Text;
+      case ETextVariant.h3:
+        return H3Text;
       case ETextVariant.button:
         return ButtonText;
       default:
