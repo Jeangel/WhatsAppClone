@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import Navigation from './src/navigation';
-import { ThemeProvider } from './src/contexts/ThemeContext';
-import { ETheme, themes } from './src/theme';
 import { PubNubProvider } from 'pubnub-react';
-import Pubnub from 'pubnub';
 import Config from 'react-native-config';
+import Pubnub from 'pubnub';
+import Navigation from './src/navigation';
+import { ETheme, themes } from './src/theme';
+import { ThemeProvider } from './src/contexts/ThemeContext';
+import { SpinnerProvider } from './src/contexts/SpinnerContext';
+import { Spinner } from './src/components/atoms/Spinner';
 
 const pubNubClient = new Pubnub({
   subscribeKey: Config.PUBNUB_SUBSCRIBE_SECRET,
@@ -16,7 +18,9 @@ const pubNubClient = new Pubnub({
 
 const App = () => {
   const [themeMode, setThemeMode] = useState(ETheme.light);
-
+  const [isShowingSpinner, setIsShowingSpinner] = useState(false);
+  const showSpinner = () => setIsShowingSpinner(true);
+  const hideSpinner = () => setIsShowingSpinner(false);
   const toggleThemeMode = () => {
     const newTheme = themeMode === ETheme.light ? ETheme.dark : ETheme.light;
     setThemeMode(newTheme);
@@ -24,21 +28,27 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <PubNubProvider client={pubNubClient}>
-        <ThemeProvider
-          theme={themes[themeMode]}
-          toggleThemeMode={toggleThemeMode}
-          themeMode={themeMode}>
-          <SafeAreaProvider>
-            <StatusBar
-              barStyle={
-                themeMode === ETheme.light ? 'dark-content' : 'light-content'
-              }
-            />
-            <Navigation />
-          </SafeAreaProvider>
-        </ThemeProvider>
-      </PubNubProvider>
+      <SpinnerProvider
+        isShowingSpinner={isShowingSpinner}
+        showSpinner={showSpinner}
+        hideSpinner={hideSpinner}>
+        <PubNubProvider client={pubNubClient}>
+          <ThemeProvider
+            theme={themes[themeMode]}
+            toggleThemeMode={toggleThemeMode}
+            themeMode={themeMode}>
+            <SafeAreaProvider>
+              <StatusBar
+                barStyle={
+                  themeMode === ETheme.light ? 'dark-content' : 'light-content'
+                }
+              />
+              <Navigation />
+              <Spinner isVisible={isShowingSpinner} />
+            </SafeAreaProvider>
+          </ThemeProvider>
+        </PubNubProvider>
+      </SpinnerProvider>
     </NavigationContainer>
   );
 };
