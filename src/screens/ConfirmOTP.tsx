@@ -10,6 +10,7 @@ import LottieView from 'lottie-react-native';
 import { RouteProp } from '@react-navigation/core';
 import { ScreenContainer } from '../components/atoms/ScreenContainer';
 import { useSpinner } from '../hooks';
+import { usePushError } from '../state/error';
 
 type ConfirmOTPScreenNavigationProp = StackNavigationProp<
   PublicStackParamList,
@@ -71,6 +72,7 @@ export const ConfirmOTP = ({ route }: ConfirmOTPProps) => {
   const [code, setCode] = React.useState('');
   const [loop, setLoop] = React.useState(true);
   const { showSpinner, hideSpinner } = useSpinner();
+  const pushError = usePushError();
   const [otpConfirmationTimes, setOTPConfirmationTimes] = React.useState(0);
   const [isFetching, setIsFetching] = React.useState(false);
   const animationRef = React.useRef<LottieView>(null);
@@ -82,7 +84,7 @@ export const ConfirmOTP = ({ route }: ConfirmOTPProps) => {
       console.log(user);
       startFiniteAnimation();
     } catch (error) {
-      console.log('CONFIRM OTP ERROR', error);
+      pushError(error);
       setIsFetching(false);
     } finally {
       hideSpinner();

@@ -21,3 +21,5 @@ export const useErrorStore = create<ErrorState>((set, get) => ({
 export const selectErrors = (state: ErrorState) => state.errors;
 
 export const useErrors = () => useErrorStore(selectErrors);
+export const usePushError = () =>
+  useErrorStore((state: ErrorState) => state.pushError);

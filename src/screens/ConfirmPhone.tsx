@@ -10,6 +10,7 @@ import { Illustration } from '../components/atoms/Illustration';
 import { CellphoneInput } from '../components/molecules/CellphoneInput';
 import { ScreenContainer } from '../components/atoms/ScreenContainer';
 import { useSpinner } from '../hooks';
+import { usePushError } from '../state/error';
 
 const Container = styled(KeyboardAvoidingView)`
   padding: 20px;
@@ -55,6 +56,7 @@ interface ConfirmPhoneProps {
 
 export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
   const { showSpinner, hideSpinner } = useSpinner();
+  const pushError = usePushError();
   const [country, setCountry] = React.useState({
     code: 'CO',
     callingCode: '57',
@@ -70,7 +72,7 @@ export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
         phone: formattedPhone,
       });
     } catch (error) {
-      console.log('SIGN UP ERROR', error);
+      pushError(error.message);
     } finally {
       hideSpinner();
     }
