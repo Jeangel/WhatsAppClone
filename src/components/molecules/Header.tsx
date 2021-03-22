@@ -15,14 +15,21 @@ type JustifyContent =
 const Container = styled(View)<{
   insets: EdgeInsets;
   justifyContent?: JustifyContent;
+  removeBorders?: boolean;
 }>`
   padding-top: ${({ insets }) => Math.max(insets.top + 10, 50)}px;
   padding-bottom: 20px;
   padding-left: 15px;
   padding-right: 15px;
   background-color: ${({ theme }) => theme.colors.surface};
-  border-bottom-width: 1px;
-  border-bottom-color: ${({ theme }) => theme.colors.neutral80};
+  ${({ removeBorders, theme }) => {
+    if (!removeBorders) {
+      return `
+        border-bottom-width: 1px;
+        border-bottom-color: ${theme.colors.neutral80};
+      `;
+    }
+  }}
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -32,6 +39,7 @@ const HeaderLeftContainer = styled(View)`
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  background-color: transparent;
 `;
 
 const BackButtonContainer = styled(View)`
@@ -39,9 +47,10 @@ const BackButtonContainer = styled(View)`
 `;
 
 interface HeaderProps extends StackHeaderProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   showBackButton?: boolean;
   title?: string;
+  removeBorders?: boolean;
 }
 
 export const Header = ({
@@ -50,9 +59,10 @@ export const Header = ({
   children,
   showBackButton,
   title,
+  removeBorders = false,
 }: HeaderProps) => {
   return (
-    <Container insets={insets}>
+    <Container insets={insets} removeBorders={removeBorders}>
       <HeaderLeftContainer>
         {showBackButton && (
           <BackButtonContainer>

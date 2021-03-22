@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Text } from '../components/atoms/Text';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components';
 import { View } from 'react-native';
 import { Illustration } from '../components/atoms/Illustration';
 import { Button } from '../components/atoms/Button';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { PublicStackParamList } from '../navigation/PublicStackNav';
+import { ScreenContainer } from '../components/atoms/ScreenContainer';
 
 const Container = styled(View)`
   padding: 20px;
@@ -46,7 +46,7 @@ export const Landing = ({ navigation }: LandingProps) => {
     navigation.navigate('ConfirmPhone');
   };
   return (
-    <SafeAreaView>
+    <ScreenContainer>
       <Container>
         <Section>
           <Illustration name="welcome" />
@@ -57,6 +57,6 @@ export const Landing = ({ navigation }: LandingProps) => {
         </WelcomeMessage>
         <StyledButton text="Let's do it!" onPress={onLetsDoIt} />
       </Container>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 };

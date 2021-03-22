@@ -2,13 +2,13 @@ import * as React from 'react';
 import { View, KeyboardAvoidingView, Platform } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import auth from '@react-native-firebase/auth';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '../components/atoms/Text';
 import { PublicStackParamList } from '../navigation/PublicStackNav';
 import { Button } from '../components/atoms/Button';
 import styled from 'styled-components';
 import { Illustration } from '../components/atoms/Illustration';
 import { CellphoneInput } from '../components/molecules/CellphoneInput';
+import { ScreenContainer } from '../components/atoms/ScreenContainer';
 
 const Container = styled(KeyboardAvoidingView)`
   padding: 20px;
@@ -70,7 +70,7 @@ export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
   };
 
   return (
-    <SafeAreaView>
+    <ScreenContainer>
       <Container behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <TitleContainer>
           <Title variant="h1">
@@ -96,6 +96,6 @@ export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
           onPress={signInWithPhoneNumber}
         />
       </Container>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 };

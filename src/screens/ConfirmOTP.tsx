@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { View, KeyboardAvoidingView, Platform } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '../components/atoms/Text';
 import { PublicStackParamList } from '../navigation/PublicStackNav';
 import { Button } from '../components/atoms/Button';
@@ -9,6 +8,7 @@ import { OTPInput } from '../components/molecules/OTPInput';
 import styled from 'styled-components';
 import LottieView from 'lottie-react-native';
 import { RouteProp } from '@react-navigation/core';
+import { ScreenContainer } from '../components/atoms/ScreenContainer';
 
 type ConfirmOTPScreenNavigationProp = StackNavigationProp<
   PublicStackParamList,
@@ -27,6 +27,7 @@ const Container = styled(KeyboardAvoidingView)`
   height: 100%;
   align-items: center;
   justify-content: center;
+  background-color: white;
 `;
 
 const TitleContainer = styled(View)`
@@ -96,7 +97,7 @@ export const ConfirmOTP = ({ route }: ConfirmOTPProps) => {
     startInfiniteAnimation();
   }, []);
   return (
-    <SafeAreaView>
+    <ScreenContainer>
       <Container behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <TitleContainer>
           <Title variant="h1">Verify Your {'\n'} Phone number</Title>
@@ -124,6 +125,6 @@ export const ConfirmOTP = ({ route }: ConfirmOTPProps) => {
           disabled={isFetching || otpConfirmationTimes === 0}
         />
       </Container>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 };
