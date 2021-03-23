@@ -9,8 +9,10 @@ import styled from 'styled-components';
 import { Illustration } from '../components/atoms/Illustration';
 import { CellphoneInput } from '../components/molecules/CellphoneInput';
 import { ScreenContainer } from '../components/atoms/ScreenContainer';
-import { useSpinner } from '../hooks';
+import { useCountdown, useSpinner } from '../hooks';
 import { usePushError } from '../state/error';
+import dayjs, { OpUnitType } from 'dayjs';
+import { EColor } from '../theme';
 
 const Container = styled(KeyboardAvoidingView)`
   padding: 20px;
@@ -45,6 +47,10 @@ const SendOTPButton = styled(Button)`
   width: 100%;
 `;
 
+const Countdown = styled(Text)`
+  padding-top: 10px;
+`;
+
 type ConfirmPhoneScreenNavigationProp = StackNavigationProp<
   PublicStackParamList,
   'ConfirmPhone'
@@ -55,13 +61,34 @@ interface ConfirmPhoneProps {
 }
 
 export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
-  const { showSpinner, hideSpinner } = useSpinner();
-  const pushError = usePushError();
   const [country, setCountry] = React.useState({
     code: 'CO',
     callingCode: '57',
   });
   const [phone, setPhone] = React.useState('');
+  const [countdown, setCountdown] = React.useState('');
+  const pushError = usePushError();
+  const { showSpinner, hideSpinner } = useSpinner();
+  const countdownSettings: { time: number; unit: OpUnitType } = __DEV__
+    ? { time: 60, unit: 'seconds' }
+    : { time: 10, unit: 'minutes' };
+  const countDownEnd = dayjs()
+    .add(countdownSettings.time, countdownSettings.unit)
+    .toString();
+  const { start: startCountdown, stop: stopCountdown } = useCountdown({
+    id: 'OTP',
+    persist: true,
+    getEndDateTime: () => countDownEnd,
+    onTick: ({ minutes, seconds }) => {
+      const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+      setCountdown(`${minutes}:${formattedSeconds}`);
+    },
+    onFinish: async () => {
+      await stopCountdown();
+      setCountdown('');
+    },
+  });
+
   const signInWithPhoneNumber = async () => {
     const formattedPhone = `+${country.callingCode} ${phone}`;
     try {
@@ -71,6 +98,7 @@ export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
         confirmation,
         phone: formattedPhone,
       });
+      await startCountdown();
     } catch (error) {
       pushError(error.message);
     } finally {
@@ -101,9 +129,14 @@ export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
         />
         <SendOTPButton
           text="SEND OTP CODE"
-          disabled={phone.length < 10}
+          disabled={phone.length < 10 || !!countdown}
           onPress={signInWithPhoneNumber}
         />
+        {!!countdown && (
+          <Countdown variant="small" color={EColor.neutral60}>
+            {countdown} left to allow code resend
+          </Countdown>
+        )}
       </Container>
     </ScreenContainer>
   );

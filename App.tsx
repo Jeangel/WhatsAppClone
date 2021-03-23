@@ -10,6 +10,7 @@ import { ETheme, themes } from './src/theme';
 import { ThemeProvider } from './src/contexts/ThemeContext';
 import { SpinnerProvider } from './src/contexts/SpinnerContext';
 import { Spinner } from './src/components/atoms/Spinner';
+import { ErrorBoxModal } from './src/components/molecules/ErrorBoxModal';
 
 const pubNubClient = new Pubnub({
   subscribeKey: Config.PUBNUB_SUBSCRIBE_SECRET,
@@ -45,6 +46,7 @@ const App = () => {
               />
               <Navigation />
               <Spinner isVisible={isShowingSpinner} />
+              <ErrorBoxModal />
             </SafeAreaProvider>
           </ThemeProvider>
         </PubNubProvider>
