@@ -19,6 +19,7 @@ const Container = styled(KeyboardAvoidingView)`
   height: 100%;
   align-items: center;
   justify-content: center;
+  flex: 1;
 `;
 
 const TitleContainer = styled(View)`
