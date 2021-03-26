@@ -17,7 +17,7 @@ const Container = styled(View)<{
   justifyContent?: JustifyContent;
   removeBorders?: boolean;
 }>`
-  padding-top: ${({ insets }) => Math.max(insets.top + 10, 50)}px;
+  padding-top: ${({ insets }) => Math.max(insets.top, 25)}px;
   padding-bottom: 20px;
   padding-left: 15px;
   padding-right: 15px;

@@ -30,6 +30,7 @@ const Container = styled(KeyboardAvoidingView)`
   align-items: center;
   justify-content: center;
   background-color: white;
+  flex: 1;
 `;
 
 const TitleContainer = styled(View)`
@@ -92,8 +93,8 @@ export const ConfirmOTP = ({ route }: ConfirmOTPProps) => {
     }
   };
   const startFiniteAnimation = () => {
+    animationRef.current?.play(110, 149);
     setLoop(false);
-    animationRef.current?.play(0);
   };
   const startInfiniteAnimation = () => {
     setLoop(true);

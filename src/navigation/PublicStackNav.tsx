@@ -32,11 +32,6 @@ export const PublicStackNav = () => {
           header: (props) => <Header removeBorders showBackButton {...props} />,
           headerShown: true,
           headerTransparent: true,
-          // headerTitle: '',
-          // headerBackImage: () => (
-          //   <Icon name="back-arrow" size={25} color="primary" />
-          // ),
-          // headerBackTitleVisible: false,
         }}
       />
     </PublicStack.Navigator>
