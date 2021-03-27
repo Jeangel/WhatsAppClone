@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Text } from '../components/atoms/Text';
+import { Text } from '../../components/atoms/Text';
 import styled from 'styled-components';
 import { View } from 'react-native';
-import { Illustration } from '../components/atoms/Illustration';
-import { Button } from '../components/atoms/Button';
+import { Illustration } from '../../components/atoms/Illustration';
+import { Button } from '../../components/atoms/Button';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { PublicStackParamList } from '../navigation/PublicStackNav';
-import { ScreenContainer } from '../components/atoms/ScreenContainer';
+import { PublicStackParamList } from '../../navigation/PublicStackNav';
+import { ScreenContainer } from '../../components/atoms/ScreenContainer';
 
 const Container = styled(View)`
   padding: 20px;

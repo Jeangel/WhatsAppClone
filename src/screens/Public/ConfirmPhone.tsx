@@ -2,17 +2,17 @@ import * as React from 'react';
 import { View, KeyboardAvoidingView, Platform } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import auth from '@react-native-firebase/auth';
-import { Text } from '../components/atoms/Text';
-import { PublicStackParamList } from '../navigation/PublicStackNav';
-import { Button } from '../components/atoms/Button';
+import { Text } from '../../components/atoms/Text';
+import { PublicStackParamList } from '../../navigation/PublicStackNav';
+import { Button } from '../../components/atoms/Button';
 import styled from 'styled-components';
-import { Illustration } from '../components/atoms/Illustration';
-import { CellphoneInput } from '../components/molecules/CellphoneInput';
-import { ScreenContainer } from '../components/atoms/ScreenContainer';
-import { useCountdown, useSpinner } from '../hooks';
-import { usePushError } from '../state/error';
+import { Illustration } from '../../components/atoms/Illustration';
+import { CellphoneInput } from '../../components/molecules/CellphoneInput';
+import { ScreenContainer } from '../../components/atoms/ScreenContainer';
+import { useCountdown, useSpinner } from '../../hooks';
+import { usePushError } from '../../state/error';
 import dayjs, { OpUnitType } from 'dayjs';
-import { EColor } from '../theme';
+import { EColor } from '../../theme';
 
 const Container = styled(KeyboardAvoidingView)`
   padding: 20px;

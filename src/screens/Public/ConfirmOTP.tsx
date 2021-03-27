@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { View, KeyboardAvoidingView, Platform } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { Text } from '../components/atoms/Text';
-import { PublicStackParamList } from '../navigation/PublicStackNav';
-import { Button } from '../components/atoms/Button';
-import { OTPInput } from '../components/molecules/OTPInput';
+import { Text } from '../../components/atoms/Text';
+import { PublicStackParamList } from '../../navigation/PublicStackNav';
+import { Button } from '../../components/atoms/Button';
+import { OTPInput } from '../../components/molecules/OTPInput';
 import styled from 'styled-components';
 import LottieView from 'lottie-react-native';
 import { RouteProp } from '@react-navigation/core';
-import { ScreenContainer } from '../components/atoms/ScreenContainer';
-import { useSpinner } from '../hooks';
-import { usePushError } from '../state/error';
+import { ScreenContainer } from '../../components/atoms/ScreenContainer';
+import { useSpinner } from '../../hooks';
+import { usePushError } from '../../state/error';
 
 type ConfirmOTPScreenNavigationProp = StackNavigationProp<
   PublicStackParamList,
@@ -116,7 +116,7 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
         </TitleContainer>
         <IllustrationContainer>
           <AnimationView
-            source={require('../animations/confirm.json')}
+            source={require('../../animations/confirm.json')}
             ref={animationRef}
             loop={loop}
           />

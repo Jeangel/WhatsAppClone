@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { ConfirmPhone } from '../screens/ConfirmPhone';
-import { Landing } from '../screens/Landing';
-import { ConfirmOTP } from '../screens/ConfirmOTP';
+import { ConfirmPhone } from '../screens/Public/ConfirmPhone';
+import { Landing } from '../screens/Public/Landing';
+import { ConfirmOTP } from '../screens/Public/ConfirmOTP';
 import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { Header } from '../components/molecules/Header';
 
