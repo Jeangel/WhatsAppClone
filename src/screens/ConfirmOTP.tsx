@@ -69,7 +69,7 @@ const AnimationView = styled(LottieView)`
   width: 300px;
 `;
 
-export const ConfirmOTP = ({ route }: ConfirmOTPProps) => {
+export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
   const [code, setCode] = React.useState('');
   const [loop, setLoop] = React.useState(true);
   const { showSpinner, hideSpinner } = useSpinner();
@@ -103,6 +103,11 @@ export const ConfirmOTP = ({ route }: ConfirmOTPProps) => {
   React.useEffect(() => {
     startInfiniteAnimation();
   }, []);
+  React.useEffect(() => {
+    if (otpConfirmationTimes >= 3) {
+      navigation.goBack();
+    }
+  }, [otpConfirmationTimes, navigation]);
   return (
     <ScreenContainer>
       <Container behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -130,6 +135,7 @@ export const ConfirmOTP = ({ route }: ConfirmOTPProps) => {
           text="RESEND NEW CODE"
           variant="transparent"
           disabled={isFetching || otpConfirmationTimes === 0}
+          onPress={navigation.goBack}
         />
       </Container>
     </ScreenContainer>

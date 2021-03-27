@@ -21,6 +21,7 @@ const Title = styled(Text)`
 
 const ErrorMessage = styled(Text)`
   padding-bottom: 20px;
+  text-align: center;
 `;
 
 const ErrorAnimation = styled(LottieView)`
