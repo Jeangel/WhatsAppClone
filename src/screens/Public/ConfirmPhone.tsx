@@ -71,7 +71,7 @@ export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
   const pushError = usePushError();
   const { showSpinner, hideSpinner } = useSpinner();
   const countdownSettings: { time: number; unit: OpUnitType } = __DEV__
-    ? { time: 60, unit: 'seconds' }
+    ? { time: 30, unit: 'seconds' }
     : { time: 10, unit: 'minutes' };
   const countDownEnd = dayjs()
     .add(countdownSettings.time, countdownSettings.unit)

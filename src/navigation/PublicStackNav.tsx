@@ -5,6 +5,7 @@ import { Landing } from '../screens/Public/Landing';
 import { ConfirmOTP } from '../screens/Public/ConfirmOTP';
 import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { Header } from '../components/molecules/Header';
+import { SignUp } from '../screens/Public/SignUp';
 
 export type PublicStackParamList = {
   Home: undefined;
@@ -14,6 +15,7 @@ export type PublicStackParamList = {
     confirmation: FirebaseAuthTypes.ConfirmationResult;
     phone: string;
   };
+  SignUp: undefined;
 };
 
 const PublicStack = createStackNavigator<PublicStackParamList>();
@@ -30,6 +32,15 @@ export const PublicStackNav = () => {
         component={ConfirmOTP}
         options={{
           header: (props) => <Header removeBorders showBackButton {...props} />,
+          headerShown: true,
+          headerTransparent: true,
+        }}
+      />
+      <PublicStack.Screen
+        name="SignUp"
+        component={SignUp}
+        options={{
+          header: (props) => <Header removeBorders {...props} />,
           headerShown: true,
           headerTransparent: true,
         }}

@@ -1,16 +1,17 @@
 import * as React from 'react';
 import { View, KeyboardAvoidingView, Platform } from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { Text } from '../../components/atoms/Text';
-import { PublicStackParamList } from '../../navigation/PublicStackNav';
-import { Button } from '../../components/atoms/Button';
-import { OTPInput } from '../../components/molecules/OTPInput';
 import styled from 'styled-components';
 import LottieView from 'lottie-react-native';
 import { RouteProp } from '@react-navigation/core';
-import { ScreenContainer } from '../../components/atoms/ScreenContainer';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { useSpinner } from '../../hooks';
+import { useAuthStore } from '../../state/auth';
 import { usePushError } from '../../state/error';
+import { Text } from '../../components/atoms/Text';
+import { Button } from '../../components/atoms/Button';
+import { OTPInput } from '../../components/molecules/OTPInput';
+import { PublicStackParamList } from '../../navigation/PublicStackNav';
+import { ScreenContainer } from '../../components/atoms/ScreenContainer';
 
 type ConfirmOTPScreenNavigationProp = StackNavigationProp<
   PublicStackParamList,
@@ -70,20 +71,39 @@ const AnimationView = styled(LottieView)`
 `;
 
 export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
-  const [code, setCode] = React.useState('');
-  const [loop, setLoop] = React.useState(true);
-  const { showSpinner, hideSpinner } = useSpinner();
-  const pushError = usePushError();
-  const [otpConfirmationTimes, setOTPConfirmationTimes] = React.useState(0);
-  const [isFetching, setIsFetching] = React.useState(false);
   const animationRef = React.useRef<LottieView>(null);
+  const [code, setCode] = React.useState('');
+  const [isFetching, setIsFetching] = React.useState(false);
+  const [userIsNew, setUserIsNew] = React.useState<boolean>();
+  const [animationIsLooping, setAnimationIsLooping] = React.useState(true);
+  const [otpConfirmationTimes, setOTPConfirmationTimes] = React.useState(0);
+  const [animationHasFinished, setAnimationHasFinished] = React.useState(false);
+  const { showSpinner, hideSpinner } = useSpinner();
+  const { setAuthenticatedUser, authenticatedUser } = useAuthStore();
+  const pushError = usePushError();
+
   const confirmOTPCode = async () => {
     setIsFetching(true);
     try {
       showSpinner();
-      const user = await route.params.confirmation.confirm(code);
-      console.log(user);
-      startFiniteAnimation();
+      const { confirmation } = route.params;
+      const confirmationResponse = await confirmation.confirm(code);
+      if (confirmationResponse) {
+        startFiniteAnimation();
+        setUserIsNew(confirmationResponse.additionalUserInfo?.isNewUser);
+        setAuthenticatedUser({
+          id: confirmationResponse.user.uid,
+          name: confirmationResponse.user.displayName,
+          profileImageUrl: confirmationResponse.user.photoURL,
+          lastSignInAt: confirmationResponse.user.metadata.creationTime
+            ? new Date(confirmationResponse.user.metadata.creationTime)
+            : new Date(),
+          createdAt: confirmationResponse.user.metadata.lastSignInTime
+            ? new Date(confirmationResponse.user.metadata.lastSignInTime)
+            : new Date(),
+          phoneNumber: confirmationResponse.user.phoneNumber,
+        });
+      }
     } catch (error) {
       pushError(error);
       setIsFetching(false);
@@ -92,36 +112,72 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
       setOTPConfirmationTimes(otpConfirmationTimes + 1);
     }
   };
+
   const startFiniteAnimation = () => {
     animationRef.current?.play(110, 149);
-    setLoop(false);
+    setAnimationIsLooping(false);
   };
+
   const startInfiniteAnimation = () => {
-    setLoop(true);
+    setAnimationIsLooping(true);
     animationRef.current?.play(60, 110);
   };
+
+  /**
+   * When mount, start the finite animation.
+   */
   React.useEffect(() => {
     startInfiniteAnimation();
   }, []);
+
+  /**
+   * Go to the previous screen if the user has tried
+   * to confirm OTP 3 times.
+   */
   React.useEffect(() => {
     if (otpConfirmationTimes >= 3) {
       navigation.goBack();
     }
   }, [otpConfirmationTimes, navigation]);
+
+  /**
+   * Listen to the userCredential state.
+   * If it's filled, it means that the OTP was success,
+   * then just wait until animation completes and navigate
+   * to the next screen.
+   */
+  React.useEffect(() => {
+    if (authenticatedUser && typeof userIsNew === 'boolean') {
+      setTimeout(() => {
+        if (userIsNew) {
+          navigation.navigate('SignUp');
+        } else {
+          navigation.navigate('Home');
+        }
+      }, 1500);
+    }
+  }, [navigation, authenticatedUser, userIsNew]);
+
   return (
     <ScreenContainer>
       <Container behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <TitleContainer>
-          <Title variant="h1">Verify Your {'\n'} Phone number</Title>
+          <Title variant="h1">
+            Verify Your {'\n'} Phone number {animationHasFinished}
+          </Title>
         </TitleContainer>
         <IllustrationContainer>
           <AnimationView
             source={require('../../animations/confirm.json')}
             ref={animationRef}
-            loop={loop}
+            loop={animationIsLooping}
+            onAnimationFinish={() => setAnimationHasFinished(true)}
           />
         </IllustrationContainer>
-        <DescriptionText>Enter Your OTP code here</DescriptionText>
+        <DescriptionText>
+          Please enter the OTP code we {'\n'} sent to you at{' '}
+          {route.params.phone}
+        </DescriptionText>
         <OTPInput value={code} onChange={setCode} />
         <ConfirmOTPCode
           text="CONFIRM OTP CODE"
