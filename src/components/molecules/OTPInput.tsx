@@ -12,14 +12,13 @@ export const OTPInput = ({ value, onChange }: OTPInputProps) => {
   const theme = useTheme();
   const styles = StyleSheet.create({
     inputFieldStyle: {
-      borderColor: 'transparent',
-      borderBottomColor: theme.colors.neutral60,
+      borderColor: theme.colors.neutral60,
+      borderWidth: 0.5,
+      borderRadius: 10,
       color: theme.colors.neutral40,
     },
     highlightedInputFieldStyle: {
-      borderColor: 'transparent',
-      borderBottomColor: theme.colors.primary,
-      color: theme.colors.neutral40,
+      borderColor: theme.colors.primary,
     },
     container: {
       height: 50,

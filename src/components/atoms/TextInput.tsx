@@ -1,5 +1,10 @@
 import React from 'react';
-import { NativeSyntheticEvent, TextInput as RNTextInput, TextInputFocusEventData, TextInputProps } from 'react-native';
+import {
+  NativeSyntheticEvent,
+  TextInput as RNTextInput,
+  TextInputFocusEventData,
+  TextInputProps,
+} from 'react-native';
 import styled from 'styled-components';
 import { useTheme } from '../../hooks';
 

@@ -40,7 +40,7 @@ const TitleContainer = styled(View)`
 
 const DescriptionText = styled(Text)`
   text-align: center;
-  padding-bottom: 10px;
+  padding-bottom: 15px;
   padding-top: 10px;
 `;
 
@@ -55,7 +55,7 @@ const IllustrationContainer = styled(View)`
 `;
 
 const ConfirmOTPCode = styled(Button)`
-  margin-top: 40px;
+  margin-top: 25px;
   align-self: center;
   width: 100%;
 `;
