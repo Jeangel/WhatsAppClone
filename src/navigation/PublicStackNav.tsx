@@ -23,7 +23,7 @@ const PublicStack = createStackNavigator<PublicStackParamList>();
 export const PublicStackNav = () => {
   return (
     <PublicStack.Navigator
-      initialRouteName="Landing"
+      initialRouteName="ConfirmPhone"
       screenOptions={{ headerShown: false }}>
       <PublicStack.Screen name="Landing" component={Landing} />
       <PublicStack.Screen name="ConfirmPhone" component={ConfirmPhone} />
