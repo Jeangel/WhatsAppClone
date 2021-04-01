@@ -20,6 +20,10 @@
 	<string>1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires access to the camera to select the profile image or upload an image as a story.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires access to the camera to take the profile image or to take an image an use it as a story.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
