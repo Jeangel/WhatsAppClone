@@ -1,8 +1,11 @@
 import * as React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  NativeSafeAreaViewProps,
+  SafeAreaView,
+} from 'react-native-safe-area-context';
 import styled from 'styled-components';
 
-interface ScreenContainerProps {
+interface ScreenContainerProps extends NativeSafeAreaViewProps {
   children: React.ReactNode;
 }
 
@@ -11,6 +14,9 @@ const StyledSafeArea = styled(SafeAreaView)`
   flex: 1;
 `;
 
-export const ScreenContainer = ({ children }: ScreenContainerProps) => {
-  return <StyledSafeArea>{children}</StyledSafeArea>;
+export const ScreenContainer = ({
+  children,
+  ...rest
+}: ScreenContainerProps) => {
+  return <StyledSafeArea {...rest}>{children}</StyledSafeArea>;
 };
