@@ -23,7 +23,7 @@ const PublicStack = createStackNavigator<PublicStackParamList>();
 export const PublicStackNav = () => {
   return (
     <PublicStack.Navigator
-      initialRouteName="ConfirmOTP"
+      initialRouteName="SignUp"
       screenOptions={{ headerShown: false }}>
       <PublicStack.Screen name="Landing" component={Landing} />
       <PublicStack.Screen name="ConfirmPhone" component={ConfirmPhone} />
@@ -40,9 +40,7 @@ export const PublicStackNav = () => {
         name="SignUp"
         component={SignUp}
         options={{
-          header: (props) => <Header removeBorders {...props} />,
-          headerShown: true,
-          headerTransparent: true,
+          headerShown: false,
         }}
       />
     </PublicStack.Navigator>
