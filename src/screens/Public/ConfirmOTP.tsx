@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import LottieView from 'lottie-react-native';
 import { RouteProp } from '@react-navigation/core';
 import { StackNavigationProp } from '@react-navigation/stack';
+import firestore from '@react-native-firebase/firestore';
 import { useSpinner } from '../../hooks';
 import { useAuthStore } from '../../state/auth';
 import { usePushError } from '../../state/error';
@@ -12,6 +13,7 @@ import { Button } from '../../components/atoms/Button';
 import { OTPInput } from '../../components/molecules/OTPInput';
 import { PublicStackParamList } from '../../navigation/PublicStackNav';
 import { ScreenContainer } from '../../components/atoms/ScreenContainer';
+import { USERS_COLLECTION } from '../../config/database';
 
 type ConfirmOTPScreenNavigationProp = StackNavigationProp<
   PublicStackParamList,
@@ -148,15 +150,28 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
    */
   React.useEffect(() => {
     if (authenticatedUser && typeof userIsNew === 'boolean') {
-      setTimeout(() => {
-        if (userIsNew || !authenticatedUser.name) {
-          navigation.navigate('SignUp');
-        } else {
+      if (userIsNew || !authenticatedUser.name) {
+        firestore()
+          .collection(USERS_COLLECTION)
+          .doc(authenticatedUser.id)
+          .set({
+            phoneNumber: authenticatedUser.phoneNumber,
+          })
+          .then(() => {
+            setTimeout(() => {
+              navigation.navigate('SignUp');
+            }, 1500);
+          })
+          .catch((error) => {
+            pushError(error);
+          });
+      } else {
+        setTimeout(() => {
           navigation.navigate('Home');
-        }
-      }, 1500);
+        }, 1500);
+      }
     }
-  }, [navigation, authenticatedUser, userIsNew]);
+  }, [navigation, authenticatedUser, userIsNew, pushError]);
 
   return (
     <ScreenContainer>

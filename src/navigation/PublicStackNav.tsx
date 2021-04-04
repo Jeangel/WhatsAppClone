@@ -6,6 +6,7 @@ import { ConfirmOTP } from '../screens/Public/ConfirmOTP';
 import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { Header } from '../components/molecules/Header';
 import { SignUp } from '../screens/Public/SignUp';
+import { useAuthStore } from '../state/auth';
 
 export type PublicStackParamList = {
   Home: undefined;
@@ -21,9 +22,14 @@ export type PublicStackParamList = {
 const PublicStack = createStackNavigator<PublicStackParamList>();
 
 export const PublicStackNav = () => {
+  const { authenticatedUser } = useAuthStore();
+  let initialRoute: keyof PublicStackParamList = 'Landing';
+  if (authenticatedUser?.id && !authenticatedUser.name) {
+    initialRoute = 'SignUp';
+  }
   return (
     <PublicStack.Navigator
-      initialRouteName="SignUp"
+      initialRouteName={initialRoute}
       screenOptions={{ headerShown: false }}
       headerMode="screen">
       <PublicStack.Screen name="Landing" component={Landing} />
