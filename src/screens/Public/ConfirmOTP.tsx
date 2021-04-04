@@ -149,7 +149,7 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
   React.useEffect(() => {
     if (authenticatedUser && typeof userIsNew === 'boolean') {
       setTimeout(() => {
-        if (userIsNew) {
+        if (userIsNew || !authenticatedUser.name) {
           navigation.navigate('SignUp');
         } else {
           navigation.navigate('Home');

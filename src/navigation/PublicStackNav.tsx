@@ -24,7 +24,8 @@ export const PublicStackNav = () => {
   return (
     <PublicStack.Navigator
       initialRouteName="SignUp"
-      screenOptions={{ headerShown: false }}>
+      screenOptions={{ headerShown: false }}
+      headerMode="screen">
       <PublicStack.Screen name="Landing" component={Landing} />
       <PublicStack.Screen name="ConfirmPhone" component={ConfirmPhone} />
       <PublicStack.Screen
@@ -36,13 +37,7 @@ export const PublicStackNav = () => {
           headerTransparent: true,
         }}
       />
-      <PublicStack.Screen
-        name="SignUp"
-        component={SignUp}
-        options={{
-          headerShown: false,
-        }}
-      />
+      <PublicStack.Screen name="SignUp" component={SignUp} />
     </PublicStack.Navigator>
   );
 };
