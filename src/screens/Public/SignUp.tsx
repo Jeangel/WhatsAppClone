@@ -7,7 +7,8 @@ import { TextInput } from '../../components/atoms/TextInput';
 import { Illustration } from '../../components/atoms/Illustration';
 import { PublicStackParamList } from '../../navigation/PublicStackNav';
 import { ScreenContainer } from '../../components/atoms/ScreenContainer';
-import { ImagePicker } from '../../components/atoms/ImagePicker';
+import { ProfileImageUploader } from '../../components/molecules/ProfileImageUploader';
+import { useAuthStore } from '../../state/auth';
 
 const Container = styled(KeyboardAvoidingView)`
   padding: 20px 0;
@@ -56,6 +57,12 @@ interface SignUpProps {
 }
 
 export const SignUp = ({}: SignUpProps) => {
+  const { authenticatedUser } = useAuthStore();
+
+  console.log(authenticatedUser, 'auth');
+  const handleOnImageSelected = async (uri: string) => {
+    console.log('on sign up', uri);
+  };
   return (
     <ScreenContainer>
       <Container behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -70,7 +77,10 @@ export const SignUp = ({}: SignUpProps) => {
           about you.
         </DescriptionText>
         <Label>Add a profile Image</Label>
-        <ImagePicker />
+        <ProfileImageUploader
+          onImageSelected={handleOnImageSelected}
+          imageNameReference={`user-profile-image-${authenticatedUser?.id}`}
+        />
         <NameTextInput placeholder={'Enter your name'} />
       </Container>
     </ScreenContainer>

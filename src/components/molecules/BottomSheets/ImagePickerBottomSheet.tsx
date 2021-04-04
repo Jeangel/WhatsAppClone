@@ -38,7 +38,7 @@ interface OptionsProps {
 }
 
 const Options = ({ onImageSelected }: OptionsProps) => {
-  const handleOnUploadImagePress = () => {
+  const handleOnPickFromGallery = () => {
     const onFinish = (response: ImagePickerResponse) => {
       console.log(response);
       if (response.uri) {
@@ -60,10 +60,10 @@ const Options = ({ onImageSelected }: OptionsProps) => {
         <Text color="neutral60">Take a picture!</Text>
       </CenteredColumn>
       <CenteredColumn>
-        <OptionContainer onPress={handleOnUploadImagePress}>
+        <OptionContainer onPress={handleOnPickFromGallery}>
           <Icon name="gallery" size={40} color={'neutral60'} />
         </OptionContainer>
-        <Text color="neutral60">Upload an image!</Text>
+        <Text color="neutral60">Pick one from gallery!</Text>
       </CenteredColumn>
     </OptionsContainer>
   );
