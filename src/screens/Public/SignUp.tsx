@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { View, KeyboardAvoidingView, Platform } from 'react-native';
 import { Text } from '../../components/atoms/Text';
+import { Button } from '../../components/atoms/Button';
 import { TextInput } from '../../components/atoms/TextInput';
 import { Illustration } from '../../components/atoms/Illustration';
 import { PublicStackParamList } from '../../navigation/PublicStackNav';
@@ -11,7 +12,7 @@ import { ProfileImageUploader } from '../../components/molecules/ProfileImageUpl
 import { useAuthStore } from '../../state/auth';
 
 const Container = styled(KeyboardAvoidingView)`
-  padding: 20px 0;
+  padding: 20px 40px;
   height: 100%;
   align-items: center;
   justify-content: center;
@@ -47,6 +48,12 @@ const Label = styled(DescriptionText)`
   font-weight: 500;
 `;
 
+const StyledButton = styled(Button)`
+  margin-top: 25px;
+  width: 90%;
+  align-self: center;
+`;
+
 type SignUpScreenNavigationProp = StackNavigationProp<
   PublicStackParamList,
   'SignUp'
@@ -56,13 +63,15 @@ interface SignUpProps {
   navigation: SignUpScreenNavigationProp;
 }
 
-export const SignUp = ({}: SignUpProps) => {
+export const SignUp = ({ navigation }: SignUpProps) => {
+  const [name, setName] = React.useState('');
+  const [wasImageUploaded, setWasImageUploaded] = React.useState(false);
   const { authenticatedUser } = useAuthStore();
-
-  console.log(authenticatedUser, 'auth');
-  const handleOnImageSelected = async (uri: string) => {
-    console.log('on sign up', uri);
+  console.log(authenticatedUser);
+  const onComplete = () => {
+    navigation.navigate('Home');
   };
+
   return (
     <ScreenContainer>
       <Container behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -78,10 +87,19 @@ export const SignUp = ({}: SignUpProps) => {
         </DescriptionText>
         <Label>Add a profile Image</Label>
         <ProfileImageUploader
-          onImageSelected={handleOnImageSelected}
-          imageNameReference={`user-profile-image-${authenticatedUser?.id}`}
+          imageId={authenticatedUser?.id as string}
+          onUploadStatusChange={setWasImageUploaded}
         />
-        <NameTextInput placeholder={'Enter your name'} />
+        <NameTextInput
+          placeholder={'Enter your name'}
+          value={name}
+          onChangeText={setName}
+        />
+        <StyledButton
+          text="Complete"
+          onPress={onComplete}
+          disabled={!wasImageUploaded || !name}
+        />
       </Container>
     </ScreenContainer>
   );

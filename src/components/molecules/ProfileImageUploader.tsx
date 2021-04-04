@@ -22,12 +22,13 @@ const ProfileImage = styled(Image)`
 `;
 
 interface ProfileImageUploaderProps {
-  onImageSelected: (uri: string) => void;
-  imageNameReference: string;
+  onUploadStatusChange: (wasImageUploaded: boolean) => void;
+  imageId: string;
 }
 
 export const ProfileImageUploader = ({
-  imageNameReference,
+  imageId,
+  onUploadStatusChange,
 }: ProfileImageUploaderProps) => {
   const [bottomSheetIsVisible, setBottomSheetIsVisible] = React.useState(false);
   const [imageUri, setImageUri] = React.useState('');
@@ -47,6 +48,10 @@ export const ProfileImageUploader = ({
     }
   }, [imageUploadProgress]);
 
+  React.useEffect(() => {
+    onUploadStatusChange(uploadIsComplete);
+  }, [uploadIsComplete, onUploadStatusChange]);
+
   const handleOnPress = () => {
     setBottomSheetIsVisible(true);
   };
@@ -55,9 +60,14 @@ export const ProfileImageUploader = ({
     setBottomSheetIsVisible(false);
     setUploadIsComplete(false);
     setImageUri(uri);
-    uploadImage({ imageNameReference, localImageUri: uri });
+    if (imageId) {
+      uploadImage({
+        imageNameReference: `profile-image-${imageId}`,
+        localImageUri: uri,
+      });
+    }
   };
-  console.log(imageUploadProgress);
+
   return (
     <>
       <Container onPress={handleOnPress}>
