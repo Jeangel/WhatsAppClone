@@ -2,6 +2,7 @@ import * as React from 'react';
 import { SpinnerContext } from '../contexts/SpinnerContext';
 import { ThemeContext } from '../contexts/ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import firebaseStorage from '@react-native-firebase/storage';
 import dayjs from 'dayjs';
 
 export const useTheme = () => React.useContext(ThemeContext).theme;
@@ -132,4 +133,30 @@ export const useCountdown = ({
   }, [persist, id, start, intervalId]);
 
   return { start, stop };
+};
+
+interface useUploadImageArgs {
+  onProgress: (progress: number) => void;
+  onError: (error: string) => void;
+}
+
+export const useUploadImage = ({ onProgress, onError }: useUploadImageArgs) => {
+  const uploadImage = ({
+    imageNameReference,
+    localImageUri,
+  }: {
+    imageNameReference: string;
+    localImageUri: string;
+  }) => {
+    const reference = firebaseStorage().ref(imageNameReference);
+    try {
+      const task = reference.putFile(localImageUri);
+      task.on('state_changed', (taskSnapshot) => {
+        onProgress(taskSnapshot.bytesTransferred / taskSnapshot.totalBytes);
+      });
+    } catch (error) {
+      onError(error);
+    }
+  };
+  return uploadImage;
 };
