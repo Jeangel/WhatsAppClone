@@ -83,6 +83,7 @@ export const ProfileImageUploader = ({
       <ImagePickerBottomSheet
         onImageSelected={handleOnImageSelected}
         isVisible={bottomSheetIsVisible}
+        onIsVisibleChange={setBottomSheetIsVisible}
       />
     </>
   );

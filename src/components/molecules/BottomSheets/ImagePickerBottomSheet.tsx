@@ -72,10 +72,12 @@ const Options = ({ onImageSelected }: OptionsProps) => {
 interface ImagePickerBottomSheetProps {
   onImageSelected: (uri: string) => void;
   isVisible: boolean;
+  onIsVisibleChange: (newValue: boolean) => void;
 }
 
 export const ImagePickerBottomSheet = ({
   onImageSelected,
+  onIsVisibleChange,
   isVisible,
 }: ImagePickerBottomSheetProps) => {
   const bottomSheetRef = React.useRef<Modalize>(null);
@@ -85,17 +87,19 @@ export const ImagePickerBottomSheet = ({
   };
 
   React.useEffect(() => {
+    onIsVisibleChange(isVisible);
     if (isVisible) {
       bottomSheetRef.current?.open();
     } else {
       bottomSheetRef.current?.close();
     }
-  }, [isVisible]);
+  }, [isVisible, onIsVisibleChange]);
 
   return (
     <Modalize
       ref={bottomSheetRef}
       modalHeight={250}
+      onOverlayPress={() => onIsVisibleChange(false)}
       withReactModal
       scrollViewProps={{ scrollEnabled: false }}>
       <Options onImageSelected={handleOnChange} />
