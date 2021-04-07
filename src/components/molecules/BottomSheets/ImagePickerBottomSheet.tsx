@@ -87,7 +87,6 @@ export const ImagePickerBottomSheet = ({
   };
 
   React.useEffect(() => {
-    onIsVisibleChange(isVisible);
     if (isVisible) {
       bottomSheetRef.current?.open();
     } else {
