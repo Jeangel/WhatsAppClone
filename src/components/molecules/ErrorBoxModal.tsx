@@ -44,8 +44,15 @@ export const ErrorBoxModal = () => {
     setIsVisible(areThereErrors);
   }, [errors, errors.length]);
 
+  React.useEffect(() => {
+    if (currentError && !isVisible) {
+      setIsVisible(true);
+    }
+  }, [currentError, isVisible]);
+
   const dismissError = () => {
     removeError(currentError);
+    setCurrentError('');
     setIsVisible(false);
   };
 

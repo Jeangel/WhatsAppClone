@@ -8,6 +8,7 @@ import {
 import { Icon } from '../../atoms/Icon';
 import { Text } from '../../atoms/Text';
 import { Modalize } from 'react-native-modalize';
+import { usePushError } from '../../../state/error';
 
 const OptionContainer = styled(TouchableOpacity)`
   border: 0.5px solid ${({ theme }) => theme.colors.neutral60};
@@ -35,17 +36,22 @@ const CenteredColumn = styled(View)`
 
 interface OptionsProps {
   onImageSelected: (uri: string) => void;
+  onError?: (error: Error) => void;
 }
 
-const Options = ({ onImageSelected }: OptionsProps) => {
+const Options = ({ onImageSelected, onError }: OptionsProps) => {
   const handleOnPickFromGallery = () => {
     const onFinish = (response: ImagePickerResponse) => {
-      console.log(response);
       if (response.uri) {
         onImageSelected(response.uri);
       } else {
-        console.log('OMG!!! NO URI!!!');
-        // TODO show error?
+        if (typeof onError === 'function') {
+          onError(
+            new Error(
+              'Something went wrong, could not get the image correctly, please try again',
+            ),
+          );
+        }
       }
     };
     launchImageLibrary({ mediaType: 'photo' }, onFinish);
@@ -80,10 +86,16 @@ export const ImagePickerBottomSheet = ({
   onIsVisibleChange,
   isVisible,
 }: ImagePickerBottomSheetProps) => {
+  const pushError = usePushError();
   const bottomSheetRef = React.useRef<Modalize>(null);
   const handleOnChange = (uri: string) => {
     bottomSheetRef.current?.close();
     onImageSelected(uri);
+  };
+
+  const handleOnError = (error: Error) => {
+    bottomSheetRef.current?.close();
+    pushError(error);
   };
 
   React.useEffect(() => {
@@ -99,9 +111,8 @@ export const ImagePickerBottomSheet = ({
       ref={bottomSheetRef}
       modalHeight={250}
       onOverlayPress={() => onIsVisibleChange(false)}
-      withReactModal
       scrollViewProps={{ scrollEnabled: false }}>
-      <Options onImageSelected={handleOnChange} />
+      <Options onImageSelected={handleOnChange} onError={handleOnError} />
     </Modalize>
   );
 };

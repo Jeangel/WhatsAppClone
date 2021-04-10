@@ -44,9 +44,9 @@ const App = () => {
                   themeMode === ETheme.light ? 'dark-content' : 'light-content'
                 }
               />
+              <ErrorBoxModal />
               <Navigation />
               <Spinner isVisible={isShowingSpinner} />
-              <ErrorBoxModal />
             </SafeAreaProvider>
           </ThemeProvider>
         </PubNubProvider>
