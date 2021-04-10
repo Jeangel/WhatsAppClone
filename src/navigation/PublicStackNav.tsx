@@ -24,7 +24,7 @@ const PublicStack = createStackNavigator<PublicStackParamList>();
 export const PublicStackNav = () => {
   const { authenticatedUser } = useAuthStore();
   let initialRoute: keyof PublicStackParamList = 'Landing';
-  if (authenticatedUser?.id && !authenticatedUser.name) {
+  if (authenticatedUser.id && !authenticatedUser.name) {
     initialRoute = 'SignUp';
   }
   return (

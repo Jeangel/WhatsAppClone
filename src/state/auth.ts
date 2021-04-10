@@ -4,16 +4,40 @@ import { AuthenticatedUser } from '../app/AuthenticatedUser';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type AuthStore = {
-  authenticatedUser?: AuthenticatedUser;
+  authenticatedUser: AuthenticatedUser;
   setAuthenticatedUser: (authenticatedUser: AuthenticatedUser) => void;
+  updateAuthenticatedUser: (updates: {
+    name?: string;
+    phoneNumber?: string;
+    profileImageUrl?: string;
+  }) => void;
 };
 
 export const useAuthStore = create<AuthStore>(
   persist(
     (set) => ({
-      authenticatedUser: undefined,
+      authenticatedUser: {
+        id: '',
+        name: '',
+        phoneNumber: '',
+        profileImageUrl: '',
+      },
       setAuthenticatedUser: (authenticatedUser) => {
         set(() => ({ authenticatedUser }));
+      },
+      updateAuthenticatedUser: (updates) => {
+        set(({ authenticatedUser }) => ({
+          authenticatedUser: {
+            ...authenticatedUser,
+            name: updates.name ? updates.name : authenticatedUser.name,
+            phoneNumber: updates.phoneNumber
+              ? updates.phoneNumber
+              : authenticatedUser.phoneNumber,
+            profileImageUrl: updates.profileImageUrl
+              ? updates.profileImageUrl
+              : authenticatedUser.profileImageUrl,
+          },
+        }));
       },
     }),
     { name: 'auth-store', getStorage: () => AsyncStorage },

@@ -69,7 +69,7 @@ export const SignUp = ({ navigation }: SignUpProps) => {
   const [name, setName] = React.useState('');
   const [profileImageUrl, setProfileImageUrl] = React.useState('');
   const [wasImageUploaded, setWasImageUploaded] = React.useState(false);
-  const { authenticatedUser } = useAuthStore();
+  const { authenticatedUser, updateAuthenticatedUser } = useAuthStore();
   const user = useDBUser(authenticatedUser?.id as string);
   const pushError = usePushError();
   const { showSpinner, hideSpinner } = useSpinner();
@@ -92,6 +92,10 @@ export const SignUp = ({ navigation }: SignUpProps) => {
   };
 
   const goHome = () => {
+    updateAuthenticatedUser({
+      name,
+      profileImageUrl,
+    });
     navigation.navigate('Home');
   };
 

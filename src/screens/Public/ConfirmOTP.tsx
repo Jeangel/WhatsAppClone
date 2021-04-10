@@ -74,12 +74,11 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
   const animationRef = React.useRef<LottieView>(null);
   const [code, setCode] = React.useState('');
   const [isFetching, setIsFetching] = React.useState(false);
-  const [userIsNew, setUserIsNew] = React.useState<boolean>();
   const [animationIsLooping, setAnimationIsLooping] = React.useState(true);
   const [otpConfirmationTimes, setOTPConfirmationTimes] = React.useState(0);
   const [animationHasFinished, setAnimationHasFinished] = React.useState(false);
   const { showSpinner, hideSpinner } = useSpinner();
-  const { setAuthenticatedUser, authenticatedUser } = useAuthStore();
+  const { setAuthenticatedUser } = useAuthStore();
   const pushError = usePushError();
   const usersCollection = useUsersCollection();
 
@@ -87,23 +86,38 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
     setIsFetching(true);
     try {
       showSpinner();
-      const { confirmation } = route.params;
+      const { confirmation, phone } = route.params;
       const confirmationResponse = await confirmation.confirm(code);
       if (confirmationResponse) {
-        startFiniteAnimation();
-        setUserIsNew(confirmationResponse.additionalUserInfo?.isNewUser);
-        setAuthenticatedUser({
-          id: confirmationResponse.user.uid,
-          name: confirmationResponse.user.displayName,
-          profileImageUrl: confirmationResponse.user.photoURL,
-          lastSignInAt: confirmationResponse.user.metadata.creationTime
-            ? new Date(confirmationResponse.user.metadata.creationTime)
-            : new Date(),
-          createdAt: confirmationResponse.user.metadata.lastSignInTime
-            ? new Date(confirmationResponse.user.metadata.lastSignInTime)
-            : new Date(),
-          phoneNumber: confirmationResponse.user.phoneNumber,
-        });
+        // Check if the user is new in the auth DB.
+        const isNew = confirmationResponse.additionalUserInfo?.isNewUser;
+        // Try to get the user from the app DB.
+        const userDb = await usersCollection
+          .doc(confirmationResponse.user.uid)
+          .get();
+        if (isNew || !userDb.exists) {
+          // if so, create it in the app DB.
+          // At this point it was already created in the auth DB.
+          await createUser({
+            id: confirmationResponse.user.uid,
+            phoneNumber: phone,
+          });
+        } else {
+          const userData = userDb.data();
+          setAuthenticatedUser({
+            id: confirmationResponse.user.uid,
+            name: userData?.name,
+            phoneNumber: phone,
+            profileImageUrl: userData?.profileImageUrl,
+          });
+          // if the user exists in the app DB but doesn't have name
+          // take them to the SignUp screen, otherwise to the Home.
+          const nextScreen = !userData?.name ? 'SignUp' : 'Home';
+          startFiniteAnimation();
+          setTimeout(() => {
+            navigation.navigate(nextScreen);
+          }, 1500);
+        }
       }
     } catch (error) {
       pushError(error);
@@ -124,6 +138,34 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
     animationRef.current?.play(60, 110);
   };
 
+  interface CreateUserArgs {
+    id: string;
+    phoneNumber: string;
+  }
+
+  const createUser = React.useCallback(
+    async ({ id, phoneNumber }: CreateUserArgs) => {
+      try {
+        await usersCollection.doc(id).set({
+          phoneNumber: phoneNumber,
+        });
+        setAuthenticatedUser({
+          id,
+          phoneNumber,
+          name: '',
+          profileImageUrl: '',
+        });
+        startFiniteAnimation();
+        setTimeout(() => {
+          navigation.navigate('SignUp');
+        }, 1500);
+      } catch (error) {
+        pushError(error);
+      }
+    },
+    [navigation, pushError, usersCollection, setAuthenticatedUser],
+  );
+
   /**
    * When mount, start the finite animation.
    */
@@ -140,36 +182,6 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
       navigation.goBack();
     }
   }, [otpConfirmationTimes, navigation]);
-
-  /**
-   * Listen to the userCredential state.
-   * If it's filled, it means that the OTP was success,
-   * then just wait until animation completes and navigate
-   * to the next screen.
-   */
-  React.useEffect(() => {
-    if (authenticatedUser && typeof userIsNew === 'boolean') {
-      if (userIsNew || !authenticatedUser.name) {
-        usersCollection
-          .doc(authenticatedUser.id)
-          .set({
-            phoneNumber: authenticatedUser.phoneNumber,
-          })
-          .then(() => {
-            setTimeout(() => {
-              navigation.navigate('SignUp');
-            }, 1500);
-          })
-          .catch((error) => {
-            pushError(error);
-          });
-      } else {
-        setTimeout(() => {
-          navigation.navigate('Home');
-        }, 1500);
-      }
-    }
-  }, [navigation, authenticatedUser, userIsNew, pushError, usersCollection]);
 
   return (
     <ScreenContainer>
