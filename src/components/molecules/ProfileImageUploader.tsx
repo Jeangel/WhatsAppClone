@@ -22,13 +22,15 @@ const ProfileImage = styled(Image)`
 `;
 
 interface ProfileImageUploaderProps {
-  onUploadStatusChange: (wasImageUploaded: boolean) => void;
+  onStart: () => void;
+  onComplete: (downloadUrl: string) => void;
   imageId: string;
 }
 
 export const ProfileImageUploader = ({
   imageId,
-  onUploadStatusChange,
+  onComplete,
+  onStart,
 }: ProfileImageUploaderProps) => {
   const [bottomSheetIsVisible, setBottomSheetIsVisible] = React.useState(false);
   const [imageUri, setImageUri] = React.useState('');
@@ -36,9 +38,11 @@ export const ProfileImageUploader = ({
   const [uploadIsComplete, setUploadIsComplete] = React.useState(false);
   const theme = useTheme();
   const pushError = usePushError();
+
   const uploadImage = useUploadImage({
     onProgress: setImageUploadProgress,
     onError: pushError,
+    onComplete,
   });
 
   React.useEffect(() => {
@@ -47,10 +51,6 @@ export const ProfileImageUploader = ({
       setImageUploadProgress(0);
     }
   }, [imageUploadProgress]);
-
-  React.useEffect(() => {
-    onUploadStatusChange(uploadIsComplete);
-  }, [uploadIsComplete, onUploadStatusChange]);
 
   const handleOnPress = () => {
     setBottomSheetIsVisible(true);
@@ -61,6 +61,7 @@ export const ProfileImageUploader = ({
     setUploadIsComplete(false);
     setImageUri(uri);
     if (imageId) {
+      onStart();
       uploadImage({
         imageNameReference: `profile-image-${imageId}`,
         localImageUri: uri,

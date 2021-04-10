@@ -4,8 +4,7 @@ import styled from 'styled-components';
 import LottieView from 'lottie-react-native';
 import { RouteProp } from '@react-navigation/core';
 import { StackNavigationProp } from '@react-navigation/stack';
-import firestore from '@react-native-firebase/firestore';
-import { useSpinner } from '../../hooks';
+import { useSpinner, useUsersCollection } from '../../hooks';
 import { useAuthStore } from '../../state/auth';
 import { usePushError } from '../../state/error';
 import { Text } from '../../components/atoms/Text';
@@ -13,7 +12,6 @@ import { Button } from '../../components/atoms/Button';
 import { OTPInput } from '../../components/molecules/OTPInput';
 import { PublicStackParamList } from '../../navigation/PublicStackNav';
 import { ScreenContainer } from '../../components/atoms/ScreenContainer';
-import { USERS_COLLECTION } from '../../config/database';
 
 type ConfirmOTPScreenNavigationProp = StackNavigationProp<
   PublicStackParamList,
@@ -83,6 +81,7 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
   const { showSpinner, hideSpinner } = useSpinner();
   const { setAuthenticatedUser, authenticatedUser } = useAuthStore();
   const pushError = usePushError();
+  const usersCollection = useUsersCollection();
 
   const confirmOTPCode = async () => {
     setIsFetching(true);
@@ -151,8 +150,7 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
   React.useEffect(() => {
     if (authenticatedUser && typeof userIsNew === 'boolean') {
       if (userIsNew || !authenticatedUser.name) {
-        firestore()
-          .collection(USERS_COLLECTION)
+        usersCollection
           .doc(authenticatedUser.id)
           .set({
             phoneNumber: authenticatedUser.phoneNumber,
@@ -171,7 +169,7 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
         }, 1500);
       }
     }
-  }, [navigation, authenticatedUser, userIsNew, pushError]);
+  }, [navigation, authenticatedUser, userIsNew, pushError, usersCollection]);
 
   return (
     <ScreenContainer>

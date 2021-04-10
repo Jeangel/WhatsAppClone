@@ -1,9 +1,11 @@
+import firestore from '@react-native-firebase/firestore';
 import * as React from 'react';
 import { SpinnerContext } from '../contexts/SpinnerContext';
 import { ThemeContext } from '../contexts/ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firebaseStorage from '@react-native-firebase/storage';
 import dayjs from 'dayjs';
+import { USERS_COLLECTION } from '../config/database';
 
 export const useTheme = () => React.useContext(ThemeContext).theme;
 
@@ -138,9 +140,14 @@ export const useCountdown = ({
 interface useUploadImageArgs {
   onProgress: (progress: number) => void;
   onError: (error: string) => void;
+  onComplete: (imageUrl: string) => void;
 }
 
-export const useUploadImage = ({ onProgress, onError }: useUploadImageArgs) => {
+export const useUploadImage = ({
+  onProgress,
+  onComplete,
+  onError,
+}: useUploadImageArgs) => {
   const uploadImage = ({
     imageNameReference,
     localImageUri,
@@ -154,9 +161,22 @@ export const useUploadImage = ({ onProgress, onError }: useUploadImageArgs) => {
       task.on('state_changed', (taskSnapshot) => {
         onProgress(taskSnapshot.bytesTransferred / taskSnapshot.totalBytes);
       });
+      task.then(() => {
+        reference.getDownloadURL().then((url) => {
+          onComplete(url);
+        });
+      });
     } catch (error) {
       onError(error);
     }
   };
   return uploadImage;
+};
+
+export const useUsersCollection = () => {
+  return firestore().collection(USERS_COLLECTION);
+};
+
+export const useDBUser = (id: string) => {
+  return firestore().doc(`${USERS_COLLECTION}/${id}`);
 };

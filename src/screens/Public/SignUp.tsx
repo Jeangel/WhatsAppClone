@@ -10,6 +10,8 @@ import { PublicStackParamList } from '../../navigation/PublicStackNav';
 import { ScreenContainer } from '../../components/atoms/ScreenContainer';
 import { ProfileImageUploader } from '../../components/molecules/ProfileImageUploader';
 import { useAuthStore } from '../../state/auth';
+import { useSpinner, useDBUser } from '../../hooks';
+import { usePushError } from '../../state/error';
 
 const Container = styled(KeyboardAvoidingView)`
   padding: 20px 40px;
@@ -65,10 +67,31 @@ interface SignUpProps {
 
 export const SignUp = ({ navigation }: SignUpProps) => {
   const [name, setName] = React.useState('');
+  const [profileImageUrl, setProfileImageUrl] = React.useState('');
   const [wasImageUploaded, setWasImageUploaded] = React.useState(false);
   const { authenticatedUser } = useAuthStore();
-  console.log(authenticatedUser);
-  const onComplete = () => {
+  const user = useDBUser(authenticatedUser?.id as string);
+  const pushError = usePushError();
+  const { showSpinner, hideSpinner } = useSpinner();
+
+  const onCompleteImageUpload = (downloadUrl: string) => {
+    setProfileImageUrl(downloadUrl);
+    setWasImageUploaded(true);
+  };
+
+  const onCompleteSignUp = () => {
+    showSpinner();
+    user
+      .update({
+        name,
+        profileImageUrl,
+      })
+      .then(goHome)
+      .catch(pushError)
+      .finally(hideSpinner);
+  };
+
+  const goHome = () => {
     navigation.navigate('Home');
   };
 
@@ -88,7 +111,8 @@ export const SignUp = ({ navigation }: SignUpProps) => {
         <Label>Add a profile Image</Label>
         <ProfileImageUploader
           imageId={authenticatedUser?.id as string}
-          onUploadStatusChange={setWasImageUploaded}
+          onStart={() => setWasImageUploaded(false)}
+          onComplete={onCompleteImageUpload}
         />
         <NameTextInput
           placeholder={'Enter your name'}
@@ -97,7 +121,7 @@ export const SignUp = ({ navigation }: SignUpProps) => {
         />
         <StyledButton
           text="Complete"
-          onPress={onComplete}
+          onPress={onCompleteSignUp}
           disabled={!wasImageUploaded || !name}
         />
       </Container>
