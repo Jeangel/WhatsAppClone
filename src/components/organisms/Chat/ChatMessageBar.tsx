@@ -14,10 +14,11 @@ import styled from 'styled-components';
 import { Icon } from '../../atoms/Icon';
 
 const Container = styled(View)`
-  height: 50px;
+  min-height: 50px;
+  max-height: 70px;
   padding: 5px 20px;
   flex-direction: row;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: center;
 `;
 
@@ -53,7 +54,7 @@ const EmojiButtonContainer = styled(View)`
 
 const AnimatedItemsContainer = styled(View)`
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   width: 90%;
 `;
 
@@ -103,7 +104,6 @@ interface ChatMessageBarProps extends InputToolbarProps {
 }
 
 export const ChatMessageBar = ({ onSend }: ChatMessageBarProps) => {
-  const [isInputFocused, setIsInputFocused] = useState(false);
   const [message, setMessage] = useState('');
   const inputSizeAnimator = React.useRef(new Animated.Value(0)).current;
   const dynamicButtonAnimator = React.useRef(new Animated.Value(0)).current;
@@ -141,17 +141,17 @@ export const ChatMessageBar = ({ onSend }: ChatMessageBarProps) => {
   const increaseAnimateValueAnimation = Animated.timing(inputSizeAnimator, {
     toValue: 1,
     useNativeDriver: false,
-    duration: 200,
+    duration: 100,
   });
 
   const decreaseAnimatedValueAnimation = Animated.timing(inputSizeAnimator, {
     toValue: 0,
     useNativeDriver: false,
-    duration: 200,
+    duration: 100,
   });
 
   React.useEffect(() => {
-    const shouldGrow = !!(isInputFocused || message.length);
+    const shouldGrow = !!message.length;
     if (shouldGrow) {
       increaseAnimateValueAnimation.start();
       dynamicButtonFadeOutAnimation.start();
@@ -166,7 +166,6 @@ export const ChatMessageBar = ({ onSend }: ChatMessageBarProps) => {
       dynamicButtonFadeInAnimation.stop();
     };
   }, [
-    isInputFocused,
     message,
     increaseAnimateValueAnimation,
     decreaseAnimatedValueAnimation,
@@ -174,21 +173,13 @@ export const ChatMessageBar = ({ onSend }: ChatMessageBarProps) => {
     dynamicButtonFadeInAnimation,
   ]);
 
-  const handleOnFocus = () => {
-    setIsInputFocused(true);
-  };
-
-  const handleOnBlur = () => {
-    setIsInputFocused(false);
-  };
-
   const onMessageChange = (text: string) => {
     setMessage(text);
   };
 
   const handleOnSend = () => {
     if (typeof onSend === 'function') {
-      onSend({ text: message });
+      onSend({ text: message.trim() });
       setMessage('');
     }
   };
@@ -205,10 +196,9 @@ export const ChatMessageBar = ({ onSend }: ChatMessageBarProps) => {
             <Input
               multiline
               placeholder="Type message"
-              onFocus={handleOnFocus}
-              onBlur={handleOnBlur}
               value={message}
               onChangeText={onMessageChange}
+              numberOfLines={2}
             />
           </InputContainer>
           <DynamicButtonsContainer>
@@ -220,7 +210,7 @@ export const ChatMessageBar = ({ onSend }: ChatMessageBarProps) => {
               icon="send"
               onPress={handleOnSend}
               style={{ transform: [{ scale: sendButtonFadeInOutAnimation }] }}
-              disabled={!message}
+              disabled={!message.trim()}
             />
           </DynamicButtonsContainer>
           <Animated.View
