@@ -11,6 +11,7 @@ type AuthStore = {
     phoneNumber?: string;
     profileImageUrl?: string;
   }) => void;
+  logout: () => void;
 };
 
 export const useAuthStore = create<AuthStore>(
@@ -38,6 +39,15 @@ export const useAuthStore = create<AuthStore>(
               : authenticatedUser.profileImageUrl,
           },
         }));
+      },
+      logout: () => {
+        const authenticatedUser = {
+          id: '',
+          name: '',
+          phoneNumber: '',
+          profileImageUrl: '',
+        };
+        set(() => ({ authenticatedUser }));
       },
     }),
     { name: 'auth-store', getStorage: () => AsyncStorage },

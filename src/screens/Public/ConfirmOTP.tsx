@@ -12,6 +12,7 @@ import { Button } from '../../components/atoms/Button';
 import { OTPInput } from '../../components/molecules/OTPInput';
 import { PublicStackParamList } from '../../navigation/PublicStackNav';
 import { ScreenContainer } from '../../components/atoms/ScreenContainer';
+import auth from '@react-native-firebase/auth';
 
 type ConfirmOTPScreenNavigationProp = StackNavigationProp<
   PublicStackParamList,
@@ -77,8 +78,9 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
   const [animationIsLooping, setAnimationIsLooping] = React.useState(true);
   const [otpConfirmationTimes, setOTPConfirmationTimes] = React.useState(0);
   const [animationHasFinished, setAnimationHasFinished] = React.useState(false);
+  const [isAuthenticating, setIsAuthenticating] = React.useState(false);
   const { showSpinner, hideSpinner } = useSpinner();
-  const { setAuthenticatedUser } = useAuthStore();
+  const { setAuthenticatedUser, authenticatedUser } = useAuthStore();
   const pushError = usePushError();
   const usersCollection = useUsersCollection();
 
@@ -86,38 +88,11 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
     setIsFetching(true);
     try {
       showSpinner();
-      const { confirmation, phone } = route.params;
+      const { confirmation } = route.params;
       const confirmationResponse = await confirmation.confirm(code);
       if (confirmationResponse) {
-        // Check if the user is new in the auth DB.
-        const isNew = confirmationResponse.additionalUserInfo?.isNewUser;
-        // Try to get the user from the app DB.
-        const userDb = await usersCollection
-          .doc(confirmationResponse.user.uid)
-          .get();
-        if (isNew || !userDb.exists) {
-          // if so, create it in the app DB.
-          // At this point it was already created in the auth DB.
-          await createUser({
-            id: confirmationResponse.user.uid,
-            phoneNumber: phone,
-          });
-        } else {
-          const userData = userDb.data();
-          setAuthenticatedUser({
-            id: confirmationResponse.user.uid,
-            name: userData?.name,
-            phoneNumber: phone,
-            profileImageUrl: userData?.profileImageUrl,
-          });
-          // if the user exists in the app DB but doesn't have name
-          // take them to the SignUp screen, otherwise to the Home.
-          const nextScreen = !userData?.name ? 'SignUp' : 'Home';
-          startFiniteAnimation();
-          setTimeout(() => {
-            navigation.navigate(nextScreen);
-          }, 1500);
-        }
+        const userId = confirmationResponse.user.uid;
+        handleSuccessOTPConfirmation({ userId });
       }
     } catch (error) {
       pushError(error);
@@ -127,6 +102,87 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
       setOTPConfirmationTimes(otpConfirmationTimes + 1);
     }
   };
+
+  /**
+   * Finish the animation and navigate to the given route
+   */
+  const successNavigate = React.useCallback(
+    (nextRoute: keyof PublicStackParamList) => {
+      startFiniteAnimation();
+      setTimeout(() => {
+        navigation.navigate(nextRoute);
+      }, 1500);
+    },
+    [navigation],
+  );
+
+  const handleExistingUser = React.useCallback(
+    async ({ id }: { id: string }) => {
+      try {
+        const userDb = await usersCollection.doc(id).get();
+        const userData = userDb.data();
+        setAuthenticatedUser({
+          id,
+          name: userData?.name,
+          phoneNumber: userData?.phoneNumber,
+          profileImageUrl: userData?.profileImageUrl,
+        });
+        // if the user exists in the app DB but doesn't have name
+        // take them to the SignUp screen, otherwise to the Home.
+        const nextScreen = !userData?.name ? 'SignUp' : 'Home';
+        successNavigate(nextScreen);
+      } catch (error) {
+        pushError(error);
+      } finally {
+        setIsAuthenticating(false);
+      }
+    },
+    [successNavigate, pushError, setAuthenticatedUser, usersCollection],
+  );
+
+  const handleNewUser = React.useCallback(
+    async ({ id, phoneNumber }: { id: string; phoneNumber: string }) => {
+      try {
+        await usersCollection.doc(id).set({
+          phoneNumber: phoneNumber,
+        });
+        setAuthenticatedUser({
+          id,
+          phoneNumber,
+          name: '',
+          profileImageUrl: '',
+        });
+        successNavigate('SignUp');
+      } catch (error) {
+        pushError(error);
+      } finally {
+        setIsAuthenticating(false);
+      }
+    },
+    [usersCollection, setAuthenticatedUser, successNavigate, pushError],
+  );
+
+  const handleSuccessOTPConfirmation = React.useCallback(
+    async ({ userId }: { userId: string }) => {
+      // Try to get the user from the app DB.
+      setIsAuthenticating(true);
+      const userDb = await usersCollection.doc(userId).get();
+      console.log('USER DB!!', userDb);
+      const { phone } = route.params;
+      // Check if the user is new in the auth DB or doesn't exist yet in the app DB.
+      if (!userDb.exists) {
+        // if so, create it in the app DB.
+        // At this point it was already created in the auth DB.
+        await handleNewUser({
+          id: userId,
+          phoneNumber: phone,
+        });
+      } else {
+        handleExistingUser({ id: userId });
+      }
+    },
+    [handleExistingUser, handleNewUser, route.params, usersCollection],
+  );
 
   const startFiniteAnimation = () => {
     animationRef.current?.play(110, 149);
@@ -138,33 +194,22 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
     animationRef.current?.play(60, 110);
   };
 
-  interface CreateUserArgs {
-    id: string;
-    phoneNumber: string;
-  }
-
-  const createUser = React.useCallback(
-    async ({ id, phoneNumber }: CreateUserArgs) => {
-      try {
-        await usersCollection.doc(id).set({
-          phoneNumber: phoneNumber,
-        });
-        setAuthenticatedUser({
-          id,
-          phoneNumber,
-          name: '',
-          profileImageUrl: '',
-        });
-        startFiniteAnimation();
-        setTimeout(() => {
-          navigation.navigate('SignUp');
-        }, 1500);
-      } catch (error) {
-        pushError(error);
+  React.useEffect(() => {
+    return auth().onAuthStateChanged((user) => {
+      if (!isAuthenticating && !authenticatedUser.id) {
+        if (user) {
+          handleSuccessOTPConfirmation({ userId: user.uid });
+        } else {
+          navigation.goBack();
+        }
       }
-    },
-    [navigation, pushError, usersCollection, setAuthenticatedUser],
-  );
+    });
+  }, [
+    handleSuccessOTPConfirmation,
+    isAuthenticating,
+    navigation,
+    authenticatedUser,
+  ]);
 
   /**
    * When mount, start the finite animation.
@@ -203,11 +248,11 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
           Please enter the OTP code we {'\n'} sent to you at{' '}
           {route.params.phone}
         </DescriptionText>
-        <OTPInput value={code} onChange={setCode} />
+        <OTPInput value={code} onChange={setCode} disabled={isAuthenticating} />
         <ConfirmOTPCode
           text="CONFIRM OTP CODE"
           onPress={confirmOTPCode}
-          disabled={code.length < 6 || isFetching}
+          disabled={code.length < 6 || isFetching || isAuthenticating}
         />
         <DescriptionText variant="small">
           Didn't you receive any code?
@@ -215,7 +260,9 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
         <ResendOTPCode
           text="RESEND NEW CODE"
           variant="transparent"
-          disabled={isFetching || otpConfirmationTimes === 0}
+          disabled={
+            isFetching || otpConfirmationTimes === 0 || isAuthenticating
+          }
           onPress={navigation.goBack}
         />
       </Container>

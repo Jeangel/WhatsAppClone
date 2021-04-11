@@ -6,9 +6,10 @@ import { useTheme } from '../../hooks';
 interface OTPInputProps {
   value: string;
   onChange: (value: string) => void;
+  disabled?: boolean;
 }
 
-export const OTPInput = ({ value, onChange }: OTPInputProps) => {
+export const OTPInput = ({ value, onChange, disabled }: OTPInputProps) => {
   const theme = useTheme();
   const styles = StyleSheet.create({
     inputFieldStyle: {
@@ -33,6 +34,7 @@ export const OTPInput = ({ value, onChange }: OTPInputProps) => {
       onCodeChanged={onChange}
       codeInputFieldStyle={styles.inputFieldStyle}
       codeInputHighlightStyle={styles.highlightedInputFieldStyle}
+      editable={!disabled}
     />
   );
 };
