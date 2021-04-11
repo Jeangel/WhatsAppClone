@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import auth from '@react-native-firebase/auth';
 import { Text } from '../../components/atoms/Text';
@@ -91,6 +91,7 @@ export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
   });
 
   const signInWithPhoneNumber = async () => {
+    Keyboard.dismiss();
     const formattedPhone = `+${country.callingCode} ${phone}`;
     try {
       showSpinner();

@@ -4,10 +4,13 @@ import { useAuthStore } from '../state/auth';
 
 export const Settings = () => {
   const { logout } = useAuthStore();
+  const handleLogout = () => {
+    logout();
+  };
   return (
     <View>
       <Text>Settings</Text>
-      <TouchableOpacity onPress={() => logout()}>
+      <TouchableOpacity onPress={handleLogout}>
         <Text>Logout</Text>
       </TouchableOpacity>
     </View>
