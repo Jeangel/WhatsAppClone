@@ -101,9 +101,9 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
     } catch (error) {
       pushError(error);
       setIsFetching(false);
+      setOTPConfirmationTimes(otpConfirmationTimes + 1);
     } finally {
       hideSpinner();
-      setOTPConfirmationTimes(otpConfirmationTimes + 1);
     }
   };
 
@@ -157,6 +157,9 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
 
   const handleSuccessOTPConfirmation = React.useCallback(async () => {
     // Try to get the user from the app DB.
+    if (!userId) {
+      return Promise.resolve();
+    }
     setIsAuthenticating(true);
     const userDb = await usersCollection.doc(userId).get();
     // Check if the user is new in the auth DB or doesn't exist yet in the app DB.
@@ -203,8 +206,6 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
           if (!userId) {
             setUserId(user.uid);
           }
-        } else {
-          navigation.goBack();
         }
       }
     });

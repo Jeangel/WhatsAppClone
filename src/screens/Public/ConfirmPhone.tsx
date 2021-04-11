@@ -71,8 +71,8 @@ export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
   const pushError = usePushError();
   const { showSpinner, hideSpinner } = useSpinner();
   const countdownSettings: { time: number; unit: OpUnitType } = __DEV__
-    ? { time: 30, unit: 'seconds' }
-    : { time: 10, unit: 'minutes' };
+    ? { time: 60, unit: 'seconds' }
+    : { time: 120, unit: 'seconds' };
   const countDownEnd = dayjs()
     .add(countdownSettings.time, countdownSettings.unit)
     .toString();
@@ -103,10 +103,17 @@ export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
       await startCountdown();
     } catch (error) {
       pushError(error.message);
+      console.log(error);
     } finally {
       hideSpinner();
     }
   };
+
+  React.useEffect(() => {
+    return () => {
+      stopCountdown();
+    };
+  }, [stopCountdown]);
 
   return (
     <ScreenContainer>
