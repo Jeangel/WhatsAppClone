@@ -49,7 +49,7 @@ const getShouldShowTabBar = (
   route: RouteProp<Record<string, object | undefined>, string>,
 ) => {
   const routeName = getFocusedRouteNameFromRoute(route);
-  const routesWithoutTabBar = ['Chat'];
+  const routesWithoutTabBar = ['Chat', 'AddContact'];
   if (routeName) {
     return !routesWithoutTabBar.includes(routeName);
   }
