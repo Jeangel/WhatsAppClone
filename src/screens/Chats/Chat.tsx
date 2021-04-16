@@ -2,17 +2,17 @@ import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { StackHeaderProps, StackNavigationProp } from '@react-navigation/stack';
 import styled from 'styled-components';
-import { Header } from '../components/molecules/Header';
-import { ChatStackParamList } from '../navigation/ChatsStackNav';
+import { Header } from '../../components/molecules/Header';
+import { ChatStackParamList } from '../../navigation/ChatsStackNav';
 // TODO: Create a separate folder with all the dummy data
-import { dummyData } from '../components/organisms/data';
-import { UserCard } from '../components/molecules/User/UserCard';
-import { capitalize } from '../util';
-import { Icon } from '../components/atoms/Icon';
+import { dummyData } from '../../components/organisms/data';
+import { UserCard } from '../../components/molecules/User/UserCard';
+import { capitalize } from '../../util';
+import { Icon } from '../../components/atoms/Icon';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
-import { ChatMessageBar } from '../components/organisms/Chat/ChatMessageBar';
-import { MessageBubble } from '../components/organisms/Chat/MessageBubble';
-import { messages as dummyMessages } from '../data/messages';
+import { ChatMessageBar } from '../../components/organisms/Chat/ChatMessageBar';
+import { MessageBubble } from '../../components/organisms/Chat/MessageBubble';
+import { messages as dummyMessages } from '../../data/messages';
 
 type ChatScreenNavigationProp = StackNavigationProp<ChatStackParamList, 'Chat'>;
 
@@ -69,7 +69,26 @@ interface ChatProps {
 }
 
 export const Chat = ({}: ChatProps) => {
+  // const { authenticatedUser } = useAuthStore();
   // const pubnub = usePubNub();
+
+  // React.useEffect(() => {
+  //   if (pubnub) {
+  //     pubnub.setUUID(authenticatedUser.id);
+  //     const listeners: Pubnub.ListenerParameters = {
+  //       message: (envelope) => {
+  //         console.log('ENVELOPE', envelope);
+  //       },
+  //     };
+  //     pubnub.addListener(listeners);
+  //     pubnub.subscribe({ channels: ['chat'] });
+  //     return () => {
+  //       pubnub.removeListener(listeners);
+  //       pubnub.unsubscribeAll();
+  //     };
+  //   }
+  // }, [authenticatedUser.id, pubnub]);
+
   const [messages, setMessages] = React.useState<IMessage[]>(dummyMessages);
   const handleOnSend = (newMessages: IMessage[]) => {
     console.log(newMessages, 'handleOnSend');

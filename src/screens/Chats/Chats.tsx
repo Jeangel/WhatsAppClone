@@ -2,11 +2,11 @@ import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { StackHeaderProps, StackNavigationProp } from '@react-navigation/stack';
 import styled from 'styled-components';
-import { Icon } from '../components/atoms/Icon';
-import { Header } from '../components/molecules/Header';
-import { StoriesList } from '../components/organisms/StoriesList';
-import { ChatList } from '../components/organisms/Chat/ChatList';
-import { ChatStackParamList } from '../navigation/ChatsStackNav';
+import { Icon } from '../../components/atoms/Icon';
+import { Header } from '../../components/molecules/Header';
+import { StoriesList } from '../../components/organisms/StoriesList';
+import { ChatList } from '../../components/organisms/Chat/ChatList';
+import { ChatStackParamList } from '../../navigation/ChatsStackNav';
 
 const Container = styled(View)`
   flex: 1;
