@@ -1,7 +1,13 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { View, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from 'react-native';
 import { Text } from '../../components/atoms/Text';
 import { Button } from '../../components/atoms/Button';
 import { TextInput } from '../../components/atoms/TextInput';
@@ -14,7 +20,7 @@ import { useSpinner, useDBUser } from '../../hooks';
 import { usePushError } from '../../state/error';
 
 const Container = styled(KeyboardAvoidingView)`
-  padding: 20px 40px;
+  padding: 20px;
   height: 100%;
   align-items: center;
   justify-content: center;
@@ -100,34 +106,38 @@ export const SignUp = ({ navigation }: SignUpProps) => {
   };
 
   return (
-    <ScreenContainer>
+    <ScreenContainer edges={['bottom']}>
       <Container behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <TitleContainer>
-          <Title variant="h1">One step away</Title>
-        </TitleContainer>
-        <IllustrationContainer>
-          <Illustration name="take_photo" />
-        </IllustrationContainer>
-        <DescriptionText>
-          We're almost there, to complete your profile, enter a few details
-          about you.
-        </DescriptionText>
-        <Label>Add a profile Image</Label>
-        <ProfileImageUploader
-          imageId={authenticatedUser?.id as string}
-          onStart={() => setWasImageUploaded(false)}
-          onComplete={onCompleteImageUpload}
-        />
-        <NameTextInput
-          placeholder={'Enter your name'}
-          value={name}
-          onChangeText={setName}
-        />
-        <StyledButton
-          text="Complete"
-          onPress={onCompleteSignUp}
-          disabled={!wasImageUploaded || !name}
-        />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <>
+            <TitleContainer>
+              <Title variant="h1">One step away</Title>
+            </TitleContainer>
+            <IllustrationContainer>
+              <Illustration name="take_photo" />
+            </IllustrationContainer>
+            <DescriptionText>
+              We're almost there, to complete your profile, enter a few details
+              about you.
+            </DescriptionText>
+            <Label>Add a profile Image</Label>
+            <ProfileImageUploader
+              imageId={authenticatedUser?.id as string}
+              onStart={() => setWasImageUploaded(false)}
+              onComplete={onCompleteImageUpload}
+            />
+            <NameTextInput
+              placeholder={'Enter your name'}
+              value={name}
+              onChangeText={setName}
+            />
+            <StyledButton
+              text="Complete"
+              onPress={onCompleteSignUp}
+              disabled={!wasImageUploaded || !name}
+            />
+          </>
+        </TouchableWithoutFeedback>
       </Container>
     </ScreenContainer>
   );
