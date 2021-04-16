@@ -44,12 +44,19 @@ const IllustrationContainer = styled(View)`
 
 const SendOTPButton = styled(Button)`
   margin-top: 40px;
-  align-self: center;
   width: 100%;
 `;
 
 const Countdown = styled(Text)`
   padding-top: 10px;
+`;
+
+const Form = styled(View)`
+  padding-left: 30px;
+  padding-right: 30px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 `;
 
 type ConfirmPhoneScreenNavigationProp = StackNavigationProp<
@@ -130,22 +137,24 @@ export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
         <IllustrationContainer>
           <Illustration name="send_letter" />
         </IllustrationContainer>
-        <CellphoneInput
-          onChangeCountry={setCountry}
-          country={country}
-          phone={phone}
-          onChangePhone={setPhone}
-        />
-        <SendOTPButton
-          text="SEND OTP CODE"
-          disabled={phone.length < 10 || !!countdown}
-          onPress={signInWithPhoneNumber}
-        />
-        {!!countdown && (
-          <Countdown variant="small" color={EColor.neutral60}>
-            {countdown} left to allow code resend
-          </Countdown>
-        )}
+        <Form>
+          <CellphoneInput
+            onChangeCountry={setCountry}
+            country={country}
+            phone={phone}
+            onChangePhone={setPhone}
+          />
+          <SendOTPButton
+            text="SEND OTP CODE"
+            disabled={phone.length < 10 || !!countdown}
+            onPress={signInWithPhoneNumber}
+          />
+          {!!countdown && (
+            <Countdown variant="small" color={EColor.neutral60}>
+              {countdown} left to allow code resend
+            </Countdown>
+          )}
+        </Form>
       </Container>
     </ScreenContainer>
   );

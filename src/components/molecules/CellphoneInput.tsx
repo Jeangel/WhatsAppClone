@@ -10,22 +10,6 @@ import { Icon } from '../atoms/Icon';
 import { Text } from '../atoms/Text';
 import { TextInput } from '../atoms/TextInput';
 
-interface CellphoneInputProps {
-  onChangePhone: (phone: string) => void;
-  onChangeCountry: ({
-    code,
-    callingCode,
-  }: {
-    code: string;
-    callingCode: string;
-  }) => void;
-  phone: string;
-  country: {
-    code: string;
-    callingCode: string;
-  };
-}
-
 const Row = styled(View)`
   flex-direction: row;
 `;
@@ -40,13 +24,16 @@ const PickerContainer = styled(TouchableOpacity)<{ borderColor: string }>`
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
   padding-left: 10px;
+  min-width: 120px;
+  width: 40%;
 `;
 
 const StyledInput = styled(TextInput)`
   border-width: 0.5px;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  width: 50%;
+  max-height: 38px;
+  width: 60%;
   color: ${({ theme }) => theme.colors.neutral40};
 `;
 
@@ -54,11 +41,29 @@ const CountryCallingCode = styled(Text)`
   padding-left: 10px;
 `;
 
+interface CellphoneInputProps {
+  onChangePhone: (phone: string) => void;
+  onChangeCountry: ({
+    code,
+    callingCode,
+  }: {
+    code: string;
+    callingCode: string;
+  }) => void;
+  phone: string;
+  country: {
+    code: string;
+    callingCode: string;
+  };
+  placeholder?: string;
+}
+
 export const CellphoneInput = ({
   onChangePhone,
   onChangeCountry,
   phone,
   country,
+  placeholder = 'Enter Cellphone Number',
 }: CellphoneInputProps) => {
   const theme = useTheme();
   const [isVisible, setIsVisible] = React.useState<boolean>(false);
@@ -93,7 +98,7 @@ export const CellphoneInput = ({
         )}
       </PickerContainer>
       <StyledInput
-        placeholder="Enter Cellphone Number"
+        placeholder={placeholder}
         keyboardType="decimal-pad"
         value={phone}
         onChangeText={(text) => onChangePhone(text.replace(/\D/g, ''))}

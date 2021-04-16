@@ -12,7 +12,6 @@ const StyledInput = styled(RNTextInput)<{ borderColor: string }>`
   padding: 10px;
   background-color: ${({ theme }) => theme.colors.surface};
   border-radius: 10px;
-  width: 100%;
   max-height: 50px;
   flex-direction: row;
   align-items: center;

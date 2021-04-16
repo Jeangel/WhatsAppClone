@@ -147,6 +147,7 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
     try {
       await usersCollection.doc(userId).set({
         phoneNumber: phone,
+        createdAt: new Date(),
       });
       await successNavigate('SignUp');
     } catch (error) {

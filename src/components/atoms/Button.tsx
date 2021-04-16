@@ -38,7 +38,6 @@ const Container = styled(TouchableOpacity)<{ backgroundColor: EColor }>`
   background-color: ${({ backgroundColor, theme }) =>
     theme.colors[backgroundColor]};
   align-items: center;
-  align-self: flex-start;
   justify-content: center;
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
 `;
