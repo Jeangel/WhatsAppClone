@@ -1,3 +1,4 @@
+import { useBoxModalsStore } from './boxModal';
 import create from 'zustand';
 
 type ErrorState = {
@@ -21,5 +22,19 @@ export const useErrorStore = create<ErrorState>((set, get) => ({
 export const selectErrors = (state: ErrorState) => state.errors;
 
 export const useErrors = () => useErrorStore(selectErrors);
-export const usePushError = () =>
-  useErrorStore((state: ErrorState) => state.pushError);
+export const usePushError = () => {
+  const { pushMessage } = useBoxModalsStore();
+  const [pushErrorToStore, removeErrorFromStore] = useErrorStore((state) => [
+    state.pushError,
+    state.removeError,
+  ]);
+  const pushError = (error: Error | string) => {
+    pushMessage({
+      content: typeof error === 'string' ? error : error.message,
+      variant: 'error',
+      onClose: () => removeErrorFromStore(error),
+    });
+    pushErrorToStore(error);
+  };
+  return pushError;
+};

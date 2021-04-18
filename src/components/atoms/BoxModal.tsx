@@ -14,11 +14,6 @@ interface BoxModalProps {
   children: React.ReactNode;
 }
 
-export enum EBoxModalVariant {
-  error = 'error',
-  info = 'info',
-}
-
 export const BoxModal = ({ isVisible, children }: BoxModalProps) => {
   return (
     <View>
