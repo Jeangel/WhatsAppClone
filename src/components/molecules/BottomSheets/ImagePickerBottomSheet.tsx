@@ -43,10 +43,10 @@ interface OptionsProps {
 const resizeImage = (image: ImagePickerResponse) => {
   return ImageResizer.createResizedImage(
     image.uri as string,
-    640,
-    480,
+    600,
+    440,
     'JPEG',
-    100,
+    70,
   ).then((e) => {
     return e;
   });
