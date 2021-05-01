@@ -9,6 +9,7 @@ import { Icon } from '../../atoms/Icon';
 import { Text } from '../../atoms/Text';
 import { Modalize } from 'react-native-modalize';
 import { usePushError } from '../../../state/error';
+import ImageResizer from 'react-native-image-resizer';
 
 const OptionContainer = styled(TouchableOpacity)`
   border: 0.5px solid ${({ theme }) => theme.colors.neutral60};
@@ -39,11 +40,25 @@ interface OptionsProps {
   onError?: (error: Error) => void;
 }
 
+const resizeImage = (image: ImagePickerResponse) => {
+  return ImageResizer.createResizedImage(
+    image.uri as string,
+    640,
+    480,
+    'JPEG',
+    100,
+  ).then((e) => {
+    return e;
+  });
+};
+
 const Options = ({ onImageSelected, onError }: OptionsProps) => {
   const handleOnPickFromGallery = () => {
     const onFinish = (response: ImagePickerResponse) => {
       if (response.uri) {
-        onImageSelected(response.uri);
+        resizeImage(response).then((image) => {
+          onImageSelected(image.uri);
+        });
       } else {
         if (typeof onError === 'function') {
           onError(
