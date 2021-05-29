@@ -1,10 +1,13 @@
 import * as React from 'react';
-import { View, Image } from 'react-native';
+import { View, StyleProp, ImageStyle } from 'react-native';
 import styled from 'styled-components';
+import { Circle } from 'react-native-progress';
+import Image from 'react-native-image-progress';
+import { useTheme } from '../../../hooks';
 
 interface UserImageProps {
   url: string;
-  status: string;
+  status?: string;
   size?: number;
 }
 
@@ -16,7 +19,6 @@ const Container = styled(View)`
 const ProfileImage = styled(Image)<{ size: number }>`
   height: ${({ size }) => size}px;
   width: ${({ size }) => size}px;
-  border-radius: 100px;
 `;
 
 const ImageContainer = styled(View)`
@@ -44,11 +46,26 @@ const Status = styled(View)<{ status: string; size: number }>`
 `;
 
 export const UserImage = ({ url, status, size = 60 }: UserImageProps) => {
+  const theme = useTheme();
+
+  const imageStyle: StyleProp<ImageStyle> = {
+    borderRadius: 100,
+  };
+
   return (
     <Container>
       <ImageContainer>
-        <ProfileImage source={{ uri: url }} size={size} />
-        <Status status={status} size={size * 0.2} />
+        <ProfileImage
+          size={size}
+          source={{ uri: url }}
+          imageStyle={imageStyle}
+          indicator={Circle}
+          indicatorProps={{
+            color: theme.colors.primary,
+            style: { height: size, width: size },
+          }}
+        />
+        {!!status && <Status status={status} size={size * 0.2} />}
       </ImageContainer>
     </Container>
   );
