@@ -16,7 +16,7 @@ import { PublicStackParamList } from '../../navigation/PublicStackNav';
 import { ScreenContainer } from '../../components/atoms/ScreenContainer';
 import { ProfileImageUploader } from '../../components/molecules/ProfileImageUploader';
 import { useAuthStore } from '../../state/auth';
-import { useDBUser } from '../../hooks';
+import useUsers from '../../hooks/useUsers';
 import useSpinner from '../../hooks/useSpinner';
 import { usePushError } from '../../state/error';
 
@@ -77,7 +77,7 @@ export const SignUp = ({ navigation }: SignUpProps) => {
   const [profileImageUrl, setProfileImageUrl] = React.useState('');
   const [wasImageUploaded, setWasImageUploaded] = React.useState(false);
   const { authenticatedUser, updateAuthenticatedUser } = useAuthStore();
-  const user = useDBUser(authenticatedUser?.id as string);
+  const { updateUser } = useUsers();
   const pushError = usePushError();
   const { showSpinner, hideSpinner } = useSpinner();
 
@@ -88,11 +88,7 @@ export const SignUp = ({ navigation }: SignUpProps) => {
 
   const onCompleteSignUp = () => {
     showSpinner();
-    user
-      .update({
-        name,
-        profileImageUrl,
-      })
+    updateUser(authenticatedUser?.id as string, { name, profileImageUrl })
       .then(goHome)
       .catch(pushError)
       .finally(hideSpinner);
