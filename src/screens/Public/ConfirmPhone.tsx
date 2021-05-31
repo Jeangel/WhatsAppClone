@@ -136,7 +136,7 @@ export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
           know you're real.
         </DescriptionText>
         <IllustrationContainer>
-          <Illustration name="send_letter" />
+          <Illustration name="send-letter" />
         </IllustrationContainer>
         <Form>
           <CellphoneInput

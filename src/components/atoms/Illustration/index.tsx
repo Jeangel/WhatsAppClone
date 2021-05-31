@@ -4,6 +4,7 @@ import { Chatting } from './Chatting';
 import { SendLetter } from './SendLetter';
 import { TakePhoto } from './TakePhoto';
 import { Welcome } from './Welcome';
+import { NoChats } from './NoChats';
 
 interface IllustrationProps {
   name: string;
@@ -15,12 +16,14 @@ export const Illustration = ({ name }: IllustrationProps) => {
       return <Welcome />;
     case 'chatting':
       return <Chatting />;
-    case 'send_letter':
+    case 'send-letter':
       return <SendLetter />;
-    case 'take_photo':
+    case 'take-photo':
       return <TakePhoto />;
-    case 'add_contact':
+    case 'add-contact':
       return <NewContact />;
+    case 'no-chats':
+      return <NoChats />;
     default:
       return <React.Fragment />;
   }

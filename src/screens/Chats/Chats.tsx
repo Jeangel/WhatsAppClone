@@ -20,14 +20,31 @@ const StoryContainer = styled(View)`
 `;
 
 export const ChatsHeader = (props: StackHeaderProps) => {
+  const { navigation } = props;
   return (
     <Header {...props} title="Chats">
-      <TouchableOpacity onPress={() => {}}>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('AddContact');
+        }}>
         <Icon name="add-people" size={35} color={'primary'} />
       </TouchableOpacity>
     </Header>
   );
 };
+
+const ContactsButton = styled(TouchableOpacity)`
+  height: 60px;
+  width: 60px;
+  border-radius: 60px;
+  background-color: ${({ theme }) => theme.colors.primary};
+  position: absolute;
+  bottom: 2%;
+  right: 2%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 type ChatScreenNavigationProp = StackNavigationProp<
   ChatStackParamList,
@@ -42,6 +59,11 @@ export const Chats = ({ navigation }: ChatsProps) => {
   const onChatPress = (chatId: string) => {
     navigation.navigate('Chat', { chatId });
   };
+
+  const onContactListPress = () => {
+    navigation.navigate('ContactList');
+  };
+
   const onChatRemove = () => {};
   return (
     <Container>
@@ -49,6 +71,9 @@ export const Chats = ({ navigation }: ChatsProps) => {
         <StoriesList />
       </StoryContainer>
       <ChatList onChatPress={onChatPress} onChatRemove={onChatRemove} />
+      <ContactsButton onPress={onContactListPress}>
+        <Icon name="user-agenda" size={28} color={'white'} />
+      </ContactsButton>
     </Container>
   );
 };

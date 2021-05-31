@@ -120,7 +120,7 @@ export const AddContact = ({ navigation }: AddContactProps) => {
           <>
             <Section>
               <Title variant="h1">Adding new Contact</Title>
-              <Illustration name="add_contact" />
+              <Illustration name="add-contact" />
             </Section>
             <Form>
               <NameInput

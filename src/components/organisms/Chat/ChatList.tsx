@@ -4,10 +4,18 @@ import styled from 'styled-components';
 import { ChatItem } from '../../molecules/Chat/ChatItem';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { Icon } from '../../atoms/Icon';
-import { dummyData } from '../data';
+import { Illustration } from '../../atoms/Illustration';
+import { Text } from '../../atoms/Text';
+import { EColor } from '../../../theme';
 
 const Container = styled(View)`
   flex: 1;
+`;
+
+const EmptyViewContainer = styled(View)`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
 `;
 
 const RemoveItemButton = styled(TouchableOpacity)`
@@ -21,6 +29,10 @@ const RemoveItemContainer = styled(Animated.View)`
   flex: 1;
   width: 18%;
   background-color: ${({ theme }) => theme.colors.primary};
+`;
+
+const EmptyViewTitle = styled(Text)`
+  margin-bottom: 50px;
 `;
 
 const RemoveItem = ({
@@ -63,20 +75,28 @@ interface ChatListProps {
 export const ChatList = ({ onChatPress, onChatRemove }: ChatListProps) => {
   const opacity = React.useRef(new Animated.Value(1)).current;
   opacity.interpolate({ inputRange: [0, 75], outputRange: [0, 1] });
+  const contentContainerStyle = { flex: 1 };
 
   return (
     <Container>
       <SwipeListView
-        data={dummyData}
+        data={[]}
+        contentContainerStyle={contentContainerStyle}
+        ListEmptyComponent={
+          <EmptyViewContainer>
+            <EmptyViewTitle variant="h2" color={EColor.neutral40}>
+              You don't have any chats yet.
+            </EmptyViewTitle>
+            <Illustration name="no-chats" />
+          </EmptyViewContainer>
+        }
         showsVerticalScrollIndicator={false}
         keyExtractor={({ id }) => id}
         renderItem={({ item }) => (
           <ChatItem data={item} onPress={onChatPress} />
         )}
         leftOpenValue={75}
-        renderHiddenItem={({ item }) => (
-          <RemoveItem id={item.id} onPress={onChatRemove} />
-        )}
+        renderHiddenItem={({}) => <RemoveItem id={''} onPress={onChatRemove} />}
       />
     </Container>
   );

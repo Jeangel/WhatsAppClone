@@ -111,7 +111,7 @@ export const SignUp = ({ navigation }: SignUpProps) => {
               <Title variant="h1">One step away</Title>
             </TitleContainer>
             <IllustrationContainer>
-              <Illustration name="take_photo" />
+              <Illustration name="take-photo" />
             </IllustrationContainer>
             <DescriptionText>
               We're almost there, to complete your profile, enter a few details
