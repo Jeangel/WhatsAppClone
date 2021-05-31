@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import styled from 'styled-components';
 import { Text } from '../../atoms/Text';
 import { UserImage } from './UserImage';
-import { User } from '../../../app/User';
+import { IUser } from '../../../app/User';
 
 const Container = styled(View)`
   flex-direction: row;
@@ -23,7 +23,7 @@ const UserName = styled(Text)`
 `;
 
 interface UserCardProps {
-  user: User;
+  user: Pick<IUser, 'id' | 'name' | 'status' | 'profileImageUrl'>;
   description: string;
   size?: number;
 }

@@ -13,6 +13,12 @@ export class Chat {
   }
 }
 
+export interface IChat {
+  id: string;
+  usersIds: string[];
+  messages: Message[];
+}
+
 export interface IChatItem {
   id: string;
   lastMessage: Message;

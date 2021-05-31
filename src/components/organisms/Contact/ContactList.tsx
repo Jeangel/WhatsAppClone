@@ -11,7 +11,7 @@ import { useNavigation } from '@react-navigation/core';
 import useSpinner from '../../../hooks/useSpinner';
 import { useAuthStore } from '../../../state/auth';
 import { UserCard } from '../../../components/molecules/User/UserCard';
-import { UserDB } from '../../../app/User';
+import { IUser } from '../../../app/User';
 import useUsers from '../../../hooks/useUsers';
 
 const Container = styled(View)`
@@ -24,7 +24,7 @@ const Separator = styled(View)`
 `;
 
 export const ContactList = () => {
-  const [contacts, setContacts] = useState<UserDB[]>([]);
+  const [contacts, setContacts] = useState<IUser[]>([]);
   const { getUserById, getUsersByIdIn } = useUsers();
   const { authenticatedUser } = useAuthStore();
   const { showSpinner, hideSpinner } = useSpinner();
@@ -46,9 +46,10 @@ export const ContactList = () => {
     getContacts();
   }, [getContacts]);
 
-  const renderItem = ({ item }: ListRenderItemInfo<UserDB>) => {
+  const renderItem = ({ item }: ListRenderItemInfo<IUser>) => {
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Chat', { chatId: item.id })}>
         <UserCard
           user={{
             id: item.id,
@@ -62,7 +63,7 @@ export const ContactList = () => {
     );
   };
 
-  const keyExtractor = (contact: UserDB, index: number) =>
+  const keyExtractor = (contact: IUser, index: number) =>
     `contact-${contact.id}-${index}`;
 
   return (
