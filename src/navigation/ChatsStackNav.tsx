@@ -3,11 +3,13 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Chats, ChatsHeader } from '../screens/Chats/Chats';
 import { Chat, ChatHeader } from '../screens/Chats/Chat';
 import { AddContact, AddContactHeader } from '../screens/Chats/AddContact';
+import { ContactList, ContactListHeader } from '../screens/Chats/ContactList';
 
 export type ChatStackParamList = {
   Chats: undefined;
   Chat: { chatId: string } | undefined;
   AddContact: undefined;
+  ContactList: undefined;
 };
 
 const ChatsStack = createStackNavigator<ChatStackParamList>();
@@ -32,6 +34,11 @@ export const ChatsStackNav = () => {
           header: AddContactHeader,
           headerTransparent: true,
         }}
+      />
+      <ChatsStack.Screen
+        name="ContactList"
+        component={ContactList}
+        options={{ header: ContactListHeader }}
       />
     </ChatsStack.Navigator>
   );
