@@ -1,11 +1,11 @@
+import { IUser } from './../app/User';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
-import { AuthenticatedUser } from '../app/AuthenticatedUser';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type AuthStore = {
-  authenticatedUser: AuthenticatedUser;
-  setAuthenticatedUser: (authenticatedUser: AuthenticatedUser) => void;
+  authenticatedUser: IUser;
+  setAuthenticatedUser: (authenticatedUser: IUser) => void;
   updateAuthenticatedUser: (updates: {
     name?: string;
     phoneNumber?: string;
@@ -14,15 +14,19 @@ type AuthStore = {
   logout: () => void;
 };
 
+const initialState = {
+  id: '',
+  name: '',
+  phoneNumber: '',
+  profileImageUrl: '',
+  contacts: [],
+  createdAt: new Date(),
+};
+
 export const useAuthStore = create<AuthStore>(
   persist(
     (set) => ({
-      authenticatedUser: {
-        id: '',
-        name: '',
-        phoneNumber: '',
-        profileImageUrl: '',
-      },
+      authenticatedUser: initialState,
       setAuthenticatedUser: (authenticatedUser) => {
         set(() => ({ authenticatedUser }));
       },
@@ -41,12 +45,7 @@ export const useAuthStore = create<AuthStore>(
         }));
       },
       logout: () => {
-        const authenticatedUser = {
-          id: '',
-          name: '',
-          phoneNumber: '',
-          profileImageUrl: '',
-        };
+        const authenticatedUser = initialState;
         set(() => ({ authenticatedUser }));
       },
     }),
