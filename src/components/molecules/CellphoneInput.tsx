@@ -5,7 +5,7 @@ import CountryPicker, {
   CountryCode,
 } from 'react-native-country-picker-modal';
 import styled from 'styled-components';
-import { useTheme } from '../../hooks';
+import useTheme from '../../hooks/useTheme';
 import { Icon } from '../atoms/Icon';
 import { Text } from '../atoms/Text';
 import { TextInput } from '../atoms/TextInput';

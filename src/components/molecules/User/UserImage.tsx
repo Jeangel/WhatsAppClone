@@ -3,7 +3,7 @@ import { View, StyleProp, ImageStyle } from 'react-native';
 import styled from 'styled-components';
 import { Circle } from 'react-native-progress';
 import Image from 'react-native-image-progress';
-import { useTheme } from '../../../hooks';
+import useTheme from '../../../hooks/useTheme';
 
 interface UserImageProps {
   url: string;

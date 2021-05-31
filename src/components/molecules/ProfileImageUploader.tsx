@@ -2,7 +2,8 @@ import React from 'react';
 import { Image, TouchableOpacity } from 'react-native';
 import styled from 'styled-components';
 import { Bar } from 'react-native-progress';
-import { useTheme, useUploadImage } from '../../hooks';
+import { useUploadImage } from '../../hooks';
+import useTheme from '../../hooks/useTheme';
 import { usePushError } from '../../state/error';
 import { ImagePickerBottomSheet } from './BottomSheets/ImagePickerBottomSheet';
 

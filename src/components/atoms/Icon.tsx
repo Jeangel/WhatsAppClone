@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Svg, Path, G, Circle } from 'react-native-svg';
-import { useTheme } from '../../hooks';
+import useTheme from '../../hooks/useTheme';
 import { EColor } from '../../theme';
 
 interface IconProps {

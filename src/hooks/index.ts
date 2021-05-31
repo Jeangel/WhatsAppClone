@@ -1,10 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
-import * as React from 'react';
-import { ThemeContext } from '../contexts/ThemeContext';
 import firebaseStorage from '@react-native-firebase/storage';
 import { USERS_COLLECTION } from '../config/database';
-
-export const useTheme = () => React.useContext(ThemeContext).theme;
 
 interface useUploadImageArgs {
   onProgress: (progress: number) => void;

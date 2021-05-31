@@ -10,7 +10,7 @@ import { ChatsStackNav } from './ChatsStackNav';
 import { CallsStackNav } from './CallsStackNav';
 import { SettingsStackNav } from './SettingsStackNav';
 import { Icon } from '../components/atoms/Icon';
-import { useTheme } from '../hooks';
+import useTheme from '../hooks/useTheme';
 import { EColor } from '../theme';
 interface RenderTabBarIconProps {
   color: EColor;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Svg, Path, Defs, Rect, G, ClipPath } from 'react-native-svg';
-import { useTheme } from '../../../hooks';
+import useTheme from '../../../hooks/useTheme';
 
 export const Welcome = () => {
   const theme = useTheme();

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useTheme } from '../../../hooks';
+import useTheme from '../../../hooks/useTheme';
 import { ImageWithSegmentedBorder } from '../ImageWithSegmentedBorder';
 import { StoryItem } from './StoryItem';
 

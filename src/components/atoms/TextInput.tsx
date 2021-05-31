@@ -6,7 +6,7 @@ import {
   TextInputProps,
 } from 'react-native';
 import styled from 'styled-components';
-import { useTheme } from '../../hooks';
+import useTheme from '../../hooks/useTheme';
 
 const StyledInput = styled(RNTextInput)<{ borderColor: string }>`
   padding: 10px;

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { BubbleProps, IMessage, Bubble } from 'react-native-gifted-chat';
 import { ITheme } from '../../../theme';
-import { useTheme } from '../../../hooks';
+import useTheme from '../../../hooks/useTheme';
 
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
-import { useTheme } from '../../hooks';
+import useTheme from '../../hooks/useTheme';
 
 interface OTPInputProps {
   value: string;
