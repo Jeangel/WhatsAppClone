@@ -48,9 +48,9 @@ const useUsers = () => {
   const updateUser = async (
     id: string,
     update: { [key in keyof Omit<IUserDb, 'id' | 'contacts'>]?: any },
-    options: { createIfNotExists?: boolean },
+    options?: { createIfNotExists?: boolean },
   ) => {
-    if (options.createIfNotExists) {
+    if (options?.createIfNotExists) {
       return usersCollection.doc(id).set(update);
     }
     return usersCollection.doc(id).update(update);
