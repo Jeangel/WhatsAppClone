@@ -16,7 +16,8 @@ import { PublicStackParamList } from '../../navigation/PublicStackNav';
 import { ScreenContainer } from '../../components/atoms/ScreenContainer';
 import { ProfileImageUploader } from '../../components/molecules/ProfileImageUploader';
 import { useAuthStore } from '../../state/auth';
-import { useSpinner, useDBUser } from '../../hooks';
+import { useDBUser } from '../../hooks';
+import useSpinner from '../../hooks/useSpinner';
 import { usePushError } from '../../state/error';
 
 const Container = styled(KeyboardAvoidingView)`
