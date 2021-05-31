@@ -1,18 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, FlatList, ListRenderItemInfo } from 'react-native';
-import { StackHeaderProps } from '@react-navigation/stack';
+import {
+  View,
+  FlatList,
+  ListRenderItemInfo,
+  TouchableOpacity,
+} from 'react-native';
 import styled from 'styled-components';
-import { Header } from '../../components/molecules/Header';
-import useSpinner from '../../hooks/useSpinner';
-import { useAuthStore } from '../../state/auth';
-import { UserCard } from '../../components/molecules/User/UserCard';
-import { UserDB } from '../../app/User';
-import useUsers from '../../hooks/useUsers';
+import { useNavigation } from '@react-navigation/core';
+import useSpinner from '../../../hooks/useSpinner';
+import { useAuthStore } from '../../../state/auth';
+import { UserCard } from '../../../components/molecules/User/UserCard';
+import { UserDB } from '../../../app/User';
+import useUsers from '../../../hooks/useUsers';
 
 const Container = styled(View)`
   flex: 1;
-  background-color: ${({ theme }) => theme.colors.surface};
 `;
 
 const Separator = styled(View)`
@@ -20,15 +23,12 @@ const Separator = styled(View)`
   margin-bottom: 10px;
 `;
 
-export const ContactListHeader = (props: StackHeaderProps) => {
-  return <Header {...props} showBackButton removeBorders />;
-};
-
 export const ContactList = () => {
   const [contacts, setContacts] = useState<UserDB[]>([]);
   const { getUserById, getUsersByIdIn } = useUsers();
   const { authenticatedUser } = useAuthStore();
   const { showSpinner, hideSpinner } = useSpinner();
+  const navigation = useNavigation();
 
   const getContacts = useCallback(async () => {
     showSpinner();
@@ -48,7 +48,7 @@ export const ContactList = () => {
 
   const renderItem = ({ item }: ListRenderItemInfo<UserDB>) => {
     return (
-      <View>
+      <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
         <UserCard
           user={{
             id: item.id,
@@ -58,7 +58,7 @@ export const ContactList = () => {
           }}
           description={'Last time online, yesterday.'}
         />
-      </View>
+      </TouchableOpacity>
     );
   };
 

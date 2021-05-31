@@ -61,7 +61,7 @@ export const Chats = ({ navigation }: ChatsProps) => {
   };
 
   const onContactListPress = () => {
-    navigation.navigate('ContactList');
+    navigation.navigate('Contacts');
   };
 
   const onChatRemove = () => {};

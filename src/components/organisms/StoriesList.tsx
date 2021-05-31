@@ -103,18 +103,19 @@ export const StoriesList = () => {
   return (
     <View>
       <FlatList
-        data={dummyData}
+        data={[]}
         horizontal
         showsHorizontalScrollIndicator={false}
         ListHeaderComponent={ListHeaderComponent}
         ItemSeparatorComponent={Separator}
         contentContainerStyle={styles.contentContainerStyle}
-        keyExtractor={({ user }) => user.id}
-        renderItem={({ item }) => (
-          <UserStoryItem
-            user={item.user}
-            uploadedStoryAmount={item.uploadedStoryAmount}
-          />
+        keyExtractor={({ user }) => user}
+        renderItem={({}) => (
+          // <UserStoryItem
+          //   user={item.user}
+          //   uploadedStoryAmount={item.uploadedStoryAmount}
+          // />
+          <></>
         )}
       />
     </View>
