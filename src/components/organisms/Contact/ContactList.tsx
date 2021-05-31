@@ -13,6 +13,7 @@ import { useAuthStore } from '../../../state/auth';
 import { UserCard } from '../../../components/molecules/User/UserCard';
 import { IUser } from '../../../app/User';
 import useUsers from '../../../hooks/useUsers';
+import { createOneToOneChatId } from '../../../util';
 
 const Container = styled(View)`
   flex: 1;
@@ -42,14 +43,19 @@ export const ContactList = () => {
     hideSpinner();
   }, [authenticatedUser.id]);
 
+  const onItemPress = (contactId: string) => {
+    navigation.navigate('Chat', {
+      chatId: createOneToOneChatId([contactId, authenticatedUser.id]),
+    });
+  };
+
   useEffect(() => {
     getContacts();
   }, [getContacts]);
 
   const renderItem = ({ item }: ListRenderItemInfo<IUser>) => {
     return (
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Chat', { chatId: item.id })}>
+      <TouchableOpacity onPress={() => onItemPress(item.id)}>
         <UserCard
           user={{
             id: item.id,
