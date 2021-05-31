@@ -1,22 +1,24 @@
-import { Contact } from './Contact';
+import { IContact } from './Contact';
 
-export class User {
-  id!: string;
-  name!: string;
-  createdAt!: Date;
-  phoneNumber!: string;
-  profileImageUrl!: string;
-  contacts!: Contact[];
-  constructor() {}
+/**
+ * This interface represents a user in a general way (not in a chat context).
+ */
+export interface IUser {
+  id: string;
+  name: string;
+  createdAt: Date;
+  phoneNumber: string;
+  profileImageUrl: string;
+  contacts: IContact[];
 }
 
-export class ChatUser {
-  id!: string;
-  name!: string;
-  profileImageUrl!: string;
-  chat!: IChat;
-  status!: string;
+/**
+ * This interface represents a user in a chat context
+ */
+export interface IChatUser {
+  id: string;
+  name: string;
+  profileImageUrl: string;
+  chat: IChat;
+  status: string;
 }
-
-export interface IUser extends User {}
-export interface IChatUser extends ChatUser {}

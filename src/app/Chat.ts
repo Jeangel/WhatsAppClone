@@ -1,9 +1,9 @@
 import { Message } from './Message';
-import { User } from './User';
+import { IChatUser } from './User';
 
 export class Chat {
   id!: string;
-  users!: User[];
+  users!: IChatUser[];
   messages!: Message[];
   constructor() {}
 
@@ -22,6 +22,6 @@ export interface IChat {
 export interface IChatItem {
   id: string;
   lastMessage: Message;
-  author: User;
+  author: IChatUser;
   unreadMessages: number;
 }

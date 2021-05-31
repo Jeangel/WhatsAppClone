@@ -1,4 +1,4 @@
-import { Contact } from './../app/Contact';
+import { IContact } from './../app/Contact';
 import firestore, { firebase } from '@react-native-firebase/firestore';
 import { IUser } from '../app/User';
 import { USERS_COLLECTION } from '../config/database';
@@ -56,7 +56,7 @@ const useUsers = () => {
     return usersCollection.doc(id).update(update);
   };
 
-  const addContact = async (id: string, contact: Contact) => {
+  const addContact = async (id: string, contact: IContact) => {
     await usersCollection.doc(id).update({
       contacts: firebase.firestore.FieldValue.arrayUnion(contact),
     });
