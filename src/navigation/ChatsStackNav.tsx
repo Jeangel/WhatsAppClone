@@ -7,7 +7,7 @@ import { Contacts, ContactsHeader } from '../screens/Chats/Contacts';
 
 export type ChatStackParamList = {
   Chats: undefined;
-  Chat: { chatId: string } | undefined;
+  Chat: { chatId: string };
   AddContact: undefined;
   Contacts: undefined;
 };

@@ -63,6 +63,7 @@ export const UserImage = ({ url, status, size = 60 }: UserImageProps) => {
           indicatorProps={{
             color: theme.colors.primary,
             style: { height: size, width: size },
+            indeterminate: true,
           }}
         />
         {!!status && <Status status={status} size={size * 0.2} />}
