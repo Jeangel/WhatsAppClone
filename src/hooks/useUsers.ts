@@ -40,10 +40,19 @@ const useUsers = () => {
     }
   };
 
+  const getUserExists = async (id: string) => {
+    const userDb = await usersCollection.doc(id).get();
+    return userDb.exists;
+  };
+
   const updateUser = async (
     id: string,
     update: { [key in keyof Omit<IUserDb, 'id' | 'contacts'>]?: any },
+    options: { createIfNotExists?: boolean },
   ) => {
+    if (options.createIfNotExists) {
+      return usersCollection.doc(id).set(update);
+    }
     return usersCollection.doc(id).update(update);
   };
 
@@ -59,6 +68,7 @@ const useUsers = () => {
     updateUser,
     addContact,
     getUsersByIdIn,
+    getUserExists,
   };
 };
 

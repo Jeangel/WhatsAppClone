@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import LottieView from 'lottie-react-native';
 import { RouteProp } from '@react-navigation/core';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useUsersCollection } from '../../hooks';
 import useSpinner from '../../hooks/useSpinner';
 import { useAuthStore } from '../../state/auth';
 import { usePushError } from '../../state/error';
@@ -14,6 +13,7 @@ import { OTPInput } from '../../components/molecules/OTPInput';
 import { PublicStackParamList } from '../../navigation/PublicStackNav';
 import { ScreenContainer } from '../../components/atoms/ScreenContainer';
 import auth from '@react-native-firebase/auth';
+import useUsers from '../../hooks/useUsers';
 
 type ConfirmOTPScreenNavigationProp = StackNavigationProp<
   PublicStackParamList,
@@ -84,7 +84,7 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
   const { showSpinner, hideSpinner } = useSpinner();
   const { setAuthenticatedUser, authenticatedUser } = useAuthStore();
   const pushError = usePushError();
-  const usersCollection = useUsersCollection();
+  const { getUserById, updateUser, getUserExists } = useUsers();
   const { phone, confirmation } = route.params;
 
   /**
@@ -114,48 +114,47 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
   const successNavigate = React.useCallback(
     async (nextRoute: keyof PublicStackParamList) => {
       startFiniteAnimation();
-      const userDb = await usersCollection.doc(userId).get();
-      const userData = userDb.data();
+      const user = await getUserById(userId);
       const timeout = setTimeout(() => {
         setAuthenticatedUser({
           id: userId,
-          name: userData?.name,
-          profileImageUrl: userData?.profileImageUrl,
+          name: user.name,
+          profileImageUrl: user.profileImageUrl,
           phoneNumber: phone,
         });
         navigation.navigate(nextRoute);
       }, 1500);
       return () => clearTimeout(timeout);
     },
-    [navigation, phone, setAuthenticatedUser, userId, usersCollection],
+    [getUserById, navigation, phone, setAuthenticatedUser, userId],
   );
 
   const handleExistingUser = React.useCallback(async () => {
     try {
-      const userDb = await usersCollection.doc(userId).get();
-      const userData = userDb.data();
+      const user = await getUserById(userId);
       // if the user exists in the app DB but doesn't have name
       // take them to the SignUp screen, otherwise to the Home.
-      const nextScreen = !userData?.name ? 'SignUp' : 'Home';
+      const nextScreen = !user.name ? 'SignUp' : 'Home';
       await successNavigate(nextScreen);
     } catch (error) {
       pushError(error);
       setIsAuthenticating(false);
     }
-  }, [usersCollection, userId, successNavigate, pushError]);
+  }, [getUserById, userId, successNavigate, pushError]);
 
   const handleNewUser = React.useCallback(async () => {
     try {
-      await usersCollection.doc(userId).set({
-        phoneNumber: phone,
-        createdAt: new Date(),
-      });
+      await updateUser(
+        userId,
+        { phoneNumber: phone, createdAt: new Date() },
+        { createIfNotExists: true },
+      );
       await successNavigate('SignUp');
     } catch (error) {
       pushError(error);
       setIsAuthenticating(false);
     }
-  }, [usersCollection, userId, phone, successNavigate, pushError]);
+  }, [updateUser, userId, phone, successNavigate, pushError]);
 
   const handleSuccessOTPConfirmation = React.useCallback(async () => {
     // Try to get the user from the app DB.
@@ -163,16 +162,16 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
       return Promise.resolve();
     }
     setIsAuthenticating(true);
-    const userDb = await usersCollection.doc(userId).get();
+    const userExists = await getUserExists(userId);
     // Check if the user is new in the auth DB or doesn't exist yet in the app DB.
-    if (!userDb.exists) {
+    if (!userExists) {
       // if so, create it in the app DB.
       // At this point it was already created in the auth DB.
       await handleNewUser();
     } else {
       await handleExistingUser();
     }
-  }, [handleExistingUser, handleNewUser, userId, usersCollection]);
+  }, [getUserExists, handleExistingUser, handleNewUser, userId]);
 
   const startFiniteAnimation = () => {
     animationRef.current?.play(110, 149);
