@@ -3,14 +3,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View, FlatList, ListRenderItemInfo } from 'react-native';
 import { StackHeaderProps } from '@react-navigation/stack';
 import styled from 'styled-components';
-import firestore from '@react-native-firebase/firestore';
-import { Contact } from '../../app/Contact';
 import { Header } from '../../components/molecules/Header';
-import { useUsersCollection } from '../../hooks';
 import useSpinner from '../../hooks/useSpinner';
 import { useAuthStore } from '../../state/auth';
 import { UserCard } from '../../components/molecules/User/UserCard';
 import { UserDB } from '../../app/User';
+import useUsers from '../../hooks/useUsers';
 
 const Container = styled(View)`
   flex: 1;
@@ -28,29 +26,17 @@ export const ContactListHeader = (props: StackHeaderProps) => {
 
 export const ContactList = () => {
   const [contacts, setContacts] = useState<UserDB[]>([]);
-  /**
-   * TODO: Create a hook that provides functions to query users collection
-   * easily...
-   * This can contain, getById, getByPhoneNumber
-   */
-  const usersCollection = useUsersCollection();
+  const { getUserById, getUsersByIdIn } = useUsers();
   const { authenticatedUser } = useAuthStore();
   const { showSpinner, hideSpinner } = useSpinner();
 
   const getContacts = useCallback(async () => {
     showSpinner();
-    const result = await usersCollection.doc(authenticatedUser.id).get();
-    const authUserContacts: Contact[] = result.data()?.contacts || [];
+    const user = await getUserById(authenticatedUser.id);
+    const authUserContacts = user.contacts || [];
     if (authUserContacts.length) {
       const contactsId = authUserContacts.map((e) => e.id);
-      const contactsUsersResult = await usersCollection
-        .where(firestore.FieldPath.documentId(), 'in', contactsId)
-        .get();
-      const users: UserDB[] = contactsUsersResult.docs.map((e) => ({
-        ...(e.data() as UserDB),
-        id: e.id,
-      }));
-      console.log(contactsUsersResult.docs);
+      const users = await getUsersByIdIn(contactsId);
       setContacts(users);
     }
     hideSpinner();

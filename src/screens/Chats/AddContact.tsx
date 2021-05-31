@@ -15,13 +15,12 @@ import { Text } from '../../components/atoms/Text';
 import { TextInput } from '../../components/atoms/TextInput';
 import { CellphoneInput } from '../../components/molecules/CellphoneInput';
 import { Header } from '../../components/molecules/Header';
-import { useUsersCollection } from '../../hooks';
 import useSpinner from '../../hooks/useSpinner';
 import { useAuthStore } from '../../state/auth';
 import { usePushError } from '../../state/error';
-import { firebase } from '@react-native-firebase/firestore';
 import { usePushBoxModal } from '../../state/boxModal';
 import { ChatStackParamList } from '../../navigation/ChatsStackNav';
+import useUsers from '../../hooks/useUsers';
 
 const Container = styled(KeyboardAvoidingView)`
   height: 100%;
@@ -80,7 +79,7 @@ export const AddContact = ({ navigation }: AddContactProps) => {
   });
   const [phone, setPhone] = React.useState('');
   const [name, setName] = React.useState('');
-  const usersCollection = useUsersCollection();
+  const { getUserByPhoneNumber, getUserById, addContact } = useUsers();
   const { authenticatedUser } = useAuthStore();
   const { showSpinner, hideSpinner } = useSpinner();
   const pushError = usePushError();
@@ -91,35 +90,21 @@ export const AddContact = ({ navigation }: AddContactProps) => {
     showSpinner();
     const formattedPhone = `+${country.callingCode} ${phone}`;
     try {
-      const result = await usersCollection
-        .where('phoneNumber', '==', formattedPhone)
-        .get();
-      if (result.empty) {
-        pushError(`User with number ${formattedPhone}, doesn't exist.`);
+      const contact = await getUserByPhoneNumber(formattedPhone);
+      const currentUser = await getUserById(authenticatedUser.id);
+      const contacts = currentUser.contacts || [];
+      const contactExists = contacts.find((e) => e.id === contact.id);
+      if (!contactExists) {
+        await addContact(authenticatedUser.id, { id: contact.id, alias: name });
+        pushBoxModal({
+          content: 'Contact was added successfully',
+          variant: 'success',
+          onClose: () => navigation.goBack(),
+        });
       } else {
-        const contactId = result.docs[0].id;
-        const currentUser = await usersCollection
-          .doc(authenticatedUser.id)
-          .get();
-        const contacts: Array<any> = currentUser.data()?.contacts || [];
-        const contactExists = contacts.find((e) => e.id === contactId);
-        if (!contactExists) {
-          await usersCollection.doc(authenticatedUser.id).update({
-            contacts: firebase.firestore.FieldValue.arrayUnion({
-              id: contactId,
-              alias: name,
-            }),
-          });
-          pushBoxModal({
-            content: 'Contact was added successfully',
-            variant: 'success',
-            onClose: () => navigation.goBack(),
-          });
-        } else {
-          pushError(
-            `Contact with phone ${formattedPhone} is already part of your contacts`,
-          );
-        }
+        pushError(
+          `Contact with phone ${formattedPhone} is already part of your contacts`,
+        );
       }
     } catch (error) {
       pushError(error);
