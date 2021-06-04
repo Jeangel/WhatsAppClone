@@ -10,6 +10,12 @@ export interface IUser {
   phoneNumber: string;
   profileImageUrl: string;
   contacts: IContact[];
+  subscribedChats: string[];
+}
+
+export interface ICustomUserMetaData {
+  name: string;
+  profileImageUrl: string;
 }
 
 /**
@@ -19,6 +25,5 @@ export interface IChatUser {
   id: string;
   name: string;
   profileImageUrl: string;
-  chat: IChat;
-  status: string;
+  status?: string;
 }

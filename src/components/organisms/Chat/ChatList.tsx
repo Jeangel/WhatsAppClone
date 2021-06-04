@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import { View, TouchableOpacity, Animated } from 'react-native';
 import styled from 'styled-components';
@@ -7,6 +8,10 @@ import { Icon } from '../../atoms/Icon';
 import { Illustration } from '../../atoms/Illustration';
 import { Text } from '../../atoms/Text';
 import { EColor } from '../../../theme';
+import useChats from '../../../hooks/useChats';
+import { useAuthStore } from '../../../state/auth';
+import { IChatItem } from '../../../app/Chat';
+import { usePushError } from '../../../state/error';
 
 const Container = styled(View)`
   flex: 1;
@@ -73,6 +78,23 @@ interface ChatListProps {
 }
 
 export const ChatList = ({ onChatPress, onChatRemove }: ChatListProps) => {
+  const [chats, setChats] = React.useState<IChatItem[]>([]);
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const { getUserChats } = useChats();
+  const { authenticatedUser } = useAuthStore();
+  const pushError = usePushError();
+  const refreshChats = async () => {
+    try {
+      setIsRefreshing(true);
+      setChats(await getUserChats(authenticatedUser.id));
+    } catch (error) {
+      pushError(error);
+    }
+    setIsRefreshing(false);
+  };
+  React.useEffect(() => {
+    refreshChats();
+  }, [authenticatedUser]);
   const opacity = React.useRef(new Animated.Value(1)).current;
   opacity.interpolate({ inputRange: [0, 75], outputRange: [0, 1] });
   const contentContainerStyle = { flex: 1 };
@@ -80,7 +102,9 @@ export const ChatList = ({ onChatPress, onChatRemove }: ChatListProps) => {
   return (
     <Container>
       <SwipeListView
-        data={[]}
+        data={chats}
+        onRefresh={refreshChats}
+        refreshing={isRefreshing}
         contentContainerStyle={contentContainerStyle}
         ListEmptyComponent={
           <EmptyViewContainer>

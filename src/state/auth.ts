@@ -14,12 +14,13 @@ type AuthStore = {
   logout: () => void;
 };
 
-const initialState = {
+const initialState: IUser = {
   id: '',
   name: '',
   phoneNumber: '',
   profileImageUrl: '',
   contacts: [],
+  subscribedChats: [],
   createdAt: new Date(),
 };
 

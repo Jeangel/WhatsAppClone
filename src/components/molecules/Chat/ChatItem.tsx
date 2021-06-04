@@ -25,11 +25,10 @@ const Container = styled(TouchableOpacity)`
 
 const UserCardContainer = styled(View)`
   height: 100%;
-  width: 80%;
+  width: 75%;
 `;
 
 const ChatInfoContainer = styled(View)`
-  width: 20%;
   align-items: center;
   justify-content: space-between;
   flex: 1;
@@ -53,6 +52,7 @@ const MessageStatusContainer = styled(View)`
 
 const LastMessageTimeStamp = styled(Text)`
   text-transform: capitalize;
+  text-align: center;
 `;
 
 const Content = styled(View)`
@@ -61,7 +61,6 @@ const Content = styled(View)`
 
 export const ChatItem = ({ data, onPress }: ChatItemProps) => {
   const hasUnreadMessages = data.unreadMessages > 0;
-  const shouldShowUnreadMessages = data.lastMessage.author === data.author.id;
   const handleOnPress = () => {
     onPress(data.id);
   };
@@ -75,7 +74,7 @@ export const ChatItem = ({ data, onPress }: ChatItemProps) => {
           <LastMessageTimeStamp color="neutral60" variant="small">
             {dayjs(data.lastMessage.sentAt).fromNow()}
           </LastMessageTimeStamp>
-          {shouldShowUnreadMessages ? (
+          {hasUnreadMessages ? (
             <UnreadMessagesContainer hide={!hasUnreadMessages}>
               <Text color="white" variant="small">
                 {data.unreadMessages}

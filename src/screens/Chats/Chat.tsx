@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { StackHeaderProps, StackNavigationProp } from '@react-navigation/stack';
@@ -5,13 +6,16 @@ import styled from 'styled-components';
 import { Header } from '../../components/molecules/Header';
 import { ChatStackParamList } from '../../navigation/ChatsStackNav';
 import { UserCard } from '../../components/molecules/User/UserCard';
-import { capitalize } from '../../util';
+import { capitalize, pubnubMessageEventToGiftedChatMessage } from '../../util';
 import { Icon } from '../../components/atoms/Icon';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import { ChatMessageBar } from '../../components/organisms/Chat/ChatMessageBar';
 import { MessageBubble } from '../../components/organisms/Chat/MessageBubble';
 import { usePubNub } from 'pubnub-react';
 import { useAuthStore } from '../../state/auth';
+import Pubnub from 'pubnub';
+import { RouteProp } from '@react-navigation/core';
+import useChats from '../../hooks/useChats';
 
 type ChatScreenNavigationProp = StackNavigationProp<ChatStackParamList, 'Chat'>;
 
@@ -65,39 +69,53 @@ export const ChatHeader = (props: StackHeaderProps) => {
 };
 interface ChatProps {
   navigation: ChatScreenNavigationProp;
+  route: RouteProp<ChatStackParamList, 'Chat'>;
 }
 
-export const Chat = ({}: ChatProps) => {
-  const { authenticatedUser } = useAuthStore();
+export const Chat = ({ route }: ChatProps) => {
   const pubnub = usePubNub();
+  const { getChatMessages } = useChats();
+  const { authenticatedUser } = useAuthStore();
+  const [messages, setMessages] = React.useState<IMessage[]>([]);
+  const chatId = route.params.chatId;
+  React.useEffect(() => {
+    getChatMessages(chatId).then(setMessages);
+  }, [chatId]);
 
   React.useEffect(() => {
     if (pubnub) {
-      pubnub.setUUID(authenticatedUser.id);
-      // const listeners: Pubnub.ListenerParameters = {
-      //   message: (envelope) => {
-      //     console.log('ENVELOPE', envelope);
-      //   },
-      // };
-      // pubnub.addListener(listeners);
-      // pubnub.subscribe({ channels: ['chat'] });
-      // return () => {
-      //   pubnub.removeListener(listeners);
-      //   pubnub.unsubscribeAll();
-      // };
+      const listeners: Pubnub.ListenerParameters = {
+        message: async (envelope) => {
+          setMessages((msgs) => [
+            ...msgs,
+            pubnubMessageEventToGiftedChatMessage(envelope),
+          ]);
+        },
+      };
+      pubnub.addListener(listeners);
+      pubnub.subscribe({ channels: [chatId] });
+      return () => {
+        pubnub.removeListener(listeners);
+        pubnub.unsubscribeAll();
+      };
     }
-  }, [authenticatedUser.id, pubnub]);
+  }, [authenticatedUser.id, pubnub, chatId]);
 
-  const [messages, setMessages] = React.useState<IMessage[]>([]);
-  const handleOnSend = (newMessages: IMessage[]) => {
-    console.log(newMessages, 'handleOnSend');
+  const handleOnSend = async (newMessages: IMessage[]) => {
     const newMessage = newMessages[0];
-    setMessages((msgs: IMessage[]) => [...msgs, newMessage]);
+    try {
+      await pubnub.publish({
+        channel: chatId,
+        message: { text: newMessage.text, author: newMessage.user._id },
+      });
+    } catch (error) {
+      console.log('error sending message', error);
+    }
   };
   return (
     <Container>
       <GiftedChat
-        user={{ _id: 2 }}
+        user={{ _id: authenticatedUser.id }}
         renderInputToolbar={(props) => <ChatMessageBar {...props} />}
         renderBubble={(props) => <MessageBubble {...props} />}
         minInputToolbarHeight={50}

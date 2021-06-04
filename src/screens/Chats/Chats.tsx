@@ -20,17 +20,7 @@ const StoryContainer = styled(View)`
 `;
 
 export const ChatsHeader = (props: StackHeaderProps) => {
-  const { navigation } = props;
-  return (
-    <Header {...props} title="Chats">
-      <TouchableOpacity
-        onPress={() => {
-          navigation.navigate('AddContact');
-        }}>
-        <Icon name="add-people" size={35} color={'primary'} />
-      </TouchableOpacity>
-    </Header>
-  );
+  return <Header {...props} title="Chats" />;
 };
 
 const ContactsButton = styled(TouchableOpacity)`

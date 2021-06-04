@@ -14,6 +14,8 @@ import { UserCard } from '../../../components/molecules/User/UserCard';
 import { IUser } from '../../../app/User';
 import useUsers from '../../../hooks/useUsers';
 import { createOneToOneChatId } from '../../../util';
+import useChats from '../../../hooks/useChats';
+import { usePushError } from '../../../state/error';
 
 const Container = styled(View)`
   flex: 1;
@@ -27,8 +29,10 @@ const Separator = styled(View)`
 export const ContactList = () => {
   const [contacts, setContacts] = useState<IUser[]>([]);
   const { getUserById, getUsersByIdIn } = useUsers();
+  const { getChatMembers, setChatMembers } = useChats();
   const { authenticatedUser } = useAuthStore();
   const { showSpinner, hideSpinner } = useSpinner();
+  const pushError = usePushError();
   const navigation = useNavigation();
 
   const getContacts = useCallback(async () => {
@@ -38,15 +42,31 @@ export const ContactList = () => {
     if (authUserContacts.length) {
       const contactsId = authUserContacts.map((e) => e.id);
       const users = await getUsersByIdIn(contactsId);
-      setContacts(users);
+      const formattedUsers = users.map((e) => {
+        const contact = authUserContacts.find((c) => c.id === e.id);
+        return { ...e, name: contact?.alias || e.name };
+      });
+      setContacts(formattedUsers);
     }
     hideSpinner();
   }, [authenticatedUser.id]);
 
-  const onItemPress = (contactId: string) => {
-    navigation.navigate('Chat', {
-      chatId: createOneToOneChatId([contactId, authenticatedUser.id]),
-    });
+  const onItemPress = async (contactId: string) => {
+    const chatId = createOneToOneChatId([contactId, authenticatedUser.id]);
+    const members = await getChatMembers(chatId);
+    if (members.length) {
+      navigation.navigate('Chat', { chatId });
+    }
+
+    try {
+      await setChatMembers({
+        members: [contactId, authenticatedUser.id],
+        chatId,
+      });
+      navigation.navigate('Chat', { chatId });
+    } catch (error) {
+      pushError(error);
+    }
   };
 
   useEffect(() => {

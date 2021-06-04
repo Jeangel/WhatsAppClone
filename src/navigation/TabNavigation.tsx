@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -12,6 +12,9 @@ import { SettingsStackNav } from './SettingsStackNav';
 import { Icon } from '../components/atoms/Icon';
 import useTheme from '../hooks/useTheme';
 import { EColor } from '../theme';
+import { usePubNub } from 'pubnub-react';
+import { useAuthStore } from '../state/auth';
+import Pubnub from 'pubnub';
 interface RenderTabBarIconProps {
   color: EColor;
   size: number;
@@ -57,8 +60,37 @@ const getShouldShowTabBar = (
 };
 
 export const TabNavigation = () => {
+  const pubnub = usePubNub();
   const theme = useTheme();
   const safeAreaInsets = useSafeAreaInsets();
+  const { authenticatedUser } = useAuthStore();
+  useEffect(() => {
+    if (pubnub && authenticatedUser.id) {
+      pubnub.setUUID(authenticatedUser.id);
+      pubnub.objects
+        .setUUIDMetadata({
+          data: {
+            custom: {
+              name: authenticatedUser.name,
+              profileImageUrl: authenticatedUser.profileImageUrl,
+            },
+          },
+        })
+        .then(() => {});
+      const listeners: Pubnub.ListenerParameters = {
+        objects: (params) => {
+          console.log(params, 'object event params');
+        },
+        message: (params) => {
+          console.log('navigation message event', params);
+        },
+      };
+      pubnub.addListener(listeners);
+      return () => {
+        pubnub.removeListener(listeners);
+      };
+    }
+  }, [pubnub, authenticatedUser]);
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
