@@ -1,9 +1,11 @@
 import { usePubNub } from 'pubnub-react';
 import { IChatItem } from '../app/Chat';
+import { useAuthStore } from '../state/auth';
 import { pubnubMessageToGiftedChatMessage } from '../util';
 
 const useChats = () => {
   const pubnub = usePubNub();
+  const { authenticatedUser } = useAuthStore();
 
   const getChatMembers = async (id: string) => {
     try {
@@ -59,11 +61,16 @@ const useChats = () => {
 
   const getUserChats = async (userId: string) => {
     const chats: IChatItem[] = [];
+    let chatsIds: string[] = [];
     try {
       const memberships = await pubnub.objects.getMemberships({
         uuid: userId,
       });
-      const chatsIds = memberships.data.map((e) => e.channel.id);
+      chatsIds = memberships.data.map((e) => e.channel.id);
+    } catch (error) {
+      console.log('error getting memberships', error);
+    }
+    try {
       for (const chat of chatsIds) {
         const membersPromise = pubnub.objects.getChannelMembers({
           channel: chat,
@@ -85,6 +92,9 @@ const useChats = () => {
           continue;
         }
         const oppositeUser = members.find((e) => e.uuid.id !== userId) as any;
+        const oppositeUserAsContact = authenticatedUser.contacts.find(
+          (e) => e.id === oppositeUser.uuid.id,
+        );
         chats.push({
           id: chat,
           lastMessage: {
@@ -100,7 +110,10 @@ const useChats = () => {
           },
           author: {
             id: oppositeUser?.uuid.id || '',
-            name: oppositeUser?.uuid.custom?.name || '',
+            name:
+              oppositeUserAsContact?.alias ||
+              oppositeUser?.uuid.custom?.name ||
+              '',
             profileImageUrl: oppositeUser?.uuid.custom?.profileImageUrl || '',
           },
           unreadMessages: 0,

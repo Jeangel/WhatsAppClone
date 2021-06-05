@@ -13,6 +13,7 @@ const CloseModalButton = styled(Button)`
 
 const Title = styled(Text)`
   padding-bottom: 20px;
+  text-align: center;
 `;
 
 const Message = styled(Text)`

@@ -14,6 +14,7 @@ import useTheme from '../hooks/useTheme';
 import { EColor } from '../theme';
 import { useChatListeners } from '../hooks/useChatListeners';
 import { TransitionPresets } from '@react-navigation/stack';
+import useUsersListeners from '../hooks/useUsersListeners';
 interface RenderTabBarIconProps {
   color: EColor;
   size: number;
@@ -61,6 +62,7 @@ export const TabNavigation = () => {
   const theme = useTheme();
   const safeAreaInsets = useSafeAreaInsets();
   useChatListeners();
+  useUsersListeners();
   return (
     <Tab.Navigator
       backBehavior="none"

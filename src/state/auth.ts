@@ -28,7 +28,7 @@ const initialState: IUser = {
 
 export const useAuthStore = create<AuthStore>(
   persist(
-    (set) => ({
+    (set, get, api) => ({
       authenticatedUser: initialState,
       setAuthenticatedUser: (authenticatedUser) => {
         set(() => ({ authenticatedUser }));
@@ -53,6 +53,7 @@ export const useAuthStore = create<AuthStore>(
       logout: () => {
         const authenticatedUser = initialState;
         set(() => ({ authenticatedUser }));
+        api.destroy();
       },
     }),
     { name: 'auth-store', getStorage: () => AsyncStorage },

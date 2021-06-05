@@ -18,14 +18,9 @@ import { RouteProp } from '@react-navigation/core';
 import useChats from '../../hooks/useChats';
 import { useChatsStore } from '../../state/chats';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ScreenContainer } from '../../components/atoms/ScreenContainer'
+import { ScreenContainer } from '../../components/atoms/ScreenContainer';
 
 type ChatScreenNavigationProp = StackNavigationProp<ChatStackParamList, 'Chat'>;
-
-const Container = styled(View)`
-  flex: 1;
-  background-color: ${({ theme }) => theme.colors.surface};
-`;
 
 const IconsContainer = styled(View)`
   flex-direction: row;
@@ -97,27 +92,29 @@ export const Chat = ({ route }: ChatProps) => {
       });
   }, [chatId]);
 
-  React.useEffect(() => {
-    if (pubnub) {
-      const listeners: Pubnub.ListenerParameters = {
-        message: async (envelope) => {
-          setMessages((msgs) => [
-            ...msgs,
-            pubnubMessageEventToGiftedChatMessage(envelope),
-          ]);
-        },
-      };
-      pubnub.addListener(listeners);
-      return () => {
-        pubnub.removeListener(listeners);
-        pubnub.unsubscribeAll();
-      };
-    }
-  }, [authenticatedUser.id, pubnub, chatId]);
+  // React.useEffect(() => {
+  //   if (pubnub) {
+  //     const listeners: Pubnub.ListenerParameters = {
+  //       message: async (envelope) => {
+  //         console.log('message listener on Chat Screen', envelope);
+  //         setMessages((msgs) => [
+  //           ...msgs,
+  //           pubnubMessageEventToGiftedChatMessage(envelope),
+  //         ]);
+  //       },
+  //     };
+  //     pubnub.addListener(listeners);
+  //     return () => {
+  //       pubnub.removeListener(listeners);
+  //       pubnub.unsubscribeAll();
+  //     };
+  //   }
+  // }, [authenticatedUser.id, pubnub, chatId]);
 
   const handleOnSend = async (newMessages: IMessage[]) => {
     const newMessage = newMessages[0];
     try {
+      console.log('Chat screen', newMessage);
       await pubnub.publish({
         channel: chatId,
         message: { text: newMessage.text, author: newMessage.user._id },
