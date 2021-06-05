@@ -13,6 +13,7 @@ import { Icon } from '../components/atoms/Icon';
 import useTheme from '../hooks/useTheme';
 import { EColor } from '../theme';
 import { useChatListeners } from '../hooks/useChatListeners';
+import { TransitionPresets } from '@react-navigation/stack';
 interface RenderTabBarIconProps {
   color: EColor;
   size: number;
@@ -67,6 +68,7 @@ export const TabNavigation = () => {
         tabBarIcon: (props) =>
           renderTabBarIcon({ ...props, route, color: props.color as EColor }),
         tabBarVisible: getShouldShowTabBar(route),
+        ...TransitionPresets.SlideFromRightIOS,
       })}
       tabBarOptions={{
         safeAreaInsets,

@@ -16,6 +16,9 @@ import { useAuthStore } from '../../state/auth';
 import Pubnub from 'pubnub';
 import { RouteProp } from '@react-navigation/core';
 import useChats from '../../hooks/useChats';
+import { useChatsStore } from '../../state/chats';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ScreenContainer } from '../../components/atoms/ScreenContainer'
 
 type ChatScreenNavigationProp = StackNavigationProp<ChatStackParamList, 'Chat'>;
 
@@ -76,10 +79,22 @@ export const Chat = ({ route }: ChatProps) => {
   const pubnub = usePubNub();
   const { getChatMessages } = useChats();
   const { authenticatedUser } = useAuthStore();
+  const { currentChat } = useChatsStore();
+  const { bottom } = useSafeAreaInsets();
   const [messages, setMessages] = React.useState<IMessage[]>([]);
   const chatId = route.params.chatId;
+  console.log(currentChat, 'current chat in Chat screenƒ');
   React.useEffect(() => {
     getChatMessages(chatId).then(setMessages);
+    pubnub
+      .hereNow({
+        channels: [chatId],
+        includeState: true,
+        includeUUIDs: true,
+      })
+      .then((e) => {
+        console.log('HERE NOW', e);
+      });
   }, [chatId]);
 
   React.useEffect(() => {
@@ -93,7 +108,6 @@ export const Chat = ({ route }: ChatProps) => {
         },
       };
       pubnub.addListener(listeners);
-      pubnub.subscribe({ channels: [chatId] });
       return () => {
         pubnub.removeListener(listeners);
         pubnub.unsubscribeAll();
@@ -113,18 +127,18 @@ export const Chat = ({ route }: ChatProps) => {
     }
   };
   return (
-    <Container>
+    <ScreenContainer edges={['bottom']}>
       <GiftedChat
         user={{ _id: authenticatedUser.id }}
         renderInputToolbar={(props) => <ChatMessageBar {...props} />}
         renderBubble={(props) => <MessageBubble {...props} />}
-        minInputToolbarHeight={50}
+        minInputToolbarHeight={60}
         onSend={handleOnSend}
-        bottomOffset={30}
+        bottomOffset={bottom}
         messages={messages}
         showUserAvatar={false}
         inverted={false}
       />
-    </Container>
+    </ScreenContainer>
   );
 };

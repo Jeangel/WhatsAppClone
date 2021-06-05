@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  TransitionPresets,
+} from '@react-navigation/stack';
 import { Chats, ChatsHeader } from '../screens/Chats/Chats';
 import { Chat, ChatHeader } from '../screens/Chats/Chat';
 import { AddContact, AddContactHeader } from '../screens/Chats/AddContact';
@@ -16,7 +19,9 @@ const ChatsStack = createStackNavigator<ChatStackParamList>();
 
 export const ChatsStackNav = () => {
   return (
-    <ChatsStack.Navigator headerMode="screen">
+    <ChatsStack.Navigator
+      headerMode="screen"
+      screenOptions={TransitionPresets.SlideFromRightIOS}>
       <ChatsStack.Screen
         name="Chats"
         component={Chats}

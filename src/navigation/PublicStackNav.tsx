@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  TransitionPresets,
+} from '@react-navigation/stack';
 import { ConfirmPhone } from '../screens/Public/ConfirmPhone';
 import { Landing } from '../screens/Public/Landing';
 import { ConfirmOTP } from '../screens/Public/ConfirmOTP';
@@ -30,7 +33,10 @@ export const PublicStackNav = () => {
   return (
     <PublicStack.Navigator
       initialRouteName={initialRoute}
-      screenOptions={{ headerShown: false }}
+      screenOptions={{
+        headerShown: false,
+        ...TransitionPresets.SlideFromRightIOS,
+      }}
       headerMode="screen">
       <PublicStack.Screen name="Landing" component={Landing} />
       <PublicStack.Screen name="ConfirmPhone" component={ConfirmPhone} />

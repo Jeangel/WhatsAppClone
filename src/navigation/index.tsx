@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  TransitionPresets,
+} from '@react-navigation/stack';
 import { TabNavigation } from './TabNavigation';
 import { PublicStackNav } from './PublicStackNav';
 import { useAuthStore } from '../state/auth';
@@ -19,7 +22,9 @@ export const MainStackNav = () => {
     }
   }, [authenticatedUser, authenticatedUser.id, authenticatedUser.name]);
   return (
-    <MainStack.Navigator initialRouteName={initialRoute}>
+    <MainStack.Navigator
+      initialRouteName={initialRoute}
+      screenOptions={TransitionPresets.SlideFromRightIOS}>
       {userIsAuthenticated ? (
         <MainStack.Screen
           name="Home"
