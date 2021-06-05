@@ -8,6 +8,7 @@ type ChatStore = {
   setChatList: (chatList: IChatItem[]) => void;
   currentChat?: IChatItem;
   setCurrentChat: (chatId?: string) => void;
+  updateChat: (chatId: string, chat: IChatItem) => void;
 };
 
 const initialState: ChatStore = {
@@ -15,6 +16,7 @@ const initialState: ChatStore = {
   setChatList: () => {},
   currentChat: undefined,
   setCurrentChat: () => {},
+  updateChat: () => {},
 };
 
 export const useChatsStore = create<ChatStore>(
@@ -29,6 +31,12 @@ export const useChatsStore = create<ChatStore>(
         set(() => ({ currentChat }));
       },
       currentChat: initialState.currentChat,
+      updateChat: (chatId, chat) => {
+        const chatList = get().chatList.map((e) =>
+          e.id === chatId ? chat : e,
+        );
+        set(() => ({ chatList }));
+      },
     }),
     { name: 'chat-store', getStorage: () => AsyncStorage },
   ),
