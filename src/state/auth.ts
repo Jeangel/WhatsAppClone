@@ -1,3 +1,4 @@
+import { IContact } from './../app/Contact';
 import { IUser } from './../app/User';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -10,6 +11,7 @@ type AuthStore = {
     name?: string;
     phoneNumber?: string;
     profileImageUrl?: string;
+    contacts?: IContact[];
   }) => void;
   logout: () => void;
 };
@@ -42,6 +44,9 @@ export const useAuthStore = create<AuthStore>(
             profileImageUrl: updates.profileImageUrl
               ? updates.profileImageUrl
               : authenticatedUser.profileImageUrl,
+            contacts: updates.contacts
+              ? updates.contacts
+              : authenticatedUser.contacts,
           },
         }));
       },

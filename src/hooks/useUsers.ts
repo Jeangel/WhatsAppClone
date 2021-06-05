@@ -2,6 +2,7 @@ import { IContact } from './../app/Contact';
 import firestore, { firebase } from '@react-native-firebase/firestore';
 import { IUser } from '../app/User';
 import { USERS_COLLECTION } from '../config/database';
+import { useAuthStore } from '../state/auth';
 
 export const useUsersCollection = () => {
   return firestore().collection(USERS_COLLECTION);
@@ -9,6 +10,7 @@ export const useUsersCollection = () => {
 
 const useUsers = () => {
   const usersCollection = useUsersCollection();
+  const { updateAuthenticatedUser, authenticatedUser } = useAuthStore();
 
   const getUserById = async (id: string) => {
     const userDb = await usersCollection.doc(id).get();
@@ -56,10 +58,17 @@ const useUsers = () => {
     return usersCollection.doc(id).update(update);
   };
 
-  const addContact = async (id: string, contact: IContact) => {
-    await usersCollection.doc(id).update({
-      contacts: firebase.firestore.FieldValue.arrayUnion(contact),
-    });
+  const addContact = async (contact: IContact) => {
+    await usersCollection
+      .doc(authenticatedUser.id)
+      .update({
+        contacts: firebase.firestore.FieldValue.arrayUnion(contact),
+      })
+      .then(() => {
+        updateAuthenticatedUser({
+          contacts: authenticatedUser.contacts.concat(contact),
+        });
+      });
   };
 
   return {

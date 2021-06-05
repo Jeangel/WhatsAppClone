@@ -14,6 +14,7 @@ import { IUser } from '../../../app/User';
 import useUsers from '../../../hooks/useUsers';
 import { useOpenChat } from '../../../hooks/useOpenChat';
 import { createOneToOneChatId } from '../../../util';
+import { useIsFocused } from '@react-navigation/core';
 
 const Container = styled(View)`
   flex: 1;
@@ -26,6 +27,7 @@ const Separator = styled(View)`
 
 export const ContactList = () => {
   const [contacts, setContacts] = useState<IUser[]>([]);
+  const isFocused = useIsFocused();
   const { getUserById, getUsersByIdIn } = useUsers();
   const { authenticatedUser } = useAuthStore();
   const { showSpinner, hideSpinner } = useSpinner();
@@ -54,8 +56,10 @@ export const ContactList = () => {
   };
 
   useEffect(() => {
-    getContacts();
-  }, [getContacts]);
+    if (isFocused) {
+      getContacts();
+    }
+  }, [isFocused]);
 
   const renderItem = ({ item }: ListRenderItemInfo<IUser>) => {
     return (

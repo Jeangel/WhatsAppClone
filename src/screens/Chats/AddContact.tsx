@@ -95,7 +95,7 @@ export const AddContact = ({ navigation }: AddContactProps) => {
       const contacts = currentUser.contacts || [];
       const contactExists = contacts.find((e) => e.id === contact.id);
       if (!contactExists) {
-        await addContact(authenticatedUser.id, { id: contact.id, alias: name });
+        await addContact({ id: contact.id, alias: name });
         pushBoxModal({
           content: 'Contact was added successfully',
           variant: 'success',
