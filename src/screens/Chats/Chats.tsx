@@ -7,6 +7,7 @@ import { Header } from '../../components/molecules/Header';
 import { StoriesList } from '../../components/organisms/StoriesList';
 import { ChatList } from '../../components/organisms/Chat/ChatList';
 import { ChatStackParamList } from '../../navigation/ChatsStackNav';
+import { useOpenChat } from '../../hooks/useOpenChat';
 
 const Container = styled(View)`
   flex: 1;
@@ -46,8 +47,9 @@ interface ChatsProps {
 }
 
 export const Chats = ({ navigation }: ChatsProps) => {
-  const onChatPress = (chatId: string) => {
-    navigation.navigate('Chat', { chatId });
+  const openChat = useOpenChat();
+  const onChatPress = async (chatId: string) => {
+    openChat({ chatId });
   };
 
   const onContactListPress = () => {

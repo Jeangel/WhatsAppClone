@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,6 +16,8 @@ import { EColor } from '../theme';
 import { usePubNub } from 'pubnub-react';
 import { useAuthStore } from '../state/auth';
 import Pubnub from 'pubnub';
+import useChats from '../hooks/useChats';
+import { useChatsStore } from '../state/chats';
 interface RenderTabBarIconProps {
   color: EColor;
   size: number;
@@ -64,8 +67,11 @@ export const TabNavigation = () => {
   const theme = useTheme();
   const safeAreaInsets = useSafeAreaInsets();
   const { authenticatedUser } = useAuthStore();
+  const { getUserChats } = useChats();
+  const { setChatList } = useChatsStore();
   useEffect(() => {
     if (pubnub && authenticatedUser.id) {
+      getUserChats(authenticatedUser.id).then(setChatList);
       pubnub.setUUID(authenticatedUser.id);
       pubnub.objects
         .setUUIDMetadata({
@@ -83,6 +89,9 @@ export const TabNavigation = () => {
         },
         message: (params) => {
           console.log('navigation message event', params);
+        },
+        presence: (params) => {
+          console.log('event presence', params);
         },
       };
       pubnub.addListener(listeners);

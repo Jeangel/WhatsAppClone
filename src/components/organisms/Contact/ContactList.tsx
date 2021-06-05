@@ -7,15 +7,13 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import styled from 'styled-components';
-import { useNavigation } from '@react-navigation/core';
 import useSpinner from '../../../hooks/useSpinner';
 import { useAuthStore } from '../../../state/auth';
 import { UserCard } from '../../../components/molecules/User/UserCard';
 import { IUser } from '../../../app/User';
 import useUsers from '../../../hooks/useUsers';
+import { useOpenChat } from '../../../hooks/useOpenChat';
 import { createOneToOneChatId } from '../../../util';
-import useChats from '../../../hooks/useChats';
-import { usePushError } from '../../../state/error';
 
 const Container = styled(View)`
   flex: 1;
@@ -29,11 +27,9 @@ const Separator = styled(View)`
 export const ContactList = () => {
   const [contacts, setContacts] = useState<IUser[]>([]);
   const { getUserById, getUsersByIdIn } = useUsers();
-  const { getChatMembers, setChatMembers } = useChats();
   const { authenticatedUser } = useAuthStore();
   const { showSpinner, hideSpinner } = useSpinner();
-  const pushError = usePushError();
-  const navigation = useNavigation();
+  const openChat = useOpenChat();
 
   const getContacts = useCallback(async () => {
     showSpinner();
@@ -52,21 +48,9 @@ export const ContactList = () => {
   }, [authenticatedUser.id]);
 
   const onItemPress = async (contactId: string) => {
-    const chatId = createOneToOneChatId([contactId, authenticatedUser.id]);
-    const members = await getChatMembers(chatId);
-    if (members.length) {
-      navigation.navigate('Chat', { chatId });
-    }
-
-    try {
-      await setChatMembers({
-        members: [contactId, authenticatedUser.id],
-        chatId,
-      });
-      navigation.navigate('Chat', { chatId });
-    } catch (error) {
-      pushError(error);
-    }
+    const membersIds = [contactId, authenticatedUser.id];
+    const chatId = createOneToOneChatId(membersIds);
+    await openChat({ chatId, membersIds });
   };
 
   useEffect(() => {
