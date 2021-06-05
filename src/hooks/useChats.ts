@@ -115,6 +115,7 @@ const useChats = () => {
               oppositeUser?.uuid.custom?.name ||
               '',
             profileImageUrl: oppositeUser?.uuid.custom?.profileImageUrl || '',
+            status: 'offline',
           },
           unreadMessages: 0,
         });

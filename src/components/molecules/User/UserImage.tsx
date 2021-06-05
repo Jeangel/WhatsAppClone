@@ -62,8 +62,7 @@ export const UserImage = ({ url, status, size = 60 }: UserImageProps) => {
           indicator={Circle}
           indicatorProps={{
             color: theme.colors.primary,
-            style: { height: size, width: size },
-            indeterminate: true,
+            size: size * 0.9,
           }}
         />
         {!!status && <Status status={status} size={size * 0.2} />}
