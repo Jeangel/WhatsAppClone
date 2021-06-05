@@ -66,7 +66,9 @@ const useUsers = () => {
       })
       .then(() => {
         updateAuthenticatedUser({
-          contacts: authenticatedUser.contacts.concat(contact),
+          contacts: authenticatedUser.contacts
+            ? authenticatedUser.contacts.concat(contact)
+            : [contact],
         });
       });
   };

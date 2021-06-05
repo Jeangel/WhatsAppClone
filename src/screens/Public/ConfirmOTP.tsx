@@ -121,7 +121,7 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
           name: user.name,
           profileImageUrl: user.profileImageUrl,
           phoneNumber: phone,
-          contacts: user.contacts,
+          contacts: user.contacts || [],
           subscribedChats: [],
           createdAt: user.createdAt,
         });
