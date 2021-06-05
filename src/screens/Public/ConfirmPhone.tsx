@@ -125,7 +125,7 @@ export const ConfirmPhone = ({ navigation }: ConfirmPhoneProps) => {
 
   return (
     <ScreenContainer>
-      <Container behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <Container behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <TitleContainer>
           <Title variant="h1">
             Sign up to start chatting with your friends!

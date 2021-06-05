@@ -28,7 +28,6 @@ const styles = StyleSheet.create({
     height: 85,
     borderTopWidth: 0.5,
     paddingHorizontal: 30,
-    paddingTop: 10,
   },
 });
 
@@ -63,6 +62,7 @@ export const TabNavigation = () => {
   useChatListeners();
   return (
     <Tab.Navigator
+      backBehavior="none"
       screenOptions={({ route }) => ({
         tabBarIcon: (props) =>
           renderTabBarIcon({ ...props, route, color: props.color as EColor }),
@@ -76,6 +76,7 @@ export const TabNavigation = () => {
         tabStyle: styles.tab,
         style: [styles.tabBar, { borderColor: theme.colors.neutral60 }],
         showLabel: false,
+        keyboardHidesTabBar: true,
       }}>
       <Tab.Screen name="Calls" component={CallsStackNav} />
       <Tab.Screen name="Chats" component={ChatsStackNav} />

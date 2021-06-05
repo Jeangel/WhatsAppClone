@@ -114,8 +114,8 @@ export const AddContact = ({ navigation }: AddContactProps) => {
   };
 
   return (
-    <ScreenContainer edges={['bottom']}>
-      <Container behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <ScreenContainer>
+      <Container behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <>
             <Section>

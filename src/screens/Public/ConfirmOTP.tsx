@@ -121,6 +121,9 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
           name: user.name,
           profileImageUrl: user.profileImageUrl,
           phoneNumber: phone,
+          contacts: user.contacts,
+          subscribedChats: [],
+          createdAt: user.createdAt,
         });
         navigation.navigate(nextRoute);
       }, 1500);
@@ -220,7 +223,7 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
 
   return (
     <ScreenContainer>
-      <Container behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <Container behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <TitleContainer>
           <Title variant="h1">
             Verify Your {'\n'} Phone number {animationHasFinished}

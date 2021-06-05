@@ -104,7 +104,7 @@ export const SignUp = ({ navigation }: SignUpProps) => {
 
   return (
     <ScreenContainer edges={['bottom']}>
-      <Container behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <Container behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <>
             <TitleContainer>

@@ -16,7 +16,7 @@ import { Icon } from '../../atoms/Icon';
 const Container = styled(View)`
   min-height: 50px;
   max-height: 70px;
-  padding: 5px 20px;
+  padding: 0 20px;
   flex-direction: row;
   align-items: flex-start;
   justify-content: center;
@@ -24,10 +24,8 @@ const Container = styled(View)`
 
 const Input = styled(TextInput)`
   border: 1px solid ${({ theme }) => theme.colors.neutral80};
-  padding: 5px 15px;
-  padding-top: 7px;
-  max-height: 200px;
-  min-height: 35px;
+  padding: 10px 15px;
+  height: 40px;
   border-radius: 20px;
   width: 100%;
 `;
@@ -186,7 +184,7 @@ export const ChatMessageBar = ({ onSend }: ChatMessageBarProps) => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <Container>
         <EmojiButtonContainer>
           <RoundedButton icon="smile-face" />
