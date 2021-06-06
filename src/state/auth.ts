@@ -24,7 +24,7 @@ const initialState: IUser = {
   contacts: [],
 };
 
-let store: StateCreator<AuthStore> = (set, get, api) => ({
+let store: StateCreator<AuthStore> = (set) => ({
   authenticatedUser: initialState,
   setAuthenticatedUser: (authenticatedUser) => {
     set((state) => ({
@@ -51,7 +51,6 @@ let store: StateCreator<AuthStore> = (set, get, api) => ({
   logout: () => {
     const authenticatedUser = initialState;
     set(() => ({ authenticatedUser }));
-    api.destroy();
   },
 });
 
