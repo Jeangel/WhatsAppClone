@@ -210,7 +210,8 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
         <IllustrationContainer>
           <AnimationView
             source={require('../../animations/waiting.json')}
-            loop={true}
+            loop
+            autoPlay
           />
         </IllustrationContainer>
         <DescriptionText>

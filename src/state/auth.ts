@@ -1,7 +1,7 @@
 import { IContact } from './../app/Contact';
 import { IUser } from './../app/User';
-import create from 'zustand';
-import { persist } from 'zustand/middleware';
+import create, { StateCreator } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type AuthStore = {
@@ -26,36 +26,36 @@ const initialState: IUser = {
   createdAt: new Date(),
 };
 
-export const useAuthStore = create<AuthStore>(
-  persist(
-    (set, get, api) => ({
-      authenticatedUser: initialState,
-      setAuthenticatedUser: (authenticatedUser) => {
-        set(() => ({ authenticatedUser }));
+let store: StateCreator<AuthStore> = (set, get, api) => ({
+  authenticatedUser: initialState,
+  setAuthenticatedUser: (authenticatedUser) => {
+    set(() => ({ authenticatedUser }));
+  },
+  updateAuthenticatedUser: (updates) => {
+    set(({ authenticatedUser }) => ({
+      authenticatedUser: {
+        ...authenticatedUser,
+        name: updates.name ? updates.name : authenticatedUser.name,
+        phoneNumber: updates.phoneNumber
+          ? updates.phoneNumber
+          : authenticatedUser.phoneNumber,
+        profileImageUrl: updates.profileImageUrl
+          ? updates.profileImageUrl
+          : authenticatedUser.profileImageUrl,
+        contacts: updates.contacts
+          ? updates.contacts
+          : authenticatedUser.contacts,
       },
-      updateAuthenticatedUser: (updates) => {
-        set(({ authenticatedUser }) => ({
-          authenticatedUser: {
-            ...authenticatedUser,
-            name: updates.name ? updates.name : authenticatedUser.name,
-            phoneNumber: updates.phoneNumber
-              ? updates.phoneNumber
-              : authenticatedUser.phoneNumber,
-            profileImageUrl: updates.profileImageUrl
-              ? updates.profileImageUrl
-              : authenticatedUser.profileImageUrl,
-            contacts: updates.contacts
-              ? updates.contacts
-              : authenticatedUser.contacts,
-          },
-        }));
-      },
-      logout: () => {
-        const authenticatedUser = initialState;
-        set(() => ({ authenticatedUser }));
-        api.destroy();
-      },
-    }),
-    { name: 'auth-store', getStorage: () => AsyncStorage },
-  ),
-);
+    }));
+  },
+  logout: () => {
+    const authenticatedUser = initialState;
+    set(() => ({ authenticatedUser }));
+    api.destroy();
+  },
+});
+
+store = devtools(store);
+store = persist(store, { name: 'auth-store', getStorage: () => AsyncStorage });
+
+export const useAuthStore = create(store);

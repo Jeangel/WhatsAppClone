@@ -10,11 +10,11 @@ import { useAuthStore } from '../state/auth';
 const MainStack = createStackNavigator();
 
 export const MainStackNav = () => {
-  const { authenticatedUser } = useAuthStore();
+  const authenticatedUser = useAuthStore((state) => state.authenticatedUser);
   const [initialRoute, setInitialRoute] = React.useState('Public');
-  const userIsAuthenticated =
-    !!authenticatedUser.id && !!authenticatedUser.name;
+  const [userIsAuthenticated, setUserIsAuthenticated] = React.useState(false);
   React.useEffect(() => {
+    setUserIsAuthenticated(!!authenticatedUser.id && !!authenticatedUser.name);
     if (authenticatedUser.id && authenticatedUser.name) {
       setInitialRoute('Home');
     } else {
