@@ -6,11 +6,9 @@ import { IContact } from './Contact';
 export interface IUser {
   id: string;
   name: string;
-  createdAt: Date;
   phoneNumber: string;
   profileImageUrl: string;
   contacts: IContact[];
-  subscribedChats: string[];
 }
 
 export interface ICustomUserMetaData {

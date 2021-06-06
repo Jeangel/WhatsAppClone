@@ -4,10 +4,12 @@ import { useAuthStore } from '../state/auth';
 import auth from '@react-native-firebase/auth';
 
 export const Settings = () => {
-  const { logout } = useAuthStore();
+  const { logout, authenticatedUser } = useAuthStore();
   const handleLogout = async () => {
-    await auth().signOut();
-    logout();
+    if (authenticatedUser.id) {
+      await auth().signOut();
+      logout();
+    }
   };
   return (
     <View>

@@ -14,6 +14,7 @@ export const MainStackNav = () => {
   const [initialRoute, setInitialRoute] = React.useState('Public');
   const [userIsAuthenticated, setUserIsAuthenticated] = React.useState(false);
   React.useEffect(() => {
+    console.log('IN USE EFFECT', authenticatedUser);
     setUserIsAuthenticated(!!authenticatedUser.id && !!authenticatedUser.name);
     if (authenticatedUser.id && authenticatedUser.name) {
       setInitialRoute('Home');
@@ -21,6 +22,11 @@ export const MainStackNav = () => {
       setInitialRoute('Public');
     }
   }, [authenticatedUser, authenticatedUser.id, authenticatedUser.name]);
+  console.log('RENDERING MAIN STACK', {
+    userIsAuthenticated,
+    initialRoute,
+    authenticatedUser,
+  });
   return (
     <MainStack.Navigator
       initialRouteName={initialRoute}

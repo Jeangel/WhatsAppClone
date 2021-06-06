@@ -22,14 +22,14 @@ const initialState: IUser = {
   phoneNumber: '',
   profileImageUrl: '',
   contacts: [],
-  subscribedChats: [],
-  createdAt: new Date(),
 };
 
 let store: StateCreator<AuthStore> = (set, get, api) => ({
   authenticatedUser: initialState,
   setAuthenticatedUser: (authenticatedUser) => {
-    set(() => ({ authenticatedUser }));
+    set((state) => ({
+      authenticatedUser: { ...state.authenticatedUser, ...authenticatedUser },
+    }));
   },
   updateAuthenticatedUser: (updates) => {
     set(({ authenticatedUser }) => ({

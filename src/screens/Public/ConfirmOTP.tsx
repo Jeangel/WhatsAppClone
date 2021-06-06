@@ -120,8 +120,6 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
         profileImageUrl: user.profileImageUrl,
         phoneNumber: phone,
         contacts: user.contacts || [],
-        subscribedChats: [],
-        createdAt: user.createdAt,
       });
       if (nextRoute) {
         navigation.navigate(nextRoute);
@@ -146,7 +144,7 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
     try {
       await updateUser(
         userId,
-        { phoneNumber: phone, createdAt: new Date() },
+        { phoneNumber: phone },
         { createIfNotExists: true },
       );
       await successNavigate('SignUp');
