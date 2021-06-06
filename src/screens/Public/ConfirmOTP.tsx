@@ -73,16 +73,16 @@ const AnimationView = styled(LottieView)`
 `;
 
 export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
-  const animationRef = React.useRef<LottieView>(null);
   const [code, setCode] = React.useState('');
   const [isFetching, setIsFetching] = React.useState(false);
-  const [animationIsLooping, setAnimationIsLooping] = React.useState(true);
   const [otpConfirmationTimes, setOTPConfirmationTimes] = React.useState(0);
-  const [animationHasFinished, setAnimationHasFinished] = React.useState(false);
   const [isAuthenticating, setIsAuthenticating] = React.useState(false);
   const [userId, setUserId] = React.useState('');
   const { showSpinner, hideSpinner } = useSpinner();
-  const { setAuthenticatedUser, authenticatedUser } = useAuthStore();
+  const { setAuthenticatedUser, authenticatedUser } = useAuthStore((state) => ({
+    authenticatedUser: state.authenticatedUser,
+    setAuthenticatedUser: state.setAuthenticatedUser,
+  }));
   const pushError = usePushError();
   const { getUserById, updateUser, getUserExists } = useUsers();
   const { phone, confirmation } = route.params;
@@ -112,22 +112,20 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
    * Finish the animation and navigate to the given route
    */
   const successNavigate = React.useCallback(
-    async (nextRoute: keyof PublicStackParamList) => {
-      startFiniteAnimation();
+    async (nextRoute?: keyof PublicStackParamList) => {
       const user = await getUserById(userId);
-      const timeout = setTimeout(() => {
-        setAuthenticatedUser({
-          id: userId,
-          name: user.name,
-          profileImageUrl: user.profileImageUrl,
-          phoneNumber: phone,
-          contacts: user.contacts || [],
-          subscribedChats: [],
-          createdAt: user.createdAt,
-        });
+      setAuthenticatedUser({
+        id: userId,
+        name: user.name,
+        profileImageUrl: user.profileImageUrl,
+        phoneNumber: phone,
+        contacts: user.contacts || [],
+        subscribedChats: [],
+        createdAt: user.createdAt,
+      });
+      if (nextRoute) {
         navigation.navigate(nextRoute);
-      }, 1500);
-      return () => clearTimeout(timeout);
+      }
     },
     [getUserById, navigation, phone, setAuthenticatedUser, userId],
   );
@@ -135,9 +133,8 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
   const handleExistingUser = React.useCallback(async () => {
     try {
       const user = await getUserById(userId);
-      // if the user exists in the app DB but doesn't have name
-      // take them to the SignUp screen, otherwise to the Home.
-      const nextScreen = !user.name ? 'SignUp' : 'Home';
+      // if the user exists in the app DB but doesn't have name take them to the SignUp screen
+      const nextScreen = !user.name ? 'SignUp' : undefined;
       await successNavigate(nextScreen);
     } catch (error) {
       pushError(error);
@@ -176,23 +173,6 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
     }
   }, [getUserExists, handleExistingUser, handleNewUser, userId]);
 
-  const startFiniteAnimation = () => {
-    animationRef.current?.play(110, 149);
-    setAnimationIsLooping(false);
-  };
-
-  const startInfiniteAnimation = () => {
-    setAnimationIsLooping(true);
-    animationRef.current?.play(60, 110);
-  };
-
-  /**
-   * When mount, start the finite animation.
-   */
-  React.useEffect(() => {
-    startInfiniteAnimation();
-  }, []);
-
   /**
    * Go to the previous screen if the user has tried
    * to confirm OTP 3 times.
@@ -225,16 +205,12 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
     <ScreenContainer>
       <Container behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <TitleContainer>
-          <Title variant="h1">
-            Verify Your {'\n'} Phone number {animationHasFinished}
-          </Title>
+          <Title variant="h1">Verify Your {'\n'} Phone number</Title>
         </TitleContainer>
         <IllustrationContainer>
           <AnimationView
-            source={require('../../animations/confirm.json')}
-            ref={animationRef}
-            loop={animationIsLooping}
-            onAnimationFinish={() => setAnimationHasFinished(true)}
+            source={require('../../animations/waiting.json')}
+            loop={true}
           />
         </IllustrationContainer>
         <DescriptionText>
