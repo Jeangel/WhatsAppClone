@@ -16,7 +16,7 @@ type AuthStore = {
   logout: () => void;
 };
 
-const initialState: IUser = {
+const initialUserState: IUser = {
   id: '',
   name: '',
   phoneNumber: '',
@@ -25,7 +25,7 @@ const initialState: IUser = {
 };
 
 let store: StateCreator<AuthStore> = (set) => ({
-  authenticatedUser: initialState,
+  authenticatedUser: initialUserState,
   setAuthenticatedUser: (authenticatedUser) => {
     set((state) => ({
       authenticatedUser: { ...state.authenticatedUser, ...authenticatedUser },
@@ -49,7 +49,7 @@ let store: StateCreator<AuthStore> = (set) => ({
     }));
   },
   logout: () => {
-    const authenticatedUser = initialState;
+    const authenticatedUser = initialUserState;
     set(() => ({ authenticatedUser }));
   },
 });
