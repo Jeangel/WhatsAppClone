@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { Header } from '../../components/molecules/Header';
 import { ChatStackParamList } from '../../navigation/ChatsStackNav';
 import { UserCard } from '../../components/molecules/User/UserCard';
-import { capitalize, pubnubMessageEventToGiftedChatMessage } from '../../util';
+import { capitalize } from '../../util';
 import { Icon } from '../../components/atoms/Icon';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import { ChatMessageBar } from '../../components/organisms/Chat/ChatMessageBar';
@@ -74,11 +74,9 @@ export const Chat = ({ route }: ChatProps) => {
   const pubnub = usePubNub();
   const { getChatMessages } = useChats();
   const { authenticatedUser } = useAuthStore();
-  const { currentChat } = useChatsStore();
   const { bottom } = useSafeAreaInsets();
   const [messages, setMessages] = React.useState<IMessage[]>([]);
   const chatId = route.params.chatId;
-  console.log(currentChat, 'current chat in Chat screenƒ');
   React.useEffect(() => {
     getChatMessages(chatId).then(setMessages);
     pubnub

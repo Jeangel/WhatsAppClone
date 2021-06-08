@@ -3,12 +3,17 @@ export enum EMessageStatus {
   read = 'read',
   received = 'received',
 }
-export class Message {
-  id!: string;
-  author!: string;
-  sentAt!: string;
-  content!: string;
-  type!: string;
-  status!: keyof typeof EMessageStatus;
-  constructor() {}
+
+export interface IMessage {
+  _id: number;
+  createdAt: string;
+  text: string;
+  user: {
+    _id: string;
+  };
+}
+
+export interface IMessagesByChat {
+  chatId: string;
+  messages: IMessage[];
 }

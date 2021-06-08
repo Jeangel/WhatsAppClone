@@ -1,7 +1,7 @@
 import { usePubNub } from 'pubnub-react';
 import { IChatItem } from '../app/Chat';
 import { useAuthStore } from '../state/auth';
-import { pubnubMessageToGiftedChatMessage } from '../util';
+import { pubnubMessageToChatMessage } from '../util';
 
 const useChats = () => {
   const pubnub = usePubNub();
@@ -24,7 +24,7 @@ const useChats = () => {
         count: 1,
       });
       const channelMessages = channels[id] || [];
-      return channelMessages.map(pubnubMessageToGiftedChatMessage);
+      return channelMessages.map(pubnubMessageToChatMessage);
     } catch (error) {
       console.log('error getting last chat message', error);
       return [];
@@ -35,7 +35,7 @@ const useChats = () => {
     try {
       const { channels } = await pubnub.fetchMessages({ channels: [id] });
       const channelMessages = channels[id] || [];
-      return channelMessages.map(pubnubMessageToGiftedChatMessage);
+      return channelMessages.map(pubnubMessageToChatMessage);
     } catch (error) {
       console.log('error getting chat messages', error);
       return [];
@@ -59,12 +59,12 @@ const useChats = () => {
     }
   };
 
-  const getUserChats = async (userId: string) => {
+  const getMyChats = async () => {
     const chats: IChatItem[] = [];
     let chatsIds: string[] = [];
     try {
       const memberships = await pubnub.objects.getMemberships({
-        uuid: userId,
+        uuid: authenticatedUser.id,
       });
       chatsIds = memberships.data.map((e) => e.channel.id);
     } catch (error) {
@@ -72,53 +72,8 @@ const useChats = () => {
     }
     try {
       for (const chat of chatsIds) {
-        const membersPromise = pubnub.objects.getChannelMembers({
-          channel: chat,
-          include: { customUUIDFields: true },
-        });
-        const lastMessagePromise = pubnub.history({
-          channel: chat,
-          count: 1,
-          includeMeta: true,
-        });
-
-        const [{ data: members }, lastMessages] = await Promise.all([
-          membersPromise,
-          lastMessagePromise,
-        ]);
-
-        const [lastMessage] = lastMessages.messages;
-        if (!lastMessage) {
-          continue;
-        }
-        const oppositeUser = members.find((e) => e.uuid.id !== userId) as any;
-        const oppositeUserAsContact = authenticatedUser.contacts.find(
-          (e) => e.id === oppositeUser.uuid.id,
-        );
-        chats.push({
-          id: chat,
-          lastMessage: {
-            // types on getChannelMembers are not friendly
-            id: lastMessage.timetoken as string,
-            content: lastMessage.entry.text,
-            type: 'text',
-            author: lastMessage.entry.author,
-            sentAt: new Date(
-              Number(lastMessage?.timetoken) / 10000,
-            ).toISOString(),
-            status: 'received',
-          },
-          author: {
-            id: oppositeUser?.uuid.id || '',
-            name:
-              oppositeUserAsContact?.alias ||
-              oppositeUser?.uuid.custom?.name ||
-              '',
-            profileImageUrl: oppositeUser?.uuid.custom?.profileImageUrl || '',
-            status: 'offline',
-          },
-          unreadMessages: 0,
-        });
+        const members = await getChatMembers(chat);
+        chats.push({ chatId: chat, members });
       }
     } catch (error) {
       console.log('error getting user chats', error);
@@ -131,7 +86,7 @@ const useChats = () => {
     getChatMembers,
     getChatMessages,
     getLastChatMessage,
-    getUserChats,
+    getMyChats,
   };
 };
 

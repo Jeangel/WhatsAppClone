@@ -5,20 +5,25 @@ import { IChatUser } from '../app/User';
 
 type UsersStore = {
   users: IChatUser[];
-  addUser: (users: IChatUser[]) => void;
+  addUsers: (users: IChatUser[]) => void;
+  setUsers: (users: IChatUser[]) => void;
   updateUser: (userId: string, update: IChatUser) => void;
 };
 
 const initialState: UsersStore = {
   users: [],
-  addUser: () => {},
+  addUsers: () => {},
   updateUser: () => {},
+  setUsers: () => {},
 };
 
 let store: StateCreator<UsersStore> = (set) => ({
   users: initialState.users,
-  addUser: (newUsers) => {
+  addUsers: (newUsers) => {
     set(({ users }) => ({ users: users.concat(newUsers) }));
+  },
+  setUsers: (users) => {
+    set(() => ({ users }));
   },
   updateUser: (userId, update) => {
     set(({ users }) => ({

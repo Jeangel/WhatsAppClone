@@ -20,8 +20,6 @@ export interface IChat {
 }
 
 export interface IChatItem {
-  id: string;
-  lastMessage: Message;
-  author: IChatUser;
-  unreadMessages: number;
+  chatId: string;
+  members: string[];
 }

@@ -4,16 +4,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IChatItem } from '../app/Chat';
 
 type ChatStore = {
-  chatList: IChatItem[];
-  setChatList: (chatList: IChatItem[]) => void;
+  chats: IChatItem[];
+  setChats: (chats: IChatItem[]) => void;
   currentChat?: IChatItem;
   setCurrentChat: (chatId?: string) => void;
   updateChat: (chatId: string, chat: IChatItem) => void;
 };
 
 const initialState: ChatStore = {
-  chatList: [],
-  setChatList: () => {},
+  chats: [],
+  setChats: () => {},
   currentChat: undefined,
   setCurrentChat: () => {},
   updateChat: () => {},
@@ -22,20 +22,18 @@ const initialState: ChatStore = {
 export const useChatsStore = create<ChatStore>(
   persist(
     (set, get) => ({
-      chatList: initialState.chatList,
-      setChatList: (chatList) => {
-        set(() => ({ chatList }));
+      chats: initialState.chats,
+      setChats: (chats) => {
+        set(() => ({ chats }));
       },
       setCurrentChat: (currentChatId) => {
-        const currentChat = get().chatList.find((e) => e.id === currentChatId);
+        const currentChat = get().chats.find((e) => e.chatId === currentChatId);
         set(() => ({ currentChat }));
       },
       currentChat: initialState.currentChat,
       updateChat: (chatId, chat) => {
-        const chatList = get().chatList.map((e) =>
-          e.id === chatId ? chat : e,
-        );
-        set(() => ({ chatList }));
+        const chats = get().chats.map((e) => (e.chatId === chatId ? chat : e));
+        set(() => ({ chats }));
       },
     }),
     { name: 'chat-store', getStorage: () => AsyncStorage },

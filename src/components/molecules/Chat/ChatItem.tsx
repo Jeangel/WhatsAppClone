@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useCallback } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
@@ -7,6 +8,9 @@ import { IChatItem } from '../../../app/Chat';
 import { Text } from '../../atoms/Text';
 import { MessageStatus } from '../Message/MessageStatus';
 import { UserCard } from '../User/UserCard';
+import { useUsersStore } from '../../../state/users';
+import { useAuthStore } from '../../../state/auth';
+import { useMessagesStore } from '../../../state/messages';
 dayjs.extend(RelativeTime);
 
 interface ChatItemProps {
@@ -60,30 +64,51 @@ const Content = styled(View)`
 `;
 
 export const ChatItem = ({ data, onPress }: ChatItemProps) => {
-  const hasUnreadMessages = data.unreadMessages > 0;
+  const { authenticatedUser } = useAuthStore();
+  const { members, chatId } = data;
+  const notMeUserId = members.find((e) => e !== authenticatedUser.id);
+  const notMeUser = useUsersStore(
+    useCallback((state) => state.users.find((e) => e.id === notMeUserId), [
+      notMeUserId,
+    ]),
+  );
+  const lastChatMessage = useMessagesStore((state) =>
+    state.getLastMessageFromChat(chatId),
+  );
+  const hasUnreadMessages = false;
+  if (!notMeUser) {
+    return <React.Fragment />;
+  }
   const handleOnPress = () => {
-    onPress(data.id);
+    onPress(data.chatId);
   };
   return (
     <Container onPress={handleOnPress}>
       <Content>
         <UserCardContainer>
-          <UserCard user={data.author} description={data.lastMessage.content} />
+          <UserCard
+            user={notMeUser}
+            description={lastChatMessage?.text || ''}
+          />
         </UserCardContainer>
         <ChatInfoContainer>
-          <LastMessageTimeStamp color="neutral60" variant="small">
-            {dayjs(data.lastMessage.sentAt).fromNow()}
-          </LastMessageTimeStamp>
-          {hasUnreadMessages ? (
-            <UnreadMessagesContainer hide={!hasUnreadMessages}>
-              <Text color="white" variant="small">
-                {data.unreadMessages}
-              </Text>
-            </UnreadMessagesContainer>
-          ) : (
-            <MessageStatusContainer>
-              <MessageStatus status={data.lastMessage.status} />
-            </MessageStatusContainer>
+          {lastChatMessage && (
+            <>
+              <LastMessageTimeStamp color="neutral60" variant="small">
+                {dayjs(lastChatMessage?.createdAt).fromNow()}
+              </LastMessageTimeStamp>
+              {hasUnreadMessages ? (
+                <UnreadMessagesContainer hide={!hasUnreadMessages}>
+                  <Text color="white" variant="small">
+                    {1}
+                  </Text>
+                </UnreadMessagesContainer>
+              ) : (
+                <MessageStatusContainer>
+                  <MessageStatus status={'sent'} />
+                </MessageStatusContainer>
+              )}
+            </>
           )}
         </ChatInfoContainer>
       </Content>

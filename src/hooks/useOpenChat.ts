@@ -24,11 +24,11 @@ interface IOpenChatArgs {
 export const useOpenChat = () => {
   const navigation = useNavigation();
   const { getChatMembers, setChatMembers } = useChats();
-  const { setCurrentChat } = useChatsStore();
+  // const { setCurrentChat } = useChatsStore();
   const pushError = usePushError();
 
   const openChat = async ({ chatId, membersIds }: IOpenChatArgs) => {
-    setCurrentChat(chatId);
+    // setCurrentChat(chatId);
     const members = await getChatMembers(chatId);
     // if the chat contain members yet, we're ready to go to the chat.
     if (members.length) {

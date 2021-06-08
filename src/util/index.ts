@@ -1,4 +1,5 @@
 import Pubnub from 'pubnub';
+import { IMessage } from '../app/Message';
 import { PubNubChatMessage } from './../types/pubnub';
 
 export const getKeyValue = <U extends keyof T, T extends object>(
@@ -15,22 +16,22 @@ export const createOneToOneChatId = (userIds: string[]) => {
   return `chats.private.${ids.join('-')}`;
 };
 
-export const pubnubMessageToGiftedChatMessage = (
+export const pubnubMessageToChatMessage = (
   message: PubNubChatMessage,
-) => ({
-  _id: message.timetoken,
-  createdAt: new Date(Number(message.timetoken) / 10000),
+): IMessage => ({
+  _id: Number(message.timetoken),
+  createdAt: new Date(Number(message.timetoken) / 10000).toISOString(),
   text: message.message.text,
   user: {
     _id: message.message.author,
   },
 });
 
-export const pubnubMessageEventToGiftedChatMessage = (
+export const pubnubMessageEventToChatMessage = (
   messageEvent: Pubnub.MessageEvent,
-) => ({
-  _id: messageEvent.timetoken,
-  createdAt: new Date(Number(messageEvent.timetoken) / 10000),
+): IMessage => ({
+  _id: Number(messageEvent.timetoken),
+  createdAt: new Date(Number(messageEvent.timetoken) / 10000).toISOString(),
   text: messageEvent.message.text,
   user: {
     _id: messageEvent.message.author,

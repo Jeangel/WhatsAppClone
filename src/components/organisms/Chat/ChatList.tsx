@@ -74,15 +74,14 @@ interface ChatListProps {
 }
 
 export const ChatList = ({ onChatPress, onChatRemove }: ChatListProps) => {
-  const { chatList } = useChatsStore();
+  const { chats } = useChatsStore();
   const opacity = React.useRef(new Animated.Value(1)).current;
   opacity.interpolate({ inputRange: [0, 75], outputRange: [0, 1] });
   const contentContainerStyle = { flex: 1 };
-
   return (
     <Container>
       <SwipeListView
-        data={chatList}
+        data={chats}
         contentContainerStyle={contentContainerStyle}
         ListEmptyComponent={
           <EmptyViewContainer>
@@ -93,7 +92,7 @@ export const ChatList = ({ onChatPress, onChatRemove }: ChatListProps) => {
           </EmptyViewContainer>
         }
         showsVerticalScrollIndicator={false}
-        keyExtractor={({ id }) => id}
+        keyExtractor={({ chatId }) => chatId}
         renderItem={({ item }) => (
           <ChatItem data={item} onPress={onChatPress} />
         )}
