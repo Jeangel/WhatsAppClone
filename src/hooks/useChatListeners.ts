@@ -11,6 +11,7 @@ import useAppStateChange from './useAppStateChange';
 import useChats from './useChats';
 import useUsers from './useUsers';
 import { IMessagesByChat } from '../app/Message';
+import { fromTimeTokenToDate } from '../util';
 
 export const useChatListeners = () => {
   const pubnub = usePubNub();
@@ -18,7 +19,7 @@ export const useChatListeners = () => {
   const { getMyChats, getChatMessages } = useChats();
   const { setChats, chats } = useChatsStore();
   const { setUsers } = useUsersStore();
-  const { setMessagesByChat } = useMessagesStore();
+  const { setMessagesByChat, addMessagesByChat } = useMessagesStore();
   const { getUsersByIdIn } = useUsers();
 
   const subscribeToChannels = () => {
@@ -67,7 +68,7 @@ export const useChatListeners = () => {
 
   const presenceListener = (event: Pubnub.PresenceEvent) => {
     const { channel, action, uuid } = event;
-    const chat = chats.find((e) => e.id === channel);
+    const chat = chats.find((e) => e.chatId === channel);
     const isMe = uuid !== authenticatedUser.id;
     const isJoinOrLeave = ['join', 'leave'].includes(action);
     if (isMe && chat && isJoinOrLeave) {
@@ -91,8 +92,18 @@ export const useChatListeners = () => {
         },
         message: (params) => {
           console.log('navigation message event', params);
+          addMessagesByChat(params.channel, [
+            {
+              _id: Number(params.timetoken),
+              text: params.message.text,
+              createdAt: fromTimeTokenToDate(params.timetoken).toISOString(),
+              user: {
+                _id: params.publisher,
+              },
+            },
+          ]);
         },
-        // presence: presenceListener,
+        presence: presenceListener,
       };
       pubnub.addListener(listeners);
       return () => {

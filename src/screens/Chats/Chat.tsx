@@ -13,12 +13,10 @@ import { ChatMessageBar } from '../../components/organisms/Chat/ChatMessageBar';
 import { MessageBubble } from '../../components/organisms/Chat/MessageBubble';
 import { usePubNub } from 'pubnub-react';
 import { useAuthStore } from '../../state/auth';
-import Pubnub from 'pubnub';
 import { RouteProp } from '@react-navigation/core';
-import useChats from '../../hooks/useChats';
-import { useChatsStore } from '../../state/chats';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScreenContainer } from '../../components/atoms/ScreenContainer';
+import { useMessagesStore } from '../../state/messages';
 
 type ChatScreenNavigationProp = StackNavigationProp<ChatStackParamList, 'Chat'>;
 
@@ -72,42 +70,15 @@ interface ChatProps {
 
 export const Chat = ({ route }: ChatProps) => {
   const pubnub = usePubNub();
-  const { getChatMessages } = useChats();
+
   const { authenticatedUser } = useAuthStore();
   const { bottom } = useSafeAreaInsets();
-  const [messages, setMessages] = React.useState<IMessage[]>([]);
   const chatId = route.params.chatId;
-  React.useEffect(() => {
-    getChatMessages(chatId).then(setMessages);
-    pubnub
-      .hereNow({
-        channels: [chatId],
-        includeState: true,
-        includeUUIDs: true,
-      })
-      .then((e) => {
-        console.log('HERE NOW', e);
-      });
-  }, [chatId]);
-
-  // React.useEffect(() => {
-  //   if (pubnub) {
-  //     const listeners: Pubnub.ListenerParameters = {
-  //       message: async (envelope) => {
-  //         console.log('message listener on Chat Screen', envelope);
-  //         setMessages((msgs) => [
-  //           ...msgs,
-  //           pubnubMessageEventToGiftedChatMessage(envelope),
-  //         ]);
-  //       },
-  //     };
-  //     pubnub.addListener(listeners);
-  //     return () => {
-  //       pubnub.removeListener(listeners);
-  //       pubnub.unsubscribeAll();
-  //     };
-  //   }
-  // }, [authenticatedUser.id, pubnub, chatId]);
+  const messages = useMessagesStore((state) =>
+    state
+      .getMessagesForChat(chatId)
+      .map((e) => ({ ...e, createdAt: new Date(e.createdAt) })),
+  );
 
   const handleOnSend = async (newMessages: IMessage[]) => {
     const newMessage = newMessages[0];

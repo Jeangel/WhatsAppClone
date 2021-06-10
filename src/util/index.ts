@@ -16,11 +16,14 @@ export const createOneToOneChatId = (userIds: string[]) => {
   return `chats.private.${ids.join('-')}`;
 };
 
+export const fromTimeTokenToDate = (timetoken?: string | number) =>
+  new Date(Number(timetoken) / 10000);
+
 export const pubnubMessageToChatMessage = (
   message: PubNubChatMessage,
 ): IMessage => ({
   _id: Number(message.timetoken),
-  createdAt: new Date(Number(message.timetoken) / 10000).toISOString(),
+  createdAt: fromTimeTokenToDate(message.timetoken).toISOString(),
   text: message.message.text,
   user: {
     _id: message.message.author,
@@ -31,7 +34,7 @@ export const pubnubMessageEventToChatMessage = (
   messageEvent: Pubnub.MessageEvent,
 ): IMessage => ({
   _id: Number(messageEvent.timetoken),
-  createdAt: new Date(Number(messageEvent.timetoken) / 10000).toISOString(),
+  createdAt: fromTimeTokenToDate(messageEvent.timetoken).toISOString(),
   text: messageEvent.message.text,
   user: {
     _id: messageEvent.message.author,

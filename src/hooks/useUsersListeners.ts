@@ -37,7 +37,7 @@ const useUsersListeners = () => {
     );
     return () => {
       Promise.all(unSubscribers).catch((e) => {
-        console.log('error when unsubcribing users', e);
+        console.log('error when unsubscribing users', e);
       });
     };
   }, [pubnub]);

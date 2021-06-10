@@ -21,10 +21,18 @@ const useUsers = () => {
   };
 
   const getUsersByIdIn = async (ids: string[]) => {
-    const users = await usersCollection
-      .where(firestore.FieldPath.documentId(), 'in', ids)
-      .get();
-    return users.docs.map((e) => ({ id: e.id, ...e.data() } as IUser));
+    if (!ids.length) {
+      return [];
+    }
+    try {
+      const users = await usersCollection
+        .where(firestore.FieldPath.documentId(), 'in', ids)
+        .get();
+      return users.docs.map((e) => ({ id: e.id, ...e.data() } as IUser));
+    } catch (error) {
+      console.log('error getting users by id', error);
+      return [];
+    }
   };
 
   const getUserByPhoneNumber = async (phone: string) => {

@@ -1,14 +1,15 @@
 import create, { StateCreator } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IMessage, IMessagesByChat } from '../app/Message';
 
 type MessagesStore = {
   messagesByChat: IMessagesByChat[];
-  addMessagesByChat: (messages: IMessagesByChat[]) => void;
+  addMessagesByChat: (chatId: string, messages: IMessage[]) => void;
   setMessagesByChat: (messages: IMessagesByChat[]) => void;
   updateMessage: (messageId: number, chatId: string, update: IMessage) => void;
   getLastMessageFromChat: (chatId: string) => IMessage | undefined;
+  getMessagesForChat: (chat: string) => IMessage[];
 };
 
 const initialState: MessagesStore = {
@@ -19,14 +20,26 @@ const initialState: MessagesStore = {
   getLastMessageFromChat: () => {
     return undefined;
   },
+  getMessagesForChat: () => {
+    return [];
+  },
 };
 
 let store: StateCreator<MessagesStore> = (set, get) => ({
   messagesByChat: initialState.messagesByChat,
-  addMessagesByChat: (newMessages) => {
-    set(({ messagesByChat }) => ({
-      messagesByChat: messagesByChat.concat(newMessages),
-    }));
+  addMessagesByChat: (chatId, newMessages) => {
+    set(({ messagesByChat }) => {
+      const chat = messagesByChat.find((e) => e.chatId === chatId);
+      if (!chat) {
+        return { messagesByChat };
+      }
+      const messages = chat.messages.concat(newMessages);
+      return {
+        messagesByChat: messagesByChat.map((e) =>
+          e.chatId === chatId ? { ...e, messages } : e,
+        ),
+      };
+    });
   },
   setMessagesByChat: (messagesByChat) => {
     set(() => ({ messagesByChat }));
@@ -35,9 +48,7 @@ let store: StateCreator<MessagesStore> = (set, get) => ({
     set(({ messagesByChat }) => {
       const chat = messagesByChat.find((e) => e.chatId === chatId);
       if (!chat) {
-        return {
-          messagesByChat,
-        };
+        return { messagesByChat };
       }
       const messages = chat.messages.map((e) =>
         e._id === messageId ? message : e,
@@ -57,7 +68,16 @@ let store: StateCreator<MessagesStore> = (set, get) => ({
     }
     return chat.messages[chat.messages.length - 1];
   },
+  getMessagesForChat: (chatId) => {
+    const chat = get().messagesByChat.find((e) => e.chatId === chatId);
+    if (!chat || (chat && !chat.messages.length)) {
+      return [];
+    }
+    return chat.messages;
+  },
 });
+
+store = devtools(store);
 
 store = persist(store, {
   name: 'messages-store',
