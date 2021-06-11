@@ -21,7 +21,7 @@ const useUsersListeners = () => {
       ...(pubnubUser.custom || {}),
       profileImageUrl,
     };
-    pubnub.objects.setUUIDMetadata({
+    await pubnub.objects.setUUIDMetadata({
       uuid: snapshot.id,
       data: { custom: userMetaData },
     });
@@ -36,9 +36,14 @@ const useUsersListeners = () => {
         .onSnapshot(onUsersSnapshot, pushError),
     );
     return () => {
-      Promise.all(unSubscribers).catch((e) => {
-        console.log('error when unsubscribing users', e);
-      });
+      console.log('Running user unsubscribers');
+      Promise.all(unSubscribers)
+        .catch((e) => {
+          console.log('error when unsubscribing users', e);
+        })
+        .then(() => {
+          console.log('users unsubscribed');
+        });
     };
   }, [pubnub]);
 };

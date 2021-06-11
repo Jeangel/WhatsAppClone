@@ -16,80 +16,105 @@ import { fromTimeTokenToDate } from '../util';
 export const useChatListeners = () => {
   const pubnub = usePubNub();
   const { authenticatedUser } = useAuthStore();
-  const { getMyChats, getChatMessages } = useChats();
-  const { setChats, chats } = useChatsStore();
+  const { getMyChats, getChatMessages, getChatMembers } = useChats();
+  const { setChats, chats, addChat } = useChatsStore();
   const { setUsers } = useUsersStore();
   const { setMessagesByChat, addMessagesByChat } = useMessagesStore();
   const { getUsersByIdIn } = useUsers();
 
   const subscribeToChannels = () => {
     const chatsIds = chats.map((e) => e.chatId);
-    pubnub.subscribe({ channels: chatsIds, withPresence: true });
+    pubnub.subscribe({
+      channels: [...chatsIds, authenticatedUser.id],
+      withPresence: true,
+    });
   };
 
   const unsubscribeFromChannels = () => {
     pubnub.unsubscribeAll();
   };
 
-  const refreshUserChats = () => {
-    getMyChats().then(async (myChats) => {
-      const users: string[] = [];
-      const messagesByChat: IMessagesByChat[] = [];
-      for (const chat of myChats) {
-        const chatMessages = await getChatMessages(chat.chatId);
-        messagesByChat.push({
-          chatId: chat.chatId,
-          messages: chatMessages,
-        });
-      }
-      myChats.forEach((e) => {
-        users.push(...e.members);
+  const refreshUserChats = async () => {
+    const myChats = await getMyChats();
+    const users: string[] = [];
+    const messagesByChat: IMessagesByChat[] = [];
+    for (const chat of myChats) {
+      const chatMessages = await getChatMessages(chat.chatId);
+      messagesByChat.push({
+        chatId: chat.chatId,
+        messages: chatMessages,
       });
-      const dbUsers = await getUsersByIdIn(users);
-      const formattedUsers: IChatUser[] = dbUsers.map((e) => ({
-        id: e.id,
-        name: e.name,
-        profileImageUrl: e.profileImageUrl,
-      }));
-      setMessagesByChat(messagesByChat);
-      setUsers(formattedUsers);
-      setChats(myChats);
+    }
+    myChats.forEach((e) => {
+      users.push(...e.members);
     });
+    const dbUsers = await getUsersByIdIn(users);
+    const formattedUsers: IChatUser[] = dbUsers.map((e) => ({
+      id: e.id,
+      name: e.name,
+      profileImageUrl: e.profileImageUrl,
+    }));
+    setMessagesByChat(messagesByChat);
+    setUsers(formattedUsers);
+    setChats(myChats);
   };
 
-  const configureUUID = () => {
+  const configureUUID = async () => {
     const userMetaData = {
       name: authenticatedUser.name,
       profileImageUrl: authenticatedUser.profileImageUrl,
     };
     pubnub.setUUID(authenticatedUser.id);
-    pubnub.objects.setUUIDMetadata({ data: { custom: userMetaData } });
+    await pubnub.objects.setUUIDMetadata({ data: { custom: userMetaData } });
   };
 
-  const presenceListener = (event: Pubnub.PresenceEvent) => {
-    const { channel, action, uuid } = event;
-    const chat = chats.find((e) => e.chatId === channel);
-    const isMe = uuid !== authenticatedUser.id;
-    const isJoinOrLeave = ['join', 'leave'].includes(action);
-    if (isMe && chat && isJoinOrLeave) {
-      // updateChat(channel, {});
+  const presenceListener = () => {
+    // const { channel, action, uuid } = event;
+    // const chat = chats.find((e) => e.chatId === channel);
+    // const isMe = uuid !== authenticatedUser.id;
+    // const isJoinOrLeave = ['join', 'leave'].includes(action);
+    // if (isMe && chat && isJoinOrLeave) {
+    //   // updateChat(channel, {});
+    // }
+  };
+
+  const membershipEventHandler = (event: Pubnub.ObjectsEvent) => {
+    const { message } = event;
+    const eventData = message.data as { channel: { id: string } };
+    if (message.event === 'set') {
+      const chatId = eventData.channel.id;
+      getChatMembers(chatId).then((members) => {
+        pubnub.subscribe({ channels: [chatId] });
+        addChat({ chatId, members });
+        addMessagesByChat(chatId, []);
+      });
     }
   };
 
+  const objectEventListener = (event: Pubnub.ObjectsEvent) => {
+    const { message, ...rest } = event;
+    if (message.type === 'membership') {
+      membershipEventHandler(event);
+    }
+    console.log('object event params', { ...rest, message });
+  };
+
   useAppStateChange({
-    handleAppDeactivated: () => unsubscribeFromChannels(),
+    // handleAppDeactivated: () => unsubscribeFromChannels(),
     handleAppActivated: () => subscribeToChannels(),
   });
 
   useEffect(() => {
     if (pubnub && authenticatedUser.id) {
+      console.log('Running use effect listeners');
       refreshUserChats();
       configureUUID();
       subscribeToChannels();
       const listeners: Pubnub.ListenerParameters = {
-        objects: (params) => {
-          console.log(params, 'object event params');
+        status: (params) => {
+          console.log('status event', params);
         },
+        objects: objectEventListener,
         message: (params) => {
           console.log('navigation message event', params);
           addMessagesByChat(params.channel, [
@@ -107,6 +132,7 @@ export const useChatListeners = () => {
       };
       pubnub.addListener(listeners);
       return () => {
+        console.log('REMOVING ALL CHAT STUFF');
         pubnub.removeListener(listeners);
         unsubscribeFromChannels();
       };

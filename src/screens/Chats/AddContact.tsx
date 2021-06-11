@@ -21,6 +21,8 @@ import { usePushError } from '../../state/error';
 import { usePushBoxModal } from '../../state/boxModal';
 import { ChatStackParamList } from '../../navigation/ChatsStackNav';
 import useUsers from '../../hooks/useUsers';
+import useChats from '../../hooks/useChats';
+import { createOneToOneChatId } from '../../util';
 
 const Container = styled(KeyboardAvoidingView)`
   height: 100%;
@@ -82,6 +84,7 @@ export const AddContact = ({ navigation }: AddContactProps) => {
   const { getUserByPhoneNumber, getUserById, addContact } = useUsers();
   const { authenticatedUser } = useAuthStore();
   const { showSpinner, hideSpinner } = useSpinner();
+  const { setChatMembers } = useChats();
   const pushError = usePushError();
   const pushBoxModal = usePushBoxModal();
 
@@ -95,7 +98,12 @@ export const AddContact = ({ navigation }: AddContactProps) => {
       const contacts = currentUser.contacts || [];
       const contactExists = contacts.find((e) => e.id === contact.id);
       if (!contactExists) {
+        const members = [contact.id, authenticatedUser.id];
         await addContact({ id: contact.id, alias: name });
+        await setChatMembers({
+          chatId: createOneToOneChatId(members),
+          members: members,
+        });
         pushBoxModal({
           content: 'Contact was added successfully',
           variant: 'success',

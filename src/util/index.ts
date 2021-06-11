@@ -40,3 +40,7 @@ export const pubnubMessageEventToChatMessage = (
     _id: messageEvent.message.author,
   },
 });
+
+export const isChannelAChat = (channelId: string) => {
+  return channelId.startsWith('chats.');
+};

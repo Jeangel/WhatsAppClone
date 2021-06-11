@@ -50,10 +50,22 @@ const useChats = () => {
     members: string[];
   }) => {
     try {
-      await pubnub.objects.setChannelMembers({
+      const promises = [];
+      const setChatMembersPromise = pubnub.objects.setChannelMembers({
         uuids: members,
         channel: chatId,
       });
+      members.forEach((member) => {
+        promises.push(
+          pubnub.objects.setMemberships({
+            uuid: member,
+            channels: [chatId],
+          }),
+        );
+      });
+      promises.push(setChatMembersPromise);
+      const response = await Promise.all(promises);
+      console.log(response, 'setting stuff');
     } catch (error) {
       console.log('error setting chat members', error);
     }
