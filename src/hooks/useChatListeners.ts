@@ -8,15 +8,15 @@ import { useAuthStore } from '../state/auth';
 import { useChatsStore } from '../state/chats';
 import { useUsersStore } from '../state/users';
 import useAppStateChange from './useAppStateChange';
-import useChats from './useChats';
-import useUsers from './useUsers';
+import useChatsRequests from './useChatsRequests';
+import useUsersRequests from './useUsersRequests';
 import { IChatMessage } from '../app/Message';
 import { fromTimeTokenToDate } from '../util';
 
 export const useChatListeners = () => {
   const pubnub = usePubNub();
   const { authenticatedUser } = useAuthStore();
-  const { getMyChats, getChatMessages, getChatMembers } = useChats();
+  const { getMyChats, getChatMessages, getChatMembers } = useChatsRequests();
   const { setChats, chats, addChat } = useChatsStore();
   const { setUsers, addUsers } = useUsersStore();
   const {
@@ -24,7 +24,7 @@ export const useChatListeners = () => {
     addChatMessages,
     addChat: addMessagesByChatItem,
   } = useChatMessagesStore();
-  const { getUsersByIdIn } = useUsers();
+  const { getUsersByIdIn } = useUsersRequests();
 
   const subscribeToChannels = () => {
     const chatsIds = chats.map((e) => e.chatId);
@@ -113,7 +113,6 @@ export const useChatListeners = () => {
   };
 
   useAppStateChange({
-    // handleAppDeactivated: () => unsubscribeFromChannels(),
     handleAppActivated: () => subscribeToChannels(),
   });
 

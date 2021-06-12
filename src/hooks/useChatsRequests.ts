@@ -3,7 +3,7 @@ import { IChatItem } from '../app/Chat';
 import { useAuthStore } from '../state/auth';
 import { pubnubMessageToChatMessage } from '../util';
 
-const useChats = () => {
+const useChatsRequests = () => {
   const pubnub = usePubNub();
   const { authenticatedUser } = useAuthStore();
 
@@ -13,20 +13,6 @@ const useChats = () => {
       return response.data.map((e) => e.uuid.id);
     } catch (error) {
       console.log('error getting chat members', error);
-      return [];
-    }
-  };
-
-  const getLastChatMessage = async (id: string) => {
-    try {
-      const { channels } = await pubnub.fetchMessages({
-        channels: [id],
-        count: 1,
-      });
-      const channelMessages = channels[id] || [];
-      return channelMessages.map(pubnubMessageToChatMessage);
-    } catch (error) {
-      console.log('error getting last chat message', error);
       return [];
     }
   };
@@ -97,9 +83,8 @@ const useChats = () => {
     setChatMembers,
     getChatMembers,
     getChatMessages,
-    getLastChatMessage,
     getMyChats,
   };
 };
 
-export default useChats;
+export default useChatsRequests;

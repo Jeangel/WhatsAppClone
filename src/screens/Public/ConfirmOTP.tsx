@@ -13,7 +13,7 @@ import { OTPInput } from '../../components/molecules/OTPInput';
 import { PublicStackParamList } from '../../navigation/PublicStackNav';
 import { ScreenContainer } from '../../components/atoms/ScreenContainer';
 import auth from '@react-native-firebase/auth';
-import useUsers from '../../hooks/useUsers';
+import useUsersRequests from '../../hooks/useUsersRequests';
 
 type ConfirmOTPScreenNavigationProp = StackNavigationProp<
   PublicStackParamList,
@@ -84,7 +84,7 @@ export const ConfirmOTP = ({ route, navigation }: ConfirmOTPProps) => {
     setAuthenticatedUser: state.setAuthenticatedUser,
   }));
   const pushError = usePushError();
-  const { getUserById, updateUser, getUserExists } = useUsers();
+  const { getUserById, updateUser, getUserExists } = useUsersRequests();
   const { phone, confirmation } = route.params;
 
   /**

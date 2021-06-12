@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/core';
 import { usePushError } from '../state/error';
-import useChats from './useChats';
+import useChatsRequests from './useChatsRequests';
 
 interface IOpenChatArgs {
   /**
@@ -22,7 +22,7 @@ interface IOpenChatArgs {
  */
 export const useOpenChat = () => {
   const navigation = useNavigation();
-  const { getChatMembers, setChatMembers } = useChats();
+  const { getChatMembers, setChatMembers } = useChatsRequests();
   // const { setCurrentChat } = useChatsStore();
   const pushError = usePushError();
 

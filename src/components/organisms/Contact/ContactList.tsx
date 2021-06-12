@@ -11,7 +11,7 @@ import useSpinner from '../../../hooks/useSpinner';
 import { useAuthStore } from '../../../state/auth';
 import { UserCard } from '../../../components/molecules/User/UserCard';
 import { IUser } from '../../../app/User';
-import useUsers from '../../../hooks/useUsers';
+import useUsersRequests from '../../../hooks/useUsersRequests';
 import { useOpenChat } from '../../../hooks/useOpenChat';
 import { createOneToOneChatId } from '../../../util';
 import { useIsFocused } from '@react-navigation/core';
@@ -28,7 +28,7 @@ const Separator = styled(View)`
 export const ContactList = () => {
   const [contacts, setContacts] = useState<IUser[]>([]);
   const isFocused = useIsFocused();
-  const { getUserById, getUsersByIdIn } = useUsers();
+  const { getUserById, getUsersByIdIn } = useUsersRequests();
   const { authenticatedUser } = useAuthStore();
   const { showSpinner, hideSpinner } = useSpinner();
   const openChat = useOpenChat();

@@ -20,8 +20,8 @@ import { useAuthStore } from '../../state/auth';
 import { usePushError } from '../../state/error';
 import { usePushBoxModal } from '../../state/boxModal';
 import { ChatStackParamList } from '../../navigation/ChatsStackNav';
-import useUsers from '../../hooks/useUsers';
-import useChats from '../../hooks/useChats';
+import useUsersRequests from '../../hooks/useUsersRequests';
+import useChatsRequests from '../../hooks/useChatsRequests';
 import { createOneToOneChatId } from '../../util';
 
 const Container = styled(KeyboardAvoidingView)`
@@ -81,10 +81,10 @@ export const AddContact = ({ navigation }: AddContactProps) => {
   });
   const [phone, setPhone] = React.useState('');
   const [name, setName] = React.useState('');
-  const { getUserByPhoneNumber, getUserById, addContact } = useUsers();
+  const { getUserByPhoneNumber, getUserById, addContact } = useUsersRequests();
   const { authenticatedUser } = useAuthStore();
   const { showSpinner, hideSpinner } = useSpinner();
-  const { setChatMembers } = useChats();
+  const { setChatMembers } = useChatsRequests();
   const pushError = usePushError();
   const pushBoxModal = usePushBoxModal();
 

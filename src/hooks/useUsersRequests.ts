@@ -1,4 +1,4 @@
-import { IContact } from './../app/Contact';
+import { IContact } from '../app/Contact';
 import firestore, { firebase } from '@react-native-firebase/firestore';
 import { IUser } from '../app/User';
 import { USERS_COLLECTION } from '../config/database';
@@ -8,7 +8,7 @@ export const useUsersCollection = () => {
   return firestore().collection(USERS_COLLECTION);
 };
 
-const useUsers = () => {
+const useUsersRequests = () => {
   const usersCollection = useUsersCollection();
   const { updateAuthenticatedUser, authenticatedUser } = useAuthStore();
 
@@ -91,4 +91,4 @@ const useUsers = () => {
   };
 };
 
-export default useUsers;
+export default useUsersRequests;
