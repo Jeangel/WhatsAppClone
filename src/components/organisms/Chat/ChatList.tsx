@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import { View, TouchableOpacity, Animated } from 'react-native';
 import styled from 'styled-components';
@@ -8,6 +9,7 @@ import { Illustration } from '../../atoms/Illustration';
 import { Text } from '../../atoms/Text';
 import { EColor } from '../../../theme';
 import { useChatsStore } from '../../../state/chats';
+import { useChatMessagesStore } from '../../../state/chatMessages';
 
 const Container = styled(View)`
   flex: 1;
@@ -74,7 +76,10 @@ interface ChatListProps {
 }
 
 export const ChatList = ({ onChatPress, onChatRemove }: ChatListProps) => {
-  const { chats } = useChatsStore();
+  const chatMessages = useChatMessagesStore((e) => e.chatMessages);
+  const chats = useChatsStore(
+    React.useCallback((e) => e.getNonEmptyChats(), [chatMessages]),
+  );
   const opacity = React.useRef(new Animated.Value(1)).current;
   opacity.interpolate({ inputRange: [0, 75], outputRange: [0, 1] });
   const contentContainerStyle = { flex: 1 };

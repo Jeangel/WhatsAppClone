@@ -3,6 +3,7 @@ import { devtools, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IChatItem } from '../app/Chat';
 import _ from 'lodash';
+import { useChatMessagesStore } from './chatMessages';
 
 type ChatStore = {
   chats: IChatItem[];
@@ -12,6 +13,7 @@ type ChatStore = {
   setCurrentChat: (args: { chatId?: string }) => void;
   updateChat: (args: { chatId: string; chat: IChatItem }) => void;
   chatExists: (args: { chatId: string }) => boolean;
+  getNonEmptyChats: () => IChatItem[];
 };
 
 const initialState: ChatStore = {
@@ -22,6 +24,7 @@ const initialState: ChatStore = {
   setCurrentChat: () => {},
   updateChat: () => {},
   chatExists: () => false,
+  getNonEmptyChats: () => [],
 };
 
 let store: StateCreator<ChatStore> = (set, get) => ({
@@ -47,6 +50,15 @@ let store: StateCreator<ChatStore> = (set, get) => ({
   chatExists: ({ chatId }) => {
     const chat = get().chats.find((e) => e.chatId === chatId);
     return !!chat;
+  },
+  getNonEmptyChats: () => {
+    const chatMessagesStore = useChatMessagesStore.getState().chatMessages;
+    const nonEmptyChats = get().chats.filter((chat) => {
+      const messages =
+        chatMessagesStore.find((e) => e.chatId === chat.chatId)?.messages || [];
+      return messages.length > 0;
+    });
+    return nonEmptyChats;
   },
 });
 

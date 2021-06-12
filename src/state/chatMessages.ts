@@ -51,7 +51,7 @@ let store: StateCreator<ChatMessagesStore> = (set, get) => ({
     const mergedMessages = chat.messages.concat(newMessages);
     set({
       chatMessages: existingMessages.map((e) =>
-        e.chatId === chatId ? { ...e, mergedMessages } : e,
+        e.chatId === chatId ? { ...e, messages: mergedMessages } : e,
       ),
     });
   },
