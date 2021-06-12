@@ -1,5 +1,5 @@
 import create, { StateCreator } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import _ from 'lodash';
 import { IChatUser } from '../app/User';
@@ -35,6 +35,7 @@ let store: StateCreator<UsersStore> = (set, get) => ({
   },
 });
 
+store = devtools(store);
 store = persist(store, { name: 'users-store', getStorage: () => AsyncStorage });
 
 export const useUsersStore = create(store);

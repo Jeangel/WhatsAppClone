@@ -7,8 +7,8 @@ export const Settings = () => {
   const { logout, authenticatedUser } = useAuthStore();
   const handleLogout = async () => {
     if (authenticatedUser.id) {
-      await auth().signOut();
       logout();
+      await auth().signOut();
     }
   };
   return (

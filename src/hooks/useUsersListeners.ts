@@ -36,14 +36,7 @@ const useUsersListeners = () => {
         .onSnapshot(onUsersSnapshot, pushError),
     );
     return () => {
-      console.log('Running user unsubscribers');
-      Promise.all(unSubscribers)
-        .catch((e) => {
-          console.log('error when unsubscribing users', e);
-        })
-        .then(() => {
-          console.log('users unsubscribed');
-        });
+      Promise.all(unSubscribers);
     };
   }, [pubnub]);
 };
