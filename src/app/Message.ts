@@ -13,7 +13,7 @@ export interface IMessage {
   };
 }
 
-export interface IMessagesByChat {
+export interface IChatMessage {
   chatId: string;
   messages: IMessage[];
 }

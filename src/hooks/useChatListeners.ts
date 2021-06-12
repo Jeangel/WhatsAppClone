@@ -1,4 +1,4 @@
-import { useMessagesStore } from './../state/messages';
+import { useChatMessagesStore } from '../state/chatMessages';
 import { IChatUser } from './../app/User';
 /* eslint-disable react-hooks/exhaustive-deps */
 import Pubnub from 'pubnub';
@@ -10,7 +10,7 @@ import { useUsersStore } from '../state/users';
 import useAppStateChange from './useAppStateChange';
 import useChats from './useChats';
 import useUsers from './useUsers';
-import { IMessagesByChat } from '../app/Message';
+import { IChatMessage } from '../app/Message';
 import { fromTimeTokenToDate } from '../util';
 
 export const useChatListeners = () => {
@@ -18,8 +18,12 @@ export const useChatListeners = () => {
   const { authenticatedUser } = useAuthStore();
   const { getMyChats, getChatMessages, getChatMembers } = useChats();
   const { setChats, chats, addChat } = useChatsStore();
-  const { setUsers } = useUsersStore();
-  const { setMessagesByChat, addMessagesByChat } = useMessagesStore();
+  const { setUsers, addUsers } = useUsersStore();
+  const {
+    setChatMessages,
+    addChatMessages,
+    addChat: addMessagesByChatItem,
+  } = useChatMessagesStore();
   const { getUsersByIdIn } = useUsers();
 
   const subscribeToChannels = () => {
@@ -37,12 +41,12 @@ export const useChatListeners = () => {
   const refreshUserChats = async () => {
     const myChats = await getMyChats();
     const users: string[] = [];
-    const messagesByChat: IMessagesByChat[] = [];
+    const chatMessages: IChatMessage[] = [];
     for (const chat of myChats) {
-      const chatMessages = await getChatMessages(chat.chatId);
-      messagesByChat.push({
+      const messages = await getChatMessages(chat.chatId);
+      chatMessages.push({
         chatId: chat.chatId,
-        messages: chatMessages,
+        messages,
       });
     }
     myChats.forEach((e) => {
@@ -54,7 +58,7 @@ export const useChatListeners = () => {
       name: e.name,
       profileImageUrl: e.profileImageUrl,
     }));
-    setMessagesByChat(messagesByChat);
+    setChatMessages({ chatMessages });
     setUsers(formattedUsers);
     setChats(myChats);
   };
@@ -83,10 +87,19 @@ export const useChatListeners = () => {
     const eventData = message.data as { channel: { id: string } };
     if (message.event === 'set') {
       const chatId = eventData.channel.id;
-      getChatMembers(chatId).then((members) => {
+      getChatMembers(chatId).then(async (members) => {
+        const dbUsers = await getUsersByIdIn(
+          members.filter((e) => e !== authenticatedUser.id),
+        );
         pubnub.subscribe({ channels: [chatId] });
         addChat({ chatId, members });
-        addMessagesByChat(chatId, []);
+        addMessagesByChatItem(chatId);
+        const formattedUsers: IChatUser[] = dbUsers.map((e) => ({
+          id: e.id,
+          name: e.name,
+          profileImageUrl: e.profileImageUrl,
+        }));
+        addUsers(formattedUsers);
       });
     }
   };
@@ -117,7 +130,7 @@ export const useChatListeners = () => {
         objects: objectEventListener,
         message: (params) => {
           console.log('navigation message event', params);
-          addMessagesByChat(params.channel, [
+          addChatMessages(params.channel, [
             {
               _id: Number(params.timetoken),
               text: params.message.text,

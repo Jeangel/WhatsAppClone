@@ -16,7 +16,7 @@ import { useAuthStore } from '../../state/auth';
 import { RouteProp } from '@react-navigation/core';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScreenContainer } from '../../components/atoms/ScreenContainer';
-import { useMessagesStore } from '../../state/messages';
+import { useChatMessagesStore } from '../../state/chatMessages';
 
 type ChatScreenNavigationProp = StackNavigationProp<ChatStackParamList, 'Chat'>;
 
@@ -74,7 +74,7 @@ export const Chat = ({ route }: ChatProps) => {
   const { authenticatedUser } = useAuthStore();
   const { bottom } = useSafeAreaInsets();
   const chatId = route.params.chatId;
-  const messages = useMessagesStore((state) =>
+  const messages = useChatMessagesStore((state) =>
     state
       .getMessagesForChat(chatId)
       .map((e) => ({ ...e, createdAt: new Date(e.createdAt) })),

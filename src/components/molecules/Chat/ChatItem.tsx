@@ -10,7 +10,7 @@ import { MessageStatus } from '../Message/MessageStatus';
 import { UserCard } from '../User/UserCard';
 import { useUsersStore } from '../../../state/users';
 import { useAuthStore } from '../../../state/auth';
-import { useMessagesStore } from '../../../state/messages';
+import { useChatMessagesStore } from '../../../state/chatMessages';
 dayjs.extend(RelativeTime);
 
 interface ChatItemProps {
@@ -72,7 +72,7 @@ export const ChatItem = ({ data, onPress }: ChatItemProps) => {
       notMeUserId,
     ]),
   );
-  const lastChatMessage = useMessagesStore((state) =>
+  const lastChatMessage = useChatMessagesStore((state) =>
     state.getLastMessageFromChat(chatId),
   );
   const hasUnreadMessages = false;
