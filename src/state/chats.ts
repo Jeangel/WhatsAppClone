@@ -2,7 +2,6 @@ import create, { StateCreator } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IChatItem } from '../app/Chat';
-import { useChatMessagesStore } from './chatMessages';
 import _ from 'lodash';
 
 type ChatStore = {
@@ -35,12 +34,6 @@ let store: StateCreator<ChatStore> = (set, get) => ({
   },
   setChats: ({ chats }) => {
     const uniqueChats = _.uniqBy(chats, (e) => e.chatId);
-    useChatMessagesStore.getState().setChatMessages({
-      chatMessages: uniqueChats.map((e) => ({
-        chatId: e.chatId,
-        messages: [],
-      })),
-    });
     set({ chats: uniqueChats });
   },
   setCurrentChat: ({ chatId }) => {

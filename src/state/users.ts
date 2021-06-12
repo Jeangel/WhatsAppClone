@@ -6,9 +6,9 @@ import { IChatUser } from '../app/User';
 
 type UsersStore = {
   users: IChatUser[];
-  addUsers: (users: IChatUser[]) => void;
-  setUsers: (users: IChatUser[]) => void;
-  updateUser: (userId: string, update: IChatUser) => void;
+  addUsers: (args: { users: IChatUser[] }) => void;
+  setUsers: (args: { users: IChatUser[] }) => void;
+  updateUser: (args: { userId: string; update: IChatUser }) => void;
 };
 
 const initialState: UsersStore = {
@@ -18,20 +18,20 @@ const initialState: UsersStore = {
   setUsers: () => {},
 };
 
-let store: StateCreator<UsersStore> = (set) => ({
+let store: StateCreator<UsersStore> = (set, get) => ({
   users: initialState.users,
-  addUsers: (newUsers) => {
-    set(({ users }) => ({
-      users: _.uniqBy(users.concat(newUsers), (e) => e.id),
-    }));
+  addUsers: ({ users: newUsers }) => {
+    const existingUsers = get().users;
+    const mergedUsers = _.uniqBy(existingUsers.concat(newUsers), (e) => e.id);
+    set({ users: mergedUsers });
   },
-  setUsers: (users) => {
-    set(() => ({ users: _.uniqBy(users, (e) => e.id) }));
+  setUsers: ({ users }) => {
+    set({ users: _.uniqBy(users, (e) => e.id) });
   },
-  updateUser: (userId, update) => {
-    set(({ users }) => ({
-      users: users.map((e) => (e.id === userId ? update : e)),
-    }));
+  updateUser: ({ userId, update }) => {
+    const users = get().users;
+    const updatedUsers = users.map((e) => (e.id === userId ? update : e));
+    set({ users: updatedUsers });
   },
 });
 

@@ -58,9 +58,9 @@ export const useChatListeners = () => {
       name: e.name,
       profileImageUrl: e.profileImageUrl,
     }));
-    setChatMessages({ chatMessages });
-    setUsers(formattedUsers);
+    setUsers({ users: formattedUsers });
     setChats({ chats: myChats });
+    setChatMessages({ chatMessages });
   };
 
   const configureUUID = async () => {
@@ -99,7 +99,7 @@ export const useChatListeners = () => {
           name: e.name,
           profileImageUrl: e.profileImageUrl,
         }));
-        addUsers(formattedUsers);
+        addUsers({ users: formattedUsers });
       });
     }
   };
