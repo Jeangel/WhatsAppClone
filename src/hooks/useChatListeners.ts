@@ -60,7 +60,7 @@ export const useChatListeners = () => {
     }));
     setChatMessages({ chatMessages });
     setUsers(formattedUsers);
-    setChats(myChats);
+    setChats({ chats: myChats });
   };
 
   const configureUUID = async () => {
@@ -92,7 +92,7 @@ export const useChatListeners = () => {
           members.filter((e) => e !== authenticatedUser.id),
         );
         pubnub.subscribe({ channels: [chatId] });
-        addChat({ chatId, members });
+        addChat({ chat: { chatId, members } });
         addMessagesByChatItem({ chatId });
         const formattedUsers: IChatUser[] = dbUsers.map((e) => ({
           id: e.id,

@@ -1,5 +1,4 @@
 import { useNavigation } from '@react-navigation/core';
-import { useChatsStore } from '../state/chats';
 import { usePushError } from '../state/error';
 import useChats from './useChats';
 

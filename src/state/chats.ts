@@ -7,12 +7,12 @@ import _ from 'lodash';
 
 type ChatStore = {
   chats: IChatItem[];
-  setChats: (chats: IChatItem[]) => void;
-  addChat: (chat: IChatItem) => void;
+  setChats: (args: { chats: IChatItem[] }) => void;
+  addChat: (args: { chat: IChatItem }) => void;
   currentChat?: IChatItem;
-  setCurrentChat: (chatId?: string) => void;
-  updateChat: (chatId: string, chat: IChatItem) => void;
-  chatExists: (chatId: string) => boolean;
+  setCurrentChat: (args: { chatId?: string }) => void;
+  updateChat: (args: { chatId: string; chat: IChatItem }) => void;
+  chatExists: (args: { chatId: string }) => boolean;
 };
 
 const initialState: ChatStore = {
@@ -28,12 +28,12 @@ const initialState: ChatStore = {
 let store: StateCreator<ChatStore> = (set, get) => ({
   chats: initialState.chats,
   currentChat: initialState.currentChat,
-  addChat: (chat) => {
+  addChat: ({ chat }) => {
     const mergedChats = get().chats.concat(chat);
     const uniqueChats = _.uniqBy(mergedChats, (e) => e.chatId);
     set({ chats: uniqueChats });
   },
-  setChats: (chats) => {
+  setChats: ({ chats }) => {
     const uniqueChats = _.uniqBy(chats, (e) => e.chatId);
     useChatMessagesStore.getState().setChatMessages({
       chatMessages: uniqueChats.map((e) => ({
@@ -43,15 +43,15 @@ let store: StateCreator<ChatStore> = (set, get) => ({
     });
     set({ chats: uniqueChats });
   },
-  setCurrentChat: (currentChatId) => {
-    const currentChat = get().chats.find((e) => e.chatId === currentChatId);
+  setCurrentChat: ({ chatId }) => {
+    const currentChat = get().chats.find((e) => e.chatId === chatId);
     set(() => ({ currentChat }));
   },
-  updateChat: (chatId, chat) => {
+  updateChat: ({ chatId, chat }) => {
     const chats = get().chats.map((e) => (e.chatId === chatId ? chat : e));
     set(() => ({ chats }));
   },
-  chatExists: (chatId) => {
+  chatExists: ({ chatId }) => {
     const chat = get().chats.find((e) => e.chatId === chatId);
     return !!chat;
   },
