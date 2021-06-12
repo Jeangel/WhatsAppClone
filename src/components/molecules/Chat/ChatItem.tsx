@@ -73,7 +73,7 @@ export const ChatItem = ({ data, onPress }: ChatItemProps) => {
     ]),
   );
   const lastChatMessage = useChatMessagesStore((state) =>
-    state.getLastMessageFromChat(chatId),
+    state.getLastMessageFromChat({ chatId }),
   );
   const hasUnreadMessages = false;
   if (!notMeUser) {

@@ -6,16 +6,16 @@ import _ from 'lodash';
 
 type ChatMessagesStore = {
   chatMessages: IChatMessage[];
-  addChat: (chatId: string) => void;
-  addChatMessages: (chatId: string, messages: IMessage[]) => void;
-  setChatMessages: ({ chatMessages }: { chatMessages: IChatMessage[] }) => void;
-  updateChatMessage: (
-    messageId: number,
-    chatId: string,
-    update: IMessage,
-  ) => void;
-  getLastMessageFromChat: (chatId: string) => IMessage | undefined;
-  getMessagesForChat: (chat: string) => IMessage[];
+  addChat: (args: { chatId: string }) => void;
+  addChatMessages: (args: { chatId: string; messages: IMessage[] }) => void;
+  setChatMessages: (args: { chatMessages: IChatMessage[] }) => void;
+  updateChatMessage: (args: {
+    messageId: number;
+    chatId: string;
+    messageUpdated: IMessage;
+  }) => void;
+  getLastMessageFromChat: (args: { chatId: string }) => IMessage | undefined;
+  getMessagesForChat: (args: { chatId: string }) => IMessage[];
 };
 
 const initialState: ChatMessagesStore = {
@@ -34,40 +34,38 @@ const initialState: ChatMessagesStore = {
 
 let store: StateCreator<ChatMessagesStore> = (set, get) => ({
   chatMessages: initialState.chatMessages,
-  addChat: (chatId) => {
-    set(({ chatMessages }) => {
-      const newChats = chatMessages.concat({
-        chatId,
-        messages: [],
-      });
-      return { chatMessages: _.uniqBy(newChats, (e) => e.chatId) };
+  addChat: ({ chatId }) => {
+    const mergedChats = get().chatMessages.concat({
+      chatId,
+      messages: [],
     });
+    const uniqueChats = _.uniqBy(mergedChats, (e) => e.chatId);
+    set({ chatMessages: uniqueChats });
   },
-  addChatMessages: (chatId, newMessages) => {
-    set(({ chatMessages }) => {
-      const chat = chatMessages.find((e) => e.chatId === chatId);
-      if (!chat) {
-        return { chatMessages };
-      }
-      const messages = chat.messages.concat(newMessages);
-      return {
-        chatMessages: chatMessages.map((e) =>
-          e.chatId === chatId ? { ...e, messages } : e,
-        ),
-      };
+  addChatMessages: ({ chatId, messages: newMessages }) => {
+    const existingMessages = get().chatMessages;
+    const chat = existingMessages.find((e) => e.chatId === chatId);
+    if (!chat) {
+      return;
+    }
+    const mergedMessages = chat.messages.concat(newMessages);
+    set({
+      chatMessages: existingMessages.map((e) =>
+        e.chatId === chatId ? { ...e, mergedMessages } : e,
+      ),
     });
   },
   setChatMessages: ({ chatMessages }) => {
     set({ chatMessages });
   },
-  updateChatMessage: (messageId, chatId, message) => {
+  updateChatMessage: ({ messageId, chatId, messageUpdated }) => {
     set(({ chatMessages }) => {
       const chat = chatMessages.find((e) => e.chatId === chatId);
       if (!chat) {
         return { chatMessages };
       }
       const messages = chat.messages.map((e) =>
-        e._id === messageId ? message : e,
+        e._id === messageId ? messageUpdated : e,
       );
       const chats = chatMessages.map((e) =>
         e.chatId === chatId ? { ...e, messages } : e,
@@ -77,14 +75,14 @@ let store: StateCreator<ChatMessagesStore> = (set, get) => ({
       };
     });
   },
-  getLastMessageFromChat: (chatId) => {
+  getLastMessageFromChat: ({ chatId }) => {
     const chat = get().chatMessages.find((e) => e.chatId === chatId);
     if (!chat || (chat && !chat.messages.length)) {
       return;
     }
     return chat.messages[chat.messages.length - 1];
   },
-  getMessagesForChat: (chatId) => {
+  getMessagesForChat: ({ chatId }) => {
     const chat = get().chatMessages.find((e) => e.chatId === chatId);
     if (!chat || (chat && !chat.messages.length)) {
       return [];

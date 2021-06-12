@@ -93,7 +93,7 @@ export const useChatListeners = () => {
         );
         pubnub.subscribe({ channels: [chatId] });
         addChat({ chatId, members });
-        addMessagesByChatItem(chatId);
+        addMessagesByChatItem({ chatId });
         const formattedUsers: IChatUser[] = dbUsers.map((e) => ({
           id: e.id,
           name: e.name,
@@ -130,16 +130,15 @@ export const useChatListeners = () => {
         objects: objectEventListener,
         message: (params) => {
           console.log('navigation message event', params);
-          addChatMessages(params.channel, [
-            {
-              _id: Number(params.timetoken),
-              text: params.message.text,
-              createdAt: fromTimeTokenToDate(params.timetoken).toISOString(),
-              user: {
-                _id: params.publisher,
-              },
+          const message = {
+            _id: Number(params.timetoken),
+            text: params.message.text,
+            createdAt: fromTimeTokenToDate(params.timetoken).toISOString(),
+            user: {
+              _id: params.publisher,
             },
-          ]);
+          };
+          addChatMessages({ chatId: params.channel, messages: [message] });
         },
         presence: presenceListener,
       };

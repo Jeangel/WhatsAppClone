@@ -76,7 +76,7 @@ export const Chat = ({ route }: ChatProps) => {
   const chatId = route.params.chatId;
   const messages = useChatMessagesStore((state) =>
     state
-      .getMessagesForChat(chatId)
+      .getMessagesForChat({ chatId })
       .map((e) => ({ ...e, createdAt: new Date(e.createdAt) })),
   );
 
