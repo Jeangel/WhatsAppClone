@@ -83,7 +83,6 @@ export const ChatList = ({ onChatPress, onChatRemove }: ChatListProps) => {
   const opacity = React.useRef(new Animated.Value(1)).current;
   opacity.interpolate({ inputRange: [0, 75], outputRange: [0, 1] });
   const contentContainerStyle = { flex: 1 };
-  console.log('RENDERING CHATS', chats);
   return (
     <Container>
       <SwipeListView

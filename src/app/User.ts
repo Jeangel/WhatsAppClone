@@ -1,3 +1,4 @@
+import { ObjectCustom } from 'pubnub';
 import { IContact } from './Contact';
 
 /**
@@ -11,7 +12,7 @@ export interface IUser {
   contacts: IContact[];
 }
 
-export interface ICustomUserMetaData {
+export interface ICustomUserMetaData extends ObjectCustom {
   name: string;
   profileImageUrl: string;
 }

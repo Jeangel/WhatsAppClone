@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { StackHeaderProps, StackNavigationProp } from '@react-navigation/stack';
@@ -17,6 +16,8 @@ import { RouteProp } from '@react-navigation/core';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ScreenContainer } from '../../components/atoms/ScreenContainer';
 import { useChatMessagesStore } from '../../state/chatMessages';
+import { useChatsStore } from '../../state/chats';
+import { useUsersStore } from '../../state/users';
 
 type ChatScreenNavigationProp = StackNavigationProp<ChatStackParamList, 'Chat'>;
 
@@ -38,16 +39,23 @@ const IconContainer = styled(TouchableOpacity)`
 `;
 
 export const ChatHeader = (props: StackHeaderProps) => {
-  // TODO: Jum, how to type this properly?
-  // const params = props.scene.route.params as { chatId: string };
-  // const chat = dummyData.find((e) => e.id === params.chatId);
+  const authenticatedUser = useAuthStore((e) => e.authenticatedUser);
+  const currentChat = useChatsStore((store) => store.currentChat);
+  const notMeUser = useUsersStore((store) =>
+    store.users.find(
+      (e) =>
+        currentChat?.members.includes(e.id) && e.id !== authenticatedUser.id,
+    ),
+  );
   return (
     <Header {...props} showBackButton>
-      {false ? (
+      {notMeUser ? (
         <UserStatusContainer>
           <UserCard
-            user={{} as any}
-            description={capitalize('active')}
+            user={notMeUser}
+            description={capitalize(
+              notMeUser.status === 'online' ? 'online' : '',
+            )}
             size={40}
           />
         </UserStatusContainer>

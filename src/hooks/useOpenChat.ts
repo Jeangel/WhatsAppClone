@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/core';
+import { useChatsStore } from '../state/chats';
 import { usePushError } from '../state/error';
 import useChatsRequests from './useChatsRequests';
 
@@ -23,11 +24,10 @@ interface IOpenChatArgs {
 export const useOpenChat = () => {
   const navigation = useNavigation();
   const { getChatMembers, setChatMembers } = useChatsRequests();
-  // const { setCurrentChat } = useChatsStore();
+  const { setCurrentChat } = useChatsStore();
   const pushError = usePushError();
-
   const openChat = async ({ chatId, membersIds }: IOpenChatArgs) => {
-    // setCurrentChat(chatId);
+    setCurrentChat({ chatId });
     const members = await getChatMembers(chatId);
     // if the chat contain members yet, we're ready to go to the chat.
     if (members.length) {

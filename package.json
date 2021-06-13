@@ -48,6 +48,7 @@
     "react-native-svg": "^12.1.0",
     "react-native-svg-charts": "^5.4.0",
     "react-native-swipe-list-view": "^3.2.6",
+    "shallowequal": "^1.1.0",
     "styled-components": "^5.2.1",
     "uuid": "^8.3.2",
     "zustand": "^3.3.3"
@@ -61,6 +62,7 @@
     "@types/pubnub": "^4.29.1",
     "@types/react-native": "^0.63.2",
     "@types/react-test-renderer": "^16.9.2",
+    "@types/shallowequal": "^1.1.1",
     "@types/styled-components": "^5.1.7",
     "@types/uuid": "^8.3.0",
     "babel-jest": "^25.1.0",

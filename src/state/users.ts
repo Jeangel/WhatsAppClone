@@ -9,6 +9,7 @@ type UsersStore = {
   addUsers: (args: { users: IChatUser[] }) => void;
   setUsers: (args: { users: IChatUser[] }) => void;
   updateUser: (args: { userId: string; update: IChatUser }) => void;
+  setUserStatus: (args: { userId: string; status: string }) => void;
 };
 
 const initialState: UsersStore = {
@@ -16,6 +17,7 @@ const initialState: UsersStore = {
   addUsers: () => {},
   updateUser: () => {},
   setUsers: () => {},
+  setUserStatus: () => {},
 };
 
 let store: StateCreator<UsersStore> = (set, get) => ({
@@ -32,6 +34,13 @@ let store: StateCreator<UsersStore> = (set, get) => ({
     const users = get().users;
     const updatedUsers = users.map((e) => (e.id === userId ? update : e));
     set({ users: updatedUsers });
+  },
+  setUserStatus: ({ userId, status }) => {
+    const user = get().users.find((e) => e.id === userId);
+    if (!user) {
+      return;
+    }
+    get().updateUser({ userId, update: { ...user, status: status } });
   },
 });
 

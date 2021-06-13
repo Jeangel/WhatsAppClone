@@ -14,11 +14,17 @@ const useUsersListeners = () => {
   const onUsersSnapshot = async (snapshot: any) => {
     // we'll be listening only for profile image updates
     const { profileImageUrl } = snapshot.data();
-    const { data: pubnubUser } = await pubnub.objects.getUUIDMetadata({
-      uuid: snapshot.id,
-    });
+    let pubnubUserMetadata = null;
+    try {
+      const { data: pubnubUser } = await pubnub.objects.getUUIDMetadata({
+        uuid: snapshot.id,
+      });
+      pubnubUserMetadata = pubnubUser.custom;
+    } catch (error) {
+      console.log('error getting user metadata', error);
+    }
     const userMetaData = {
-      ...(pubnubUser.custom || {}),
+      ...(pubnubUserMetadata || {}),
       profileImageUrl,
     };
     await pubnub.objects.setUUIDMetadata({

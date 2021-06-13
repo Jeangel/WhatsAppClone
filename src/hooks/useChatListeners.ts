@@ -1,6 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useChatMessagesStore } from '../state/chatMessages';
 import { IChatUser } from './../app/User';
-/* eslint-disable react-hooks/exhaustive-deps */
 import Pubnub from 'pubnub';
 import { usePubNub } from 'pubnub-react';
 import { useEffect } from 'react';
@@ -12,13 +12,14 @@ import useChatsRequests from './useChatsRequests';
 import useUsersRequests from './useUsersRequests';
 import { IChatMessage } from '../app/Message';
 import { fromTimeTokenToDate } from '../util';
+import isEqual from 'shallowequal';
 
 export const useChatListeners = () => {
   const pubnub = usePubNub();
   const { authenticatedUser } = useAuthStore();
   const { getMyChats, getChatMessages, getChatMembers } = useChatsRequests();
   const { setChats, chats, addChat } = useChatsStore();
-  const { setUsers, addUsers } = useUsersStore();
+  const { setUsers, addUsers, setUserStatus } = useUsersStore();
   const {
     setChatMessages,
     addChatMessages,
@@ -28,8 +29,9 @@ export const useChatListeners = () => {
 
   const subscribeToChannels = () => {
     const chatsIds = chats.map((e) => e.chatId);
+    pubnub.subscribe({ channels: [authenticatedUser.id] });
     pubnub.subscribe({
-      channels: [...chatsIds, authenticatedUser.id],
+      channels: chatsIds,
       withPresence: true,
     });
   };
@@ -57,6 +59,7 @@ export const useChatListeners = () => {
       id: e.id,
       name: e.name,
       profileImageUrl: e.profileImageUrl,
+      status: 'offline',
     }));
     setUsers({ users: formattedUsers });
     setChats({ chats: myChats });
@@ -64,22 +67,47 @@ export const useChatListeners = () => {
   };
 
   const configureUUID = async () => {
+    pubnub.setUUID(authenticatedUser.id);
+    let pubnubUserMetadata = null;
+    try {
+      const { data } = await pubnub.objects.getUUIDMetadata({
+        uuid: authenticatedUser.id,
+      });
+      pubnubUserMetadata = data;
+    } catch (error) {}
     const userMetaData = {
       name: authenticatedUser.name,
       profileImageUrl: authenticatedUser.profileImageUrl,
     };
-    pubnub.setUUID(authenticatedUser.id);
-    await pubnub.objects.setUUIDMetadata({ data: { custom: userMetaData } });
+    const metaDataIsEqual =
+      pubnubUserMetadata && isEqual(pubnubUserMetadata.custom, userMetaData);
+    if (!metaDataIsEqual) {
+      await pubnub.objects.setUUIDMetadata({ data: { custom: userMetaData } });
+    }
   };
 
-  const presenceListener = () => {
-    // const { channel, action, uuid } = event;
-    // const chat = chats.find((e) => e.chatId === channel);
-    // const isMe = uuid !== authenticatedUser.id;
-    // const isJoinOrLeave = ['join', 'leave'].includes(action);
-    // if (isMe && chat && isJoinOrLeave) {
-    //   // updateChat(channel, {});
-    // }
+  const presenceListener = (event: Pubnub.PresenceEvent) => {
+    console.log('PRESENCE EVENT', event);
+    const { action, uuid } = event;
+    const isJoinOrLeave = ['join', 'leave'].includes(action);
+    if (isJoinOrLeave) {
+      setUserStatus({
+        userId: uuid,
+        status: action === 'join' ? 'online' : 'offline',
+      });
+    }
+  };
+
+  const messageEventListener = (event: Pubnub.MessageEvent) => {
+    const message = {
+      _id: Number(event.timetoken),
+      text: event.message.text,
+      createdAt: fromTimeTokenToDate(event.timetoken).toISOString(),
+      user: {
+        _id: event.publisher,
+      },
+    };
+    addChatMessages({ chatId: event.channel, messages: [message] });
   };
 
   const membershipEventHandler = (event: Pubnub.ObjectsEvent) => {
@@ -108,42 +136,30 @@ export const useChatListeners = () => {
     const { message, ...rest } = event;
     if (message.type === 'membership') {
       membershipEventHandler(event);
+    } else {
+      console.log('object event params', { ...rest, message });
     }
-    console.log('object event params', { ...rest, message });
   };
 
   useAppStateChange({
+    // TODO If messages stop working, comment this line
+    handleAppDeactivated: () => unsubscribeFromChannels(),
     handleAppActivated: () => subscribeToChannels(),
   });
 
   useEffect(() => {
     if (pubnub && authenticatedUser.id) {
-      console.log('Running use effect listeners');
       refreshUserChats();
       configureUUID();
       subscribeToChannels();
       const listeners: Pubnub.ListenerParameters = {
-        status: (params) => {
-          console.log('status event', params);
-        },
+        status: (params) => console.log('status event', params),
         objects: objectEventListener,
-        message: (params) => {
-          console.log('navigation message event', params);
-          const message = {
-            _id: Number(params.timetoken),
-            text: params.message.text,
-            createdAt: fromTimeTokenToDate(params.timetoken).toISOString(),
-            user: {
-              _id: params.publisher,
-            },
-          };
-          addChatMessages({ chatId: params.channel, messages: [message] });
-        },
+        message: messageEventListener,
         presence: presenceListener,
       };
       pubnub.addListener(listeners);
       return () => {
-        console.log('REMOVING ALL CHAT STUFF');
         pubnub.removeListener(listeners);
         unsubscribeFromChannels();
       };
