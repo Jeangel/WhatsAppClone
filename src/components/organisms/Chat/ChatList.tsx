@@ -82,10 +82,12 @@ export const ChatList = ({ onChatPress, onChatRemove }: ChatListProps) => {
   );
   const opacity = React.useRef(new Animated.Value(1)).current;
   opacity.interpolate({ inputRange: [0, 75], outputRange: [0, 1] });
+  const contentContainerStyle = chats.length ? {} : { flex: 1 };
   return (
     <Container>
       <SwipeListView
         data={chats}
+        contentContainerStyle={contentContainerStyle}
         ListEmptyComponent={
           <EmptyViewContainer>
             <EmptyViewTitle variant="h2" color={EColor.neutral40}>

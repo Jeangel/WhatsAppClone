@@ -15,6 +15,9 @@ import useUsersRequests from '../../../hooks/useUsersRequests';
 import { useOpenChat } from '../../../hooks/useOpenChat';
 import { createOneToOneChatId } from '../../../util';
 import { useIsFocused } from '@react-navigation/core';
+import { Illustration } from '../../atoms/Illustration';
+import { Text } from '../../atoms/Text';
+import { EColor } from '../../../theme';
 
 const Container = styled(View)`
   flex: 1;
@@ -23,6 +26,16 @@ const Container = styled(View)`
 const Separator = styled(View)`
   margin-top: 10px;
   margin-bottom: 10px;
+`;
+
+const EmptyViewContainer = styled(View)`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
+const EmptyViewTitle = styled(Text)`
+  margin-bottom: 50px;
 `;
 
 export const ContactList = () => {
@@ -80,10 +93,21 @@ export const ContactList = () => {
   const keyExtractor = (contact: IUser, index: number) =>
     `contact-${contact.id}-${index}`;
 
+  const contentContainerStyle = contacts.length ? {} : { flex: 1 };
+
   return (
     <Container>
       <FlatList
         data={contacts}
+        contentContainerStyle={contentContainerStyle}
+        ListEmptyComponent={
+          <EmptyViewContainer>
+            <EmptyViewTitle variant="h2" color={EColor.neutral40}>
+              You don't have any contacts yet.
+            </EmptyViewTitle>
+            <Illustration name="no-contacts" />
+          </EmptyViewContainer>
+        }
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         ItemSeparatorComponent={Separator}

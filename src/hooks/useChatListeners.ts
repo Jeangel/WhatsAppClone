@@ -113,7 +113,6 @@ export const useChatListeners = () => {
   };
 
   const presenceListener = (event: Pubnub.PresenceEvent) => {
-    console.log('PRESENCE EVENT', event);
     const { action, uuid } = event;
     const isJoinOrLeave = ['join', 'leave'].includes(action);
     if (isJoinOrLeave) {
@@ -159,16 +158,13 @@ export const useChatListeners = () => {
   };
 
   const objectEventListener = (event: Pubnub.ObjectsEvent) => {
-    const { message, ...rest } = event;
+    const { message } = event;
     if (message.type === 'membership') {
       membershipEventHandler(event);
-    } else {
-      console.log('object event params', { ...rest, message });
     }
   };
 
   useAppStateChange({
-    // TODO If messages stop working, comment this line
     handleAppDeactivated: () => unsubscribeFromChannels(),
     handleAppActivated: async () => {
       subscribeToChannels();
@@ -182,7 +178,6 @@ export const useChatListeners = () => {
       refreshUserChats();
       subscribeToChannels();
       const listeners: Pubnub.ListenerParameters = {
-        status: (params) => console.log('status event', params),
         objects: objectEventListener,
         message: messageEventListener,
         presence: presenceListener,
