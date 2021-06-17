@@ -55,13 +55,22 @@ const MessageStatusContainer = styled(View)`
 `;
 
 const LastMessageTimeStamp = styled(Text)`
-  text-transform: capitalize;
   text-align: center;
 `;
 
 const Content = styled(View)`
   flex-direction: row;
 `;
+
+const formatDate = (date: string) => {
+  if (dayjs(date).isSame(new Date(), 'day')) {
+    return dayjs(date).format('hh:mm A');
+  }
+  if (dayjs(date).isSame(new Date(), 'week')) {
+    return dayjs(date).format('dddd[.]');
+  }
+  return dayjs(date).format('DD [de] MMM[.]');
+};
 
 export const ChatItem = ({ data, onPress }: ChatItemProps) => {
   const { authenticatedUser } = useAuthStore();
@@ -95,7 +104,7 @@ export const ChatItem = ({ data, onPress }: ChatItemProps) => {
           {lastChatMessage && (
             <>
               <LastMessageTimeStamp color="neutral60" variant="small">
-                {dayjs(lastChatMessage?.createdAt).fromNow()}
+                {formatDate(lastChatMessage.createdAt)}
               </LastMessageTimeStamp>
               {hasUnreadMessages ? (
                 <UnreadMessagesContainer hide={!hasUnreadMessages}>

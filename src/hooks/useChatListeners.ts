@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useChatMessagesStore } from '../state/chatMessages';
-import { IChatUser } from './../app/User';
+import { useEffect } from 'react';
+import isEqual from 'shallowequal';
 import Pubnub from 'pubnub';
 import { usePubNub } from 'pubnub-react';
-import { useEffect } from 'react';
+import { IChatUser } from './../app/User';
 import { useAuthStore } from '../state/auth';
 import { useChatsStore } from '../state/chats';
 import { useUsersStore } from '../state/users';
@@ -12,14 +12,19 @@ import useChatsRequests from './useChatsRequests';
 import useUsersRequests from './useUsersRequests';
 import { IChatMessage } from '../app/Message';
 import { fromTimeTokenToDate } from '../util';
-import isEqual from 'shallowequal';
+import { useChatMessagesStore } from '../state/chatMessages';
 
 export const useChatListeners = () => {
   const pubnub = usePubNub();
   const { authenticatedUser } = useAuthStore();
   const { getMyChats, getChatMessages, getChatMembers } = useChatsRequests();
   const { setChats, chats, addChat } = useChatsStore();
-  const { setUsers, addUsers, setUserStatus } = useUsersStore();
+  const {
+    setUsers,
+    addUsers,
+    setUserStatus,
+    users: allUsers,
+  } = useUsersStore();
   const {
     setChatMessages,
     addChatMessages,
@@ -38,6 +43,27 @@ export const useChatListeners = () => {
 
   const unsubscribeFromChannels = () => {
     pubnub.unsubscribeAll();
+  };
+
+  const refreshUsersPresence = async () => {
+    const onlineUsers: string[] = [];
+    const chatsIds = chats.map((e) => e.chatId);
+    const { channels } = await pubnub.hereNow({
+      channels: chatsIds,
+    });
+    for (const channel in channels) {
+      const { occupants } = channels[channel];
+      occupants.forEach((e) => {
+        onlineUsers.push(e.uuid);
+      });
+    }
+    allUsers.forEach((user) => {
+      const isOnline = onlineUsers.includes(user.id);
+      setUserStatus({
+        userId: user.id,
+        status: isOnline ? 'online' : 'offline',
+      });
+    });
   };
 
   const refreshUserChats = async () => {
@@ -144,13 +170,16 @@ export const useChatListeners = () => {
   useAppStateChange({
     // TODO If messages stop working, comment this line
     handleAppDeactivated: () => unsubscribeFromChannels(),
-    handleAppActivated: () => subscribeToChannels(),
+    handleAppActivated: async () => {
+      subscribeToChannels();
+      await refreshUsersPresence();
+    },
   });
 
   useEffect(() => {
     if (pubnub && authenticatedUser.id) {
-      refreshUserChats();
       configureUUID();
+      refreshUserChats();
       subscribeToChannels();
       const listeners: Pubnub.ListenerParameters = {
         status: (params) => console.log('status event', params),

@@ -13,7 +13,7 @@ type ChatStore = {
   setCurrentChat: (args: { chatId?: string }) => void;
   updateChat: (args: { chatId: string; chat: IChatItem }) => void;
   chatExists: (args: { chatId: string }) => boolean;
-  getNonEmptyChats: () => IChatItem[];
+  getSortedNonEmptyChats: () => IChatItem[];
 };
 
 const initialState: ChatStore = {
@@ -24,7 +24,7 @@ const initialState: ChatStore = {
   setCurrentChat: () => {},
   updateChat: () => {},
   chatExists: () => false,
-  getNonEmptyChats: () => [],
+  getSortedNonEmptyChats: () => [],
 };
 
 let store: StateCreator<ChatStore> = (set, get) => ({
@@ -51,14 +51,24 @@ let store: StateCreator<ChatStore> = (set, get) => ({
     const chat = get().chats.find((e) => e.chatId === chatId);
     return !!chat;
   },
-  getNonEmptyChats: () => {
-    const chatMessagesStore = useChatMessagesStore.getState().chatMessages;
-    const nonEmptyChats = get().chats.filter((chat) => {
-      const messages =
-        chatMessagesStore.find((e) => e.chatId === chat.chatId)?.messages || [];
-      return messages.length > 0;
+  getSortedNonEmptyChats: () => {
+    const allChats = get().chats;
+    const formattedChats = allChats.map((chat) => ({
+      ...chat,
+      lastMessage: useChatMessagesStore
+        .getState()
+        .getLastMessageFromChat({ chatId: chat.chatId }),
+    }));
+    const nonEmptyChats = formattedChats.filter((chat) => {
+      return !!chat.lastMessage;
     });
-    return nonEmptyChats;
+    const sortedChats = nonEmptyChats.sort((a, b) => {
+      if (a.lastMessage && b.lastMessage) {
+        return b.lastMessage._id - a.lastMessage._id;
+      }
+      return 0;
+    });
+    return sortedChats;
   },
 });
 

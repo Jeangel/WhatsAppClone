@@ -78,16 +78,14 @@ interface ChatListProps {
 export const ChatList = ({ onChatPress, onChatRemove }: ChatListProps) => {
   const chatMessages = useChatMessagesStore((e) => e.chatMessages);
   const chats = useChatsStore(
-    React.useCallback((e) => e.getNonEmptyChats(), [chatMessages]),
+    React.useCallback((e) => e.getSortedNonEmptyChats(), [chatMessages]),
   );
   const opacity = React.useRef(new Animated.Value(1)).current;
   opacity.interpolate({ inputRange: [0, 75], outputRange: [0, 1] });
-  const contentContainerStyle = { flex: 1 };
   return (
     <Container>
       <SwipeListView
         data={chats}
-        contentContainerStyle={contentContainerStyle}
         ListEmptyComponent={
           <EmptyViewContainer>
             <EmptyViewTitle variant="h2" color={EColor.neutral40}>
