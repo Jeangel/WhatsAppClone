@@ -91,7 +91,6 @@ export const Chat = ({ route }: ChatProps) => {
   const handleOnSend = async (newMessages: IMessage[]) => {
     const newMessage = newMessages[0];
     try {
-      console.log('Chat screen', newMessage);
       await pubnub.publish({
         channel: chatId,
         message: { text: newMessage.text, author: newMessage.user._id },

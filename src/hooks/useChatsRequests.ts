@@ -50,8 +50,7 @@ const useChatsRequests = () => {
         );
       });
       promises.push(setChatMembersPromise);
-      const response = await Promise.all(promises);
-      console.log(response, 'setting stuff');
+      await Promise.all(promises);
     } catch (error) {
       console.log('error setting chat members', error);
     }

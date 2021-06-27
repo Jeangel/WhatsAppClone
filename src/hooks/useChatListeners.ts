@@ -145,13 +145,13 @@ export const useChatListeners = () => {
           members.filter((e) => e !== authenticatedUser.id),
         );
         pubnub.subscribe({ channels: [chatId] });
-        addChat({ chat: { chatId, members } });
-        addMessagesByChatItem({ chatId });
         const formattedUsers: IChatUser[] = dbUsers.map((e) => ({
           id: e.id,
           name: e.name,
           profileImageUrl: e.profileImageUrl,
         }));
+        addChat({ chat: { chatId, members } });
+        addMessagesByChatItem({ chatId });
         addUsers({ users: formattedUsers });
       });
     }
